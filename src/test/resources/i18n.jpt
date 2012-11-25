@@ -1,0 +1,79 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.javapagetemplates.org/namespaces/i18n">
+  <head>
+    <title>I18n test</title>
+    <meta http-equiv="Content-type" content="text/xml;charset=UTF-8" />
+  </head>
+  <body>
+    <h1>I18n áéíóú test</h1>
+    
+    <h2>Test i18n:domain and i18n:content</h2> 
+    <table>
+    	<tr>
+    		<th>File</th>
+    		<th>Language</th>
+    		<th>Key</th>
+    		<th>Value</th>
+    	</tr>
+    	<tr i18n:domain="helper/getI18n1('en')"
+    		tal:define="language string:English">
+    		<td tal:content="string: label1_en.properties">labelX_YY.properties</td>
+    		<td tal:content="language">Language</td>
+    		<td>i18n_title</td>
+    		<td i18n:content="i18n_title">Value</td>
+    	</tr>
+    	<tr i18n:domain="helper/getI18n1('es')"
+    		tal:define="language string:Spanish">
+    		<td tal:content="string: label1_es.properties">labelX_YY.properties</td>
+    		<td tal:content="language">Language</td>
+    		<td>i18n_title</td>
+    		<td i18n:content="i18n_title">Value</td>
+    	</tr>
+    	<tr i18n:domain="helper/getI18n2('en')"
+    		tal:define="language string:English">
+    		<td tal:content="string: label2_en.properties">labelX_YY.properties</td>
+    		<td tal:content="language">Language</td>
+    		<td>i18n_title</td>
+    		<td i18n:content="i18n_title">Value</td>
+    	</tr>
+    	<tr i18n:domain="helper/getI18n2('es')"
+    		tal:define="language string:Spanish">
+    		<td tal:content="string: label2_es.properties">labelX_YY.properties</td>
+    		<td tal:content="language">Language</td>
+    		<td>i18n_title</td>
+    		<td i18n:content="i18n_title">Value</td>
+    	</tr>
+    </table>
+    
+    <tal:block i18n:domain="helper/getI18n1('es')">
+    
+		<h2>Test i18n:define</h2>
+		<p i18n:define="title i18n_title">
+			<span tal:content="title">Title</span>
+		</p>
+		
+		<h2>Test i18n:replace</h2>
+		<p>
+			<span i18n:replace="i18n_title">Title</span>
+		</p>
+		
+		<h2>Test i18n:attributes</h2>
+		<p>
+			<a href="http://www.google.com" i18n:attributes="title i18n_title">Go to google</a>
+		</p>
+		
+		<h2>Test i18n:params</h2>
+		<p i18n:content="i18n_countMessage"
+			i18n:params="'10' '28'">
+			Listing...
+		</p>
+		
+		<h2>Test i18n:on-error</h2>
+	    <p i18n:on-error="i18n_error">
+	      <span tal:replace="helper/error">1 / 0</span>
+	    </p>
+	
+	</tal:block>
+	
+  </body>
+</html>

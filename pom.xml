@@ -1,0 +1,195 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.javapagetemplates</groupId>
+    <artifactId>jpt</artifactId>
+    <packaging>jar</packaging>
+    <version>0.11.0</version>
+    <name>Java page templates</name>
+    <url>http://javapagetemplates.org</url>
+
+    <developers>
+    
+        <developer>
+            <id>David</id>
+            <name>David Cana</name>
+            <email>david.cana::at::gmail.com</email>
+            <organization>None</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
+        <skipTests>false</skipTests>
+        <skipWebTests>true</skipWebTests>
+        <tomcat.home>/usr/local/tomcat</tomcat.home>
+    </properties>
+  
+    <repositories>
+    
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>gettext-commons-site</id>
+            <url>http://gettext-commons.googlecode.com/svn/maven-repository</url>
+        </repository>
+    
+    </repositories>
+
+    <dependencies>
+    
+        <dependency>
+            <groupId>org.beanshell</groupId>
+            <artifactId>bsh</artifactId>
+            <version>2.0b4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xnap.commons</groupId>
+            <artifactId>gettext-commons</artifactId>
+            <version>0.9.6</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>1.9.14</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.0.b2</version>
+        </dependency>
+
+    </dependencies>
+  
+    <build>
+    
+        <finalName>jpt</finalName>
+    
+        <plugins>
+      
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+            
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+        
+            </plugin>
+        
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+            
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/src.xml</descriptor>
+                    </descriptors>
+                    <finalName>${project.artifactId}_${maven.build.timestamp}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+            
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+      
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.2</version>
+                
+                <configuration>
+                    <skipTests>${skipTests}</skipTests> <!-- to run tests: mvn install -DskipTests=false -->
+                    <excludes>
+                        <exclude>**/*WebTests*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            
+	        <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-failsafe-plugin</artifactId>
+		        <version>2.12.3</version>
+		        <configuration>
+		            <skipTests>${skipWebTests}</skipTests> <!-- to run tests: mvn install -DskipWebTests=false -->
+                    <includes>
+                        <include>**/*WebTests*</include>
+                    </includes>
+		        </configuration>
+	        </plugin>
+      
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
+                
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+        </plugins>
+        
+    </build>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+    
+    <description>JPT is a Java implementation of Zope Page Templates (ZPT).</description>
+</project>

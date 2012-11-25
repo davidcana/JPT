@@ -1,0 +1,52 @@
+New in 0.11.0
+ - Migrated project from ant to maven.
+ - Added support to tal:on-error.
+ - Added i18n namespace. Add new tags:
+    - i18n:domain. Register a list of I18n instances to do i18n.
+    - i18n:define. Search the specified value into the available I18n instances and save the value to a variable.
+    - i18n:content. It works as tal:content, but searching the specified value into the available I18n instances.
+    - i18n:replace. As tal:replace.
+    - i18n:attributes. As tal:attributes.
+    - i18n:params. It allows to set parameters to i18n strings.
+    - i18n:on-error. As tal:on-error.
+ - Added math expressions support (+:, -:, *:, :: and %:). Math helper removed.
+ - Added boolean expressions support (or:, and: and cond:) with lazy evaluation. Bool helper removed.
+ - Added comparison expressions support:
+    - equals: Checks if an integer number is equals than other. If the compared instances are not numbers it checks if both values are equals.
+    - greater: Checks if an integer number is greater than other.
+    - lower: Checks if an integer number is lower than other.
+ - Added support of external caching via interface. Added default implementation (not for production use, only for testing purposes).
+ - Added support to deny use of java expressions for security reasons (using JPTContext class).
+ - Order of tag processing changed. Now it is:
+    - tal:repeat
+    - tal:on-error / i18n:on-error
+    - tal:define
+    - i18n:domain
+    - i18n:define
+    - tal:condition
+    - tal:content / i18n:content
+    - tal:attributes / i18n:attributes
+    - tal:omit-tag
+    - content
+ - Fixed bug with parsing HTML fragments of void tags. Web browsers don't support some void tags (as textarea). Added support to set a list of tags that can be void (as br, input or img), the rest will never be void: if there is no content it will be added a single space.
+ - Added support of no parsing HTML fragments (using JPTContext class).
+ - Migrated code to Java 1.5.
+ - Updated license from LGPL 2.1 to LGPL 3.
+ - Full refactoring: Added a new implementation that works on two phases. At the first, we create a java model and save it to a cache; at the second one, we read the java model and generate the output. The next time we need to generate output we will get the java model from the cache and the performance will be better, we avoid reading the JPT file every time we need to generate the output. The old implementation is available at onePhaseImpl package, the new one is at twoPhasesImpl package.
+ - Added support of doc type declaration in JPT files using two phases implementation.
+ - Several bugs fixed.
+ - Add some tests.
+ 
+New in 0.10.0
+ - Integrated the BeanShell.  This allows evaluation of Java expressions and calling of external BeanShell scripts.
+ - Structured (xml/html) content is now handled by nekohtml rather than Tidy.  Introduced HTMLFragment object which might potentially be useful in other apps.
+
+New in 0.9.3
+
+ - Added real namespace support (thank you nekohtml).
+ - Added support for arrays.
+ - Added bool/cond to bool helper
+ - Added date helper.
+ - Upgraded metal code to support slots definition and filling across multiple layers of macro.
+ - Fixed bug with evaluating arrays inside method calls.
+ - Added xercesImpl to lib as it is a dependency of nekohtml.  This didn't become a problem until I upgraded to ant 1.6.2.  Previous versions of ant must have included xerces in the classpath.

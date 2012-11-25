@@ -1,0 +1,13 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      tal:omit-tag="">
+
+    <p metal:define-macro="macro1">
+        This is macro1
+    </p>
+
+    <p metal:define-macro="macro2">
+        This is macro2
+    </p>
+
+</html>
