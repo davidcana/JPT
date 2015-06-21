@@ -2,8 +2,7 @@ package org.javapagetemplates.onePhaseImpl;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
-
-import bsh.Interpreter;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -38,30 +37,30 @@ public class BoolExpressions {
 	private static final String OR = "OR";
 	private static final String AND = "AND";
 	
-	
-	public static boolean and( String exp, Interpreter beanShell ) throws PageTemplateException {
-		return and( exp, beanShell, OnePhasePageTemplate.EXPRESSION_DELIMITER );
+	// and:
+	public static boolean and( String exp, EvaluationHelper evaluationHelper ) throws PageTemplateException {
+		return and( exp, evaluationHelper, OnePhasePageTemplate.EXPRESSION_DELIMITER );
 	}
 	
-	public static boolean and( String exp, Interpreter beanShell, char delimiter ) throws PageTemplateException {
+	public static boolean and( String exp, EvaluationHelper evaluationHelper, char delimiter ) throws PageTemplateException {
     	
         String expression = exp.trim();
         
         if ( expression.length() == 0 ) {
-            throw new PageTemplateException("And expression void.");
+            throw new PageTemplateException( "And expression void." );
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( expression, delimiter );
         if ( segments.countTokens() == 1 ) {
-        	throw new PageTemplateException("Only one element in and expression, please add at least one more.");
+        	throw new PageTemplateException( "Only one element in and expression, please add at least one more." );
         }
         
         while ( segments.hasMoreTokens() ) {
-            if (!evaluateSegment(
+            if ( ! evaluateSegment(
             		AND,
             		expression, 
             		segments.nextToken().trim(), 
-            		beanShell)){
+            		evaluationHelper ) ){
             	return false;
             }
         }
@@ -69,11 +68,13 @@ public class BoolExpressions {
         return true;
     }
 	
-	public static boolean or( String exp, Interpreter beanShell ) throws PageTemplateException {
-		return or(exp, beanShell, OnePhasePageTemplate.EXPRESSION_DELIMITER );
+	
+	// or:
+	public static boolean or( String exp, EvaluationHelper evaluationHelper ) throws PageTemplateException {
+		return or(exp, evaluationHelper, OnePhasePageTemplate.EXPRESSION_DELIMITER );
 	}
 	
-    public static boolean or( String exp, Interpreter beanShell, char delimiter ) throws PageTemplateException {
+    public static boolean or( String exp, EvaluationHelper evaluationHelper, char delimiter ) throws PageTemplateException {
     	
         String expression = exp.trim();
         
@@ -83,15 +84,15 @@ public class BoolExpressions {
 
         ExpressionTokenizer segments = new ExpressionTokenizer( expression, delimiter );
         if ( segments.countTokens() == 1 ) {
-        	throw new PageTemplateException("Only one element in or expression, please add at least one more.");
+        	throw new PageTemplateException( "Only one element in or expression, please add at least one more." );
         }
         
         while ( segments.hasMoreTokens() ) {
-            if (evaluateSegment(
+            if ( evaluateSegment(
             		OR, 
             		expression, 
             		segments.nextToken().trim(), 
-            		beanShell)){
+            		evaluationHelper ) ){
             	return true;
             }
         }
@@ -99,21 +100,23 @@ public class BoolExpressions {
         return false;
     }
     
-	public static Object cond( String exp, Interpreter beanShell ) throws PageTemplateException {
-		return cond( exp, beanShell, OnePhasePageTemplate.EXPRESSION_DELIMITER );
+    
+    // cond:
+	public static Object cond( String exp, EvaluationHelper evaluationHelper ) throws PageTemplateException {
+		return cond( exp, evaluationHelper, OnePhasePageTemplate.EXPRESSION_DELIMITER );
 	}
 	
-    public static Object cond( String exp, Interpreter beanShell, char delimiter ) throws PageTemplateException {
+    public static Object cond( String exp, EvaluationHelper evaluationHelper, char delimiter ) throws PageTemplateException {
     	
         String expression = exp.trim();
         
         if ( expression.length() == 0 ) {
-            throw new PageTemplateException("Cond expression void.");
+            throw new PageTemplateException( "Cond expression void." );
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( expression, delimiter );
         if ( segments.countTokens() != 3 ) {
-        	throw new PageTemplateException("3 element are needed in cond expression.");
+        	throw new PageTemplateException( "3 element are needed in cond expression." );
         }
         
         // Evaluate first expression
@@ -122,29 +125,31 @@ public class BoolExpressions {
         		COND,
         		expression, 
         		segment, 
-        		beanShell);
+        		evaluationHelper );
         
         // If true, evaluate second expression
         segment = segments.nextToken().trim();
-        if (fistExpressionResult){
-        	return Expression.evaluate( segment, beanShell );
+        if ( fistExpressionResult ){
+        	return Expression.evaluate( segment, evaluationHelper );
         }
 
         // If false, evaluate third expression
         segment = segments.nextToken().trim();
-        return Expression.evaluate( segment, beanShell );
+        return Expression.evaluate( segment, evaluationHelper );
     }
     
-    private static boolean evaluateSegment(String name, String expression, String segment, Interpreter beanShell )
+    
+    private static boolean evaluateSegment(String name, String expression, String segment, EvaluationHelper evaluationHelper )
     		throws PageTemplateException {
     	
-    	Object result = Expression.evaluate( segment, beanShell );
-        if (!(result instanceof Boolean)){
-        	throw new PageTemplateException("Element '"  + segment + "' in " + name + " expression '" 
-        			+ expression + "' is not a valid boolean.");
+    	Object result = Expression.evaluate( segment, evaluationHelper );
+        if ( ! ( result instanceof Boolean ) ){
+        	throw new PageTemplateException(
+        			"Element '"  + segment + "' in " + name + " expression '" 
+        			+ expression + "' is not a valid boolean." );
         }
         
-    	return (Boolean) result;
+    	return ( Boolean ) result;
     }
     
 }

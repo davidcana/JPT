@@ -39,37 +39,37 @@ public class TranslatorImpl implements Translator {
 	
 	
 	@Override
-	public String tr(List<I18n> i18nList, String i18nTranslate) {
+	public String tr( List<I18n> i18nList, String i18nTranslate ) {
 		
         String result = null;
         boolean done = false;
         Iterator<I18n> i = i18nList.iterator();
         
-        while (!done && i.hasNext()){
+        while ( ! done && i.hasNext() ){
             I18n i18n = i.next();
-            result = i18n.tr(i18nTranslate);
-            done = !i18nTranslate.equals(result);
+            result = i18n.tr( i18nTranslate );
+            done = ! i18nTranslate.equals( result );
         }
         
         return result;
 	}
 	
 	@Override
-	public String tr(List<I18n> i18nList, String i18nTranslate,
-			Object[] i18nParams) {
+	public String tr( List<I18n> i18nList, String i18nTranslate,
+			Object[] i18nParams ) {
 		
-        if (i18nParams == null){
-            return tr(i18nList, i18nTranslate);
+        if ( i18nParams == null ){
+            return tr( i18nList, i18nTranslate );
         }
         
         String result = null;
         boolean done = false;
         Iterator<I18n> i = i18nList.iterator();
         
-        while (!done && i.hasNext()){
+        while ( ! done && i.hasNext() ){
             I18n i18n = i.next();
-            result = i18n.tr(i18nTranslate, i18nParams);
-            done = !i18nTranslate.equals(result);
+            result = i18n.tr( i18nTranslate, i18nParams );
+            done = ! i18nTranslate.equals( result );
         }
         
         return result;

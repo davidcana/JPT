@@ -1,11 +1,10 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToNumber;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.FirstPathToken;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -49,22 +48,21 @@ public class IntegerLiteralExpression implements EvaluableToNumber, FirstPathTok
 
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		return this.literal;
 	}
 	
 	@Override
-	public Number evaluateToNumber(Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Number evaluateToNumber( EvaluationHelper evaluationHelper )
+			throws EvaluationException {
 		return this.literal;
 	}
 	
-	static public Object evaluate(String expression, Interpreter beanShell) 
-			throws PageTemplateException {
+	static public Object evaluate( String expression, EvaluationHelper evaluationHelper ) throws PageTemplateException {
 		return new Integer( expression );
 	}
 	
-	static public IntegerLiteralExpression generate(String expression){
+	static public IntegerLiteralExpression generate( String expression ){
 		
         try {
             return new IntegerLiteralExpression(

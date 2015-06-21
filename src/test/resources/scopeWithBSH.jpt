@@ -1,0 +1,60 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <head>
+    <title>This is a test</title>
+  </head>
+  <body>
+  
+    Not defined var
+    <p>
+        var does not exist: <span tal:replace="cond: ( exists: var ) 'Error' 'OK'">OK</span>
+        var value: null <span tal:replace="var">null</span>
+    </p>
+    
+    Nested vars
+    <p tal:define="var 1">
+        var exists: <span tal:replace="cond: ( exists: var ) 'OK' 'Error'">OK</span>
+        check value: <span tal:replace="cond: ( equals: var 1 ) 'OK' 'Error'">OK</span>
+        var value: 1 <span tal:replace="var">1</span>
+        
+        <div tal:define="var 2">
+            var exists: <span tal:replace="cond: ( exists: var ) 'OK' 'Error'">OK</span>
+            check value: <span tal:replace="cond: ( equals: var 2 ) 'OK' 'Error'">OK</span>
+            var value: 2 <span tal:replace="var">2</span>
+            
+            <div tal:define="var 'three';
+                             var2 4">
+                var exists: <span tal:replace="cond: ( exists: var ) 'OK' 'Error'">OK</span>
+                check value: <span tal:replace="cond: ( equals: var 'three' ) 'OK' 'Error'">OK</span>
+                var value: three <span tal:replace="var">three</span>
+                
+                var2 exists: <span tal:replace="cond: ( exists: var2 ) 'OK' 'Error'">OK</span>
+                check value: <span tal:replace="cond: ( equals: var2 4 ) 'OK' 'Error'">OK</span>
+                var2 value: 4 <span tal:replace="var2">4</span>
+            </div>
+            
+            var exists: <span tal:replace="cond: ( exists: var ) 'OK' 'Error'">OK</span>
+            check value: <span tal:replace="cond: ( equals: var 2 ) 'OK' 'Error'">OK</span>
+            var value: 2 <span tal:replace="var">2</span>
+            
+            var2 does not exist: <span tal:replace="cond: ( exists: var2 ) 'Error' 'OK'">OK</span>
+            var2 value: null <span tal:replace="var2">null</span>
+        </div>
+        
+        var exists: <span tal:replace="cond: ( exists: var ) 'OK' 'Error'">OK</span>
+        check value: <span tal:replace="cond: ( equals: var 1 ) 'OK' 'Error'">OK</span>
+        var value: 1 <span tal:replace="var">1</span>
+        
+        var2 does not exist: <span tal:replace="cond: ( exists: var2 ) 'Error' 'OK'">OK</span>
+        var2 value: null <span tal:replace="var2">null</span>
+    </p>
+    
+    Out of scope var
+    <p>
+        var does not exist: <span tal:replace="cond: ( exists: var ) 'Error' 'OK'">OK</span>
+        the var value: null <span tal:replace="var">null</span>
+        
+        var2 does not exist: <span tal:replace="cond: ( exists: var2 ) 'Error' 'OK'">OK</span>
+        var2 value: null <span tal:replace="var2">null</span>
+    </p>
+  </body>
+</html>

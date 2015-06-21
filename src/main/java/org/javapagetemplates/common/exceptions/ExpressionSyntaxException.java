@@ -1,6 +1,10 @@
 package org.javapagetemplates.common.exceptions;
 
 /**
+ * <p>
+ *   Exception thrown after any syntax error of JPT expressions.
+ * </p>
+ * 
  *  Java Page Templates
  *
  *  This library is free software; you can redistribute it and/or

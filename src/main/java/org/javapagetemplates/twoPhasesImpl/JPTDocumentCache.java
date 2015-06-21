@@ -1,6 +1,6 @@
 package org.javapagetemplates.twoPhasesImpl;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.javapagetemplates.common.exceptions.PageTemplateException;
 import org.javapagetemplates.twoPhasesImpl.model.JPTDocument;
@@ -33,7 +33,22 @@ import org.javapagetemplates.twoPhasesImpl.model.JPTDocument;
  */
 public interface JPTDocumentCache {
 	
-	public void put(URL url, JPTDocument jptDocument)  throws PageTemplateException;
+	/**
+	 * Put a JPTDocument into the cache
+	 * 
+	 * @param uri
+	 * @param jptDocument
+	 * @throws PageTemplateException
+	 */
+	public void put( URI uri, JPTDocument jptDocument ) throws PageTemplateException;
 	
-	public JPTDocument get(URL url) throws PageTemplateException;
+	
+	/**
+	 * Get a JPTDocument from the cache
+	 * 
+	 * @param uri
+	 * @return
+	 * @throws PageTemplateException
+	 */
+	public JPTDocument get( URI uri ) throws PageTemplateException;
 }

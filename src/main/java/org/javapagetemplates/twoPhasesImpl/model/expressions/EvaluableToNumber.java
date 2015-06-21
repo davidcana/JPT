@@ -1,8 +1,7 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
-
-import bsh.Interpreter;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -31,6 +30,6 @@ import bsh.Interpreter;
  */
 public interface EvaluableToNumber extends JPTExpression {
 
-	public Number evaluateToNumber( Interpreter beanShell ) throws ExpressionEvaluationException;
+	public Number evaluateToNumber( EvaluationHelper evaluationHelper ) throws EvaluationException;
 	
 }

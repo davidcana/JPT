@@ -108,7 +108,7 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
         String jpt = test + ".jpt";
         long start = System.currentTimeMillis();
         URL resource = getClass().getResource( "/" + jpt );
-        TwoPhasesPageTemplate template = new TwoPhasesPageTemplateImpl( resource );
+        TwoPhasesPageTemplate template = new TwoPhasesPageTemplateImpl( resource.toURI() );
         long elapsed = System.currentTimeMillis() - start;
         System.err.println( test + ": constructed template in " + elapsed + " ms" );
 

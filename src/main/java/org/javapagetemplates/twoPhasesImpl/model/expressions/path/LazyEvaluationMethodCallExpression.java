@@ -1,10 +1,9 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.StringExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -40,8 +39,8 @@ public class LazyEvaluationMethodCallExpression extends AbstractMethodCallExpres
 	
 	public LazyEvaluationMethodCallExpression(){}
 
-	public LazyEvaluationMethodCallExpression(String stringExpression, String methodName, String argumentString){
-		super(stringExpression, methodName);
+	public LazyEvaluationMethodCallExpression( String stringExpression, String methodName, String argumentString ){
+		super( stringExpression, methodName );
 		this.argumentString = argumentString;
 	}
 
@@ -50,24 +49,22 @@ public class LazyEvaluationMethodCallExpression extends AbstractMethodCallExpres
 		return this.argumentString;
 	}
 
-	public void setArgumentString(String argumentString) {
+	public void setArgumentString( String argumentString ) {
 		this.argumentString = argumentString;
 	}
 
 	@Override
-	public Object evaluate(Object parent, Interpreter beanShell) 
-			throws ExpressionEvaluationException {
-		
-		return evaluate(parent, this.methodName, this.argumentString, beanShell);
+	public Object evaluate( Object parent, EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluate( parent, this.methodName, this.argumentString, evaluationHelper );
 	}
 	
-    static public final LazyEvaluationMethodCallExpression generate( String token, 
-            Interpreter beanShell ) throws PageTemplateException {
+    static public final LazyEvaluationMethodCallExpression generate( String token, EvaluationHelper evaluationHelper ) 
+    	throws PageTemplateException {
     	
         int leftParen = token.indexOf( '(' );
         if ( leftParen != -1 ) {
             if ( ! token.endsWith( ")" ) ) {
-                throw new ExpressionEvaluationException( "syntax error: bad method call: " + token );
+                throw new EvaluationException( "Syntax error: bad method call: " + token );
             }
             String methodName = token.substring( 0, leftParen ).trim();
             String arguments = token.substring( leftParen + 1, token.length() - 1 );
@@ -77,5 +74,4 @@ public class LazyEvaluationMethodCallExpression extends AbstractMethodCallExpres
         
         return null;
 	}
-	
 }

@@ -1,8 +1,7 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
-
-import bsh.Interpreter;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -41,7 +40,7 @@ public class ClassExpression implements FirstPathToken {
 	
 	public ClassExpression(){}
 
-	public ClassExpression(String className){
+	public ClassExpression( String className ){
 		this.className = className;
 	}
 
@@ -50,36 +49,35 @@ public class ClassExpression implements FirstPathToken {
 		return this.className;
 	}
 
-	public void setClassName(String className) {
+	public void setClassName( String className ) {
 		this.className = className;
 	}
 
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return evaluate(this.className);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluate( this.className );
 	}
 	
-	static public Object evaluate(String className) 
-			throws ExpressionEvaluationException {
+	static public Object evaluate( String className ) throws EvaluationException {
 		
 		try {
 			return Class.forName( className );
 			
-		} catch (ClassNotFoundException e) {
-			throw new ExpressionEvaluationException(e);
+		} catch ( ClassNotFoundException e ) {
+			throw new EvaluationException( e );
 		}
 	}
 	
-	static public ClassExpression generate(String token){
+	static public ClassExpression generate( String token ){
 		
 		try {
             if ( token.endsWith( CLASS_EXTENSION ) ) {
                 String className = token.substring( 0, token.length() - CLASS_EXTENSION.length() );
                 Class.forName( className );
-    			return new ClassExpression(className);
+    			return new ClassExpression( className );
             }
 			
-		} catch (Exception e) {}
+		} catch ( Exception e ) {}
 		
 		return null;
 	}

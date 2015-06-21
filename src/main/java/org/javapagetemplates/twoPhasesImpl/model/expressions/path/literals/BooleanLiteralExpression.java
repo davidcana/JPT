@@ -1,11 +1,10 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.FirstPathToken;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -43,18 +42,17 @@ public class BooleanLiteralExpression implements FirstPathToken {
 	
 	public BooleanLiteralExpression(){}
 	
-	public BooleanLiteralExpression(Boolean literal){
+	public BooleanLiteralExpression( Boolean literal ){
 		this.literal = literal;
 	}
 
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		return this.literal;
 	}
 	
-	static public Object evaluate(String expression, Interpreter beanShell) 
-			throws PageTemplateException {
+	static public Object evaluate( String expression, EvaluationHelper evaluationHelper ) throws PageTemplateException {
 		return expression.substring( 1, expression.length() - 1 );
 	}
 	

@@ -1,6 +1,10 @@
 package org.javapagetemplates.common.exceptions;
 
 /**
+ * <p>
+ *   Exception thrown after a there is a non existing expression path.
+ * </p>
+ * 
  *  Java Page Templates
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,7 +26,7 @@ package org.javapagetemplates.common.exceptions;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.4 $
  */
-public class NoSuchPathException extends ExpressionEvaluationException {
+public class NoSuchPathException extends EvaluationException {
 
     private static final long serialVersionUID = -1612463192275942723L;
 

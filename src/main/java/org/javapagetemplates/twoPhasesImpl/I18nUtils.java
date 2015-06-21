@@ -2,15 +2,13 @@ package org.javapagetemplates.twoPhasesImpl;
 
 import java.util.List;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.JPTContext;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.I18N.I18NParams;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 
 import org.xnap.commons.i18n.I18n;
-
-import bsh.EvalError;
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -40,64 +38,57 @@ import bsh.Interpreter;
  */
 public class I18nUtils {
 
-	
-    static public String evaluateContent(Interpreter beanShell, String i18nContent, I18NParams i18nParams) 
-    		throws ExpressionEvaluationException {
+    static public String evaluateContent( EvaluationHelper evaluationHelper, String i18nContent, I18NParams i18nParams ) 
+    		throws EvaluationException {
         
         // Get the i18n instance
-        List<I18n> i18nList = getI18n(beanShell);
+        List<I18n> i18nList = getI18n( evaluationHelper );
         
         try {
 			// Translate with no params
-			if (i18nParams == null){
+			if ( i18nParams == null ){
 			    return JPTContext.getInstance().getTranslator().tr(
 			    		i18nList, 
-			    		i18nContent);
+			    		i18nContent );
 			}
 			
 			// Translate with params
 			return JPTContext.getInstance().getTranslator().tr(
 					i18nList, 
 					i18nContent, 
-			        getArrayFromI18nParams(i18nParams, beanShell));
+			        getArrayFromI18nParams( i18nParams, evaluationHelper ) );
 			
-		} catch (NullPointerException e) {
-			throw new ExpressionEvaluationException("I18n subsystem of JPT was not initialized.");
+		} catch ( NullPointerException e ) {
+			throw new EvaluationException( "I18n subsystem of JPT was not initialized." );
 		}
     }
     
     @SuppressWarnings("unchecked")
-    static private List<I18n> getI18n(Interpreter beanShell) throws ExpressionEvaluationException {
+    static private List<I18n> getI18n( EvaluationHelper evaluationHelper ) throws EvaluationException {
 
-        try {
-        	Object result = beanShell.get(TwoPhasesPageTemplateImpl.I18N_DOMAIN_VAR_NAME);
-            
-            if (result instanceof List<?>){
-                return (List<I18n>) result;
-            }
-        } catch (EvalError e) {
-            throw new ExpressionEvaluationException(
-            		"The " + TwoPhasesPageTemplateImpl.I18N_DOMAIN_VAR_NAME 
-            		+ " var is not an instance ofI18n class");
+    	Object result = evaluationHelper.get( TwoPhasesPageTemplateImpl.I18N_DOMAIN_VAR_NAME );
+        
+        if ( result instanceof List<?> ){
+            return ( List<I18n> ) result;
         }
         
-        throw new ExpressionEvaluationException(TwoPhasesPageTemplateImpl.I18N_DOMAIN_VAR_NAME + " instance not found.");
+        throw new EvaluationException( TwoPhasesPageTemplateImpl.I18N_DOMAIN_VAR_NAME + " instance not found." );
     }
     
-    static private Object[] getArrayFromI18nParams(I18NParams i18nParams, Interpreter beanShell) 
-    		throws ExpressionEvaluationException {
+    static private Object[] getArrayFromI18nParams(I18NParams i18nParams, EvaluationHelper evaluationHelper) 
+    		throws EvaluationException {
     	
-        Object[] result = new Object[TwoPhasesPageTemplateImpl.MAXIMUM_NUMBER_OF_ATTRIBUTES];
+        Object[] result = new Object[ TwoPhasesPageTemplateImpl.MAXIMUM_NUMBER_OF_ATTRIBUTES ];
         
         int i = 0;
         
-        for (JPTExpression jptExpression: i18nParams.getParams()){
+        for ( JPTExpression jptExpression : i18nParams.getParams() ){
             try {
-                result[i++] = jptExpression.evaluate(beanShell);
+                result[ i++ ] = jptExpression.evaluate( evaluationHelper );
                 
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ExpressionEvaluationException("Too many number of attributes, the maximum is " 
-                		+ TwoPhasesPageTemplateImpl.MAXIMUM_NUMBER_OF_ATTRIBUTES);
+            } catch ( ArrayIndexOutOfBoundsException e ) {
+                throw new EvaluationException( "Too many number of attributes, the maximum is " 
+                		+ TwoPhasesPageTemplateImpl.MAXIMUM_NUMBER_OF_ATTRIBUTES );
             }
         }
         

@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.I18nUtils;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
@@ -13,8 +14,6 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -50,21 +49,21 @@ public class I18NDefine extends JPTAttributeImpl implements DynamicAttribute {
 	
 	
 	public I18NDefine(){}
-	public I18NDefine(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
-		this.definitions = AttributesUtils.getDefinitionsFromString(expression);
+	public I18NDefine( String namespaceUri, String expression ) throws PageTemplateException {
+		super( namespaceUri );
+		this.definitions = AttributesUtils.getDefinitionsFromString( expression );
 	}
 	
 	public List<KeyValuePair<String>> getDefinitions() {
 		return this.definitions;
 	}
 
-	public void setDefinitions(List<KeyValuePair<String>> definitions) {
+	public void setDefinitions( List<KeyValuePair<String>> definitions ) {
 		this.definitions = definitions;
 	}
 	
-	public void addDefinition(KeyValuePair<String> definition){
-		this.definitions.add(definition);
+	public void addDefinition( KeyValuePair<String> definition ){
+		this.definitions.add( definition );
 	}
 	
 	@Override
@@ -74,37 +73,36 @@ public class I18NDefine extends JPTAttributeImpl implements DynamicAttribute {
 	
 	@Override
 	public String getValue() {
-		return AttributesUtils.getStringFromDefinitions(this.definitions);
+		return AttributesUtils.getStringFromDefinitions( this.definitions );
 	}
 	
-    public void evaluate( Interpreter beanShell, I18NParams i18nParams,
-    		List<String> varsToUnset, Map<String, Object> varsToSet )
-    				throws ExpressionEvaluationException{
+    public void evaluate( EvaluationHelper evaluationHelper, I18NParams i18nParams,
+    		List<String> varsToUnset, Map<String, Object> varsToSet ) throws EvaluationException {
     	
 		for ( KeyValuePair<String> definition: this.definitions ){
 			
 			try {
 				TwoPhasesPageTemplateImpl.setVar(
-						beanShell, 
+						evaluationHelper, 
 						varsToUnset, 
 						varsToSet, 
 						definition.getKey(), 
 						I18nUtils.evaluateContent( 
-								beanShell, 
+								evaluationHelper, 
 								definition.getValue(), 
 								i18nParams ));
 				
-			} catch (ExpressionEvaluationException e) {
+			} catch ( EvaluationException e ) {
 				e.setInfo(
 						null,
-						this.getQualifiedName());
+						this.getQualifiedName() );
 				throw e;
 				
-			} catch (Exception e) {
-				ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+			} catch ( Exception e ) {
+				EvaluationException e2 = new EvaluationException( e );
 				e2.setInfo(
 						null,
-						this.getQualifiedName());
+						this.getQualifiedName() );
 				throw e2;
 			}
 		}

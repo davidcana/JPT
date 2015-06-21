@@ -3,8 +3,9 @@ package org.javapagetemplates.twoPhasesImpl.model.attributes.TAL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.JPTDocument;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
@@ -13,8 +14,6 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.xml.sax.helpers.AttributesImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -50,9 +49,9 @@ public class TALAttributes extends JPTAttributeImpl implements DynamicAttribute 
 	
 	
 	public TALAttributes(){}
-	public TALAttributes(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
-		this.attributes = AttributesUtils.getDefinitions(expression);
+	public TALAttributes( String namespaceUri, String expression ) throws PageTemplateException {
+		super( namespaceUri );
+		this.attributes = AttributesUtils.getDefinitions( expression );
 	}
 
 	
@@ -60,12 +59,12 @@ public class TALAttributes extends JPTAttributeImpl implements DynamicAttribute 
 		return attributes;
 	}
 
-	public void setAttributes(List<KeyValuePair<JPTExpression>> attributes) {
+	public void setAttributes( List<KeyValuePair<JPTExpression>> attributes ) {
 		this.attributes = attributes;
 	}
 
-	public void addAttribute(KeyValuePair<JPTExpression> attribute){
-		this.attributes.add(attribute);
+	public void addAttribute( KeyValuePair<JPTExpression> attribute ){
+		this.attributes.add( attribute );
 	}
 	
 	@Override
@@ -75,33 +74,33 @@ public class TALAttributes extends JPTAttributeImpl implements DynamicAttribute 
 	
 	@Override
 	public String getValue() {
-		return AttributesUtils.getStringFromDefinitions(this.attributes);
+		return AttributesUtils.getStringFromDefinitions( this.attributes );
 	}
 	
-	public void evaluate(Interpreter beanShell, AttributesImpl attributesImpl, JPTDocument jptDocument) 
-			throws ExpressionEvaluationException {
+	public void evaluate( EvaluationHelper evaluationHelper, AttributesImpl attributesImpl, JPTDocument jptDocument ) 
+			throws EvaluationException {
 		
-		for (KeyValuePair<JPTExpression> attribute: this.attributes){
+		for ( KeyValuePair<JPTExpression> attribute : this.attributes ){
 			
 			JPTExpression jptExpression = null;
 			try {
 			    String qualifiedName = attribute.getKey();
 			    jptExpression = attribute.getValue();
-				Object value = jptExpression.evaluate(beanShell);
+				Object value = jptExpression.evaluate( evaluationHelper );
 			    
-				AttributesUtils.addAttribute(qualifiedName, value, attributesImpl, jptDocument);
+				AttributesUtils.addAttribute( qualifiedName, value, attributesImpl, jptDocument );
 			
-			} catch (ExpressionEvaluationException e) {
+			} catch ( EvaluationException e ) {
 				e.setInfo(
 						jptExpression.getStringExpression(),
-						this.getQualifiedName());
+						this.getQualifiedName() );
 				throw e;
 				
-			} catch (Exception e) {
-				ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+			} catch ( Exception e ) {
+				EvaluationException e2 = new EvaluationException( e );
 				e2.setInfo(
 						jptExpression.getStringExpression(),
-						this.getQualifiedName());
+						this.getQualifiedName() );
 				throw e2;
 			}
 		}

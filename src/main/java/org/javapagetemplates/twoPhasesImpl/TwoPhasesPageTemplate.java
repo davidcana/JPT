@@ -8,7 +8,7 @@ import org.javapagetemplates.common.exceptions.PageTemplateException;
 
 /**
  * <p>
- *   Extends SimplePageTemplate interface with related to two phase
+ *   Extends PageTemplate interface with related to two phase
  *   implementation methods.
  * </p>
  * 
@@ -37,7 +37,7 @@ public interface TwoPhasesPageTemplate extends PageTemplate {
 	
 	// Methods
 	public void process( OutputStream output, Object context, Map<String, Object> dictionary,
-			JPTOutputFormat jptOutputFormat)
+			JPTOutputFormat jptOutputFormat )
         throws PageTemplateException;
     
 	Resolver getResolver();

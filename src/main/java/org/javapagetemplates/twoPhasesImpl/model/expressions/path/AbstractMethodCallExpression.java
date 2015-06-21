@@ -5,11 +5,10 @@ import java.lang.reflect.Method;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
 import org.javapagetemplates.common.LazyEvaluation;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.StringExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -47,7 +46,7 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
 	
 	public AbstractMethodCallExpression(){}
 
-	public AbstractMethodCallExpression(String stringExpression, String methodName){
+	public AbstractMethodCallExpression( String stringExpression, String methodName ){
 		this.stringExpression = stringExpression;
 		this.methodName = methodName;
 	}
@@ -57,7 +56,7 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
 		return this.stringExpression;
 	}
 
-	public void setStringExpression(String stringExpression) {
+	public void setStringExpression( String stringExpression ) {
 		this.stringExpression = stringExpression;
 	}
 
@@ -65,16 +64,14 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
 		return this.methodName;
 	}
 
-	public void setMethodName(String methodName) {
+	public void setMethodName( String methodName ) {
 		this.methodName = methodName;
 	}
 	
     @SuppressWarnings({ "rawtypes" })
-    static public final Object evaluate( Object parent, 
-                                         String methodName, 
-                                         String argumentString, 
-                                         Interpreter beanShell )
-        throws ExpressionEvaluationException {
+    static public final Object evaluate( Object parent, String methodName, String argumentString, EvaluationHelper evaluationHelper )
+        throws EvaluationException {
+    	
         Object object;
         Class clazz;
 
@@ -84,7 +81,7 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
             if ( parent instanceof StaticCall ) {
                 // Must be static method
                 object = null;
-                clazz = ((StaticCall)parent).clazz;
+                clazz = ( ( StaticCall ) parent ).clazz;
             }
             else {
                 object = parent;
@@ -92,29 +89,31 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
             }
 
             // If is a lazy class run the other method
-            if (object instanceof LazyEvaluation){
-            	return evaluateLazyMethodCall(methodName, argumentString,
-						beanShell, object, clazz);
+            if ( object instanceof LazyEvaluation ){
+            	return evaluateLazyMethodCall(
+            			methodName, argumentString,
+            			evaluationHelper, object, clazz );
             }
             
-            return evaluateNonLazyMethodCall(methodName,
-					argumentString, beanShell, object, clazz);
+            return evaluateNonLazyMethodCall(
+            		methodName, argumentString, 
+            		evaluationHelper, object, clazz );
 
         }
-        catch( Exception e ) {
-            if (e instanceof InvocationTargetException){
-                InvocationTargetException e2 = (InvocationTargetException) e;
-                throw new ExpressionEvaluationException(e2.getTargetException());
+        catch ( Exception e ) {
+            if ( e instanceof InvocationTargetException ){
+                InvocationTargetException e2 = ( InvocationTargetException ) e;
+                throw new EvaluationException( e2.getTargetException() );
             }
-            throw new ExpressionEvaluationException(e);
+            throw new EvaluationException( e );
         }
     }
 
 	@SuppressWarnings({ "rawtypes" })
 	private static Object evaluateNonLazyMethodCall(String methodName,
-			String argumentString, Interpreter beanShell, Object object,
-			Class clazz) throws PageTemplateException, IllegalAccessException,
-			InvocationTargetException {
+			String argumentString, EvaluationHelper evaluationHelper, Object object,
+			Class clazz) 
+					throws PageTemplateException, IllegalAccessException, InvocationTargetException {
 		
 		// Parse and evaluate arguments
 		ExpressionTokenizer argumentTokens = new ExpressionTokenizer(
@@ -123,44 +122,43 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
 		Object[] arguments = new Object[ argumentTokens.countTokens() ];
 		for ( int i = 0; i < arguments.length; i++ ) {
 		    String argumentExpression = argumentTokens.nextToken().trim();
-		    arguments[i] = StringExpression.evaluate( argumentExpression, beanShell );
+		    arguments[ i ] = StringExpression.evaluate( argumentExpression, evaluationHelper );
 		}
 		
-		Method method = generateMethod(methodName, clazz, arguments);
+		Method method = generateMethod( methodName, clazz, arguments );
 		if ( method != null ) {
 		    return method.invoke( object, arguments );
 		}
 		
-        throw new ExpressionEvaluationException( 
-        		generateErrorMessage(methodName, clazz, arguments) );
+        throw new EvaluationException( 
+        		generateErrorMessage( methodName, clazz, arguments ) );
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected static Method generateMethod(String methodName, Class clazz,
-			Object[] arguments) {
+	protected static Method generateMethod(String methodName, Class clazz, Object[] arguments) {
 		
 		// Lookup method
 		Method[] methods = clazz.getMethods();
 		Method method = null;
 		for ( int i = 0; i < methods.length; i++ ) {
-		    if ( methods[i].getName().equals( methodName ) ) {
+		    if ( methods[ i ].getName().equals( methodName ) ) {
 
 		        // See if arguments match
-		        Class[] parms = methods[i].getParameterTypes();
+		        Class[] parms = methods[ i ].getParameterTypes();
 		        if ( parms.length == arguments.length ) {
 		            boolean match = true;
 		            for ( int j = 0; j < parms.length; j++ ) {
 		                // null is universally assignable (almost)
-		                if ( arguments[j] == null ) {
+		                if ( arguments[ j ] == null ) {
 		                    continue;
 		                }
-		                else if ( ! primitiveToClass( parms[j] ).isAssignableFrom( arguments[j].getClass() ) ) {
+		                else if ( ! primitiveToClass( parms[ j ] ).isAssignableFrom( arguments[ j ].getClass() ) ) {
 		                    match = false;
 		                }
 		                break;
 		            }
 		            if ( match ) {
-		                method = methods[i];
+		                method = methods[ i ];
 		                break;
 		            }
 		        }
@@ -174,13 +172,13 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
 		
 		StringBuffer errorMessage;
 		errorMessage = new StringBuffer( 100 );
-		errorMessage.append( "no such method: " );
+		errorMessage.append( "No such method: " );
 		errorMessage.append( clazz.getName() );
 		errorMessage.append( StringExpression.DOT );
 		errorMessage.append( methodName );
 		errorMessage.append( "(" );
 		for ( int i = 0; i < arguments.length; i++ ) {
-		    errorMessage.append( arguments[i] == null ? "<null>" : arguments[i].getClass().getName() );
+		    errorMessage.append( arguments[i] == null ? "<null>" : arguments[ i ].getClass().getName() );
 		    if ( i < arguments.length - 1 ) {
 		        errorMessage.append( ',' );
 		    }
@@ -192,24 +190,47 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Object evaluateLazyMethodCall(String methodName,
+			String argumentString, EvaluationHelper evaluationHelper, Object object,
+			Class clazz) 
+					throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		
+		// Get the method instance
+		Class parameterTypes[] = new Class[ 2 ];
+		parameterTypes[ 0 ] = String.class;
+		parameterTypes[ 1 ] = evaluationHelper.getClassType();
+		//parameterTypes[ 1 ] = Interpreter.class;
+		Method method = clazz.getMethod( methodName, parameterTypes );
+		
+		// Get the arguments
+		Object[] arguments = new Object[ 2 ];
+		arguments[ 0 ] = argumentString;
+		arguments[ 1 ] = evaluationHelper;
+		//arguments[ 1 ] = beanShell;
+		
+		// Invoke method
+		return method.invoke( object, arguments );
+	}
+	/*
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Object evaluateLazyMethodCall(String methodName,
 			String argumentString, Interpreter beanShell, Object object,
 			Class clazz) throws NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
 		
 		// Get the method instance
-		Class parameterTypes[] = new Class[2];
-		parameterTypes[0] = String.class;
-		parameterTypes[1] = Interpreter.class;
-		Method method = clazz.getMethod(methodName, parameterTypes);
+		Class parameterTypes[] = new Class[ 2 ];
+		parameterTypes[ 0 ] = String.class;
+		parameterTypes[ 1 ] = Interpreter.class;
+		Method method = clazz.getMethod( methodName, parameterTypes );
 		
 		// Get the arguments
-		Object[] arguments = new Object[2];
-		arguments[0] = argumentString;
-		arguments[1] = beanShell;
+		Object[] arguments = new Object[ 2 ];
+		arguments[ 0 ] = argumentString;
+		arguments[ 1 ] = beanShell;
 		
 		// Invoke method
 		return method.invoke( object, arguments );
-	}
+	}*/
 	
     /**
      * In order to match method descriptors with primitive type paremeters,
@@ -218,6 +239,7 @@ abstract public class AbstractMethodCallExpression implements NextPathToken {
      */
     @SuppressWarnings("rawtypes")
 	private static final Class primitiveToClass( Class clazz ) {
+    	
         if ( clazz.isPrimitive() ) {
             if ( Boolean.TYPE == clazz ) {
                 return Boolean.class;

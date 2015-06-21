@@ -1,12 +1,11 @@
 package org.javapagetemplates.twoPhasesImpl.model.attributes.I18N;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.I18nUtils;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -43,8 +42,8 @@ public class I18NOnError extends JPTAttributeImpl implements DynamicAttribute {
 	
 	public I18NOnError(){}
 	
-	public I18NOnError(String namespaceUri, String expression){
-		super(namespaceUri);
+	public I18NOnError( String namespaceUri, String expression ){
+		super( namespaceUri );
 		this.i18nKey = expression;
 	}
 	
@@ -67,12 +66,12 @@ public class I18NOnError extends JPTAttributeImpl implements DynamicAttribute {
 		return this.i18nKey;
 	}
 	
-	public String evaluate(Interpreter beanShell, I18NParams i18nParams) 
-			throws ExpressionEvaluationException{
+	public String evaluate( EvaluationHelper evaluationHelper, I18NParams i18nParams ) 
+			throws EvaluationException {
 		
 		return I18nUtils.evaluateContent(
-				beanShell, 
+				evaluationHelper, 
 				this.i18nKey, 
-				i18nParams);
+				i18nParams );
 	}
 }

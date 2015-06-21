@@ -49,7 +49,7 @@ public class PerformanceTest {
         dictionary2P.put( "helper", new TestObject(true) );
         dictionary2P.put( "acquaintance", "friend" );
         
-        testPerformance( "expressions", dictionary1P, dictionary2P, null);
+        testPerformance( "expressionsUsingBSH", dictionary1P, dictionary2P, null);
 	}
 	
 	@Test
@@ -140,7 +140,7 @@ public class PerformanceTest {
 			if (resource == null){
 				resource = getClass().getResource( "/" + jpt );
 			}
-			TwoPhasesPageTemplate template = new TwoPhasesPageTemplateImpl( resource );
+			TwoPhasesPageTemplate template = new TwoPhasesPageTemplateImpl( resource.toURI() );
 			
 			TestObject testObject = new TestObject(true);
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();

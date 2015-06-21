@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
@@ -13,8 +14,6 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -51,8 +50,8 @@ public class TALDefine extends JPTAttributeImpl implements DynamicAttribute {
 	
 	public TALDefine(){}
 	public TALDefine(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
-		this.definitions = AttributesUtils.getDefinitions(expression);
+		super( namespaceUri );
+		this.definitions = AttributesUtils.getDefinitions( expression );
 	}
 	
 	
@@ -65,7 +64,7 @@ public class TALDefine extends JPTAttributeImpl implements DynamicAttribute {
 	}
 	
 	public void addDefinition(KeyValuePair<JPTExpression> definition){
-		this.definitions.add(definition);
+		this.definitions.add( definition );
 	}
 	
 	@Override
@@ -75,11 +74,11 @@ public class TALDefine extends JPTAttributeImpl implements DynamicAttribute {
 	
 	@Override
 	public String getValue() {
-		return AttributesUtils.getStringFromDefinitions(this.definitions);
+		return AttributesUtils.getStringFromDefinitions( this.definitions );
 	}
 	
-	public void process( Interpreter beanShell, 
-			List<String> varsToUnset, Map<String, Object> varsToSet ) throws ExpressionEvaluationException {
+	public void process( EvaluationHelper evaluationHelper, 
+			List<String> varsToUnset, Map<String, Object> varsToSet ) throws EvaluationException {
 		
 		JPTExpression expression = null;
 		try {
@@ -87,24 +86,24 @@ public class TALDefine extends JPTAttributeImpl implements DynamicAttribute {
 			for ( KeyValuePair<JPTExpression> definition: this.definitions ){
 				expression = definition.getValue();
 				TwoPhasesPageTemplateImpl.setVar(
-						beanShell, 
+						evaluationHelper, 
 						varsToUnset, 
 						varsToSet, 
 						definition.getKey(), 
-						expression.evaluate(beanShell));
+						expression.evaluate( evaluationHelper ) );
 			}
 			
-		} catch (ExpressionEvaluationException e) {
+		} catch ( EvaluationException e ) {
 			e.setInfo(
 					expression == null? null: expression.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e;
 			
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					expression == null? null: expression.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e2;
 		}
 	}

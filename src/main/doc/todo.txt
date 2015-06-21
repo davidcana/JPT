@@ -1,7 +1,5 @@
 todo items:
 
-improve performance
 check security
-implement global for tal:define (currently all variables are 'local'). Is really needed?
 
 what else?

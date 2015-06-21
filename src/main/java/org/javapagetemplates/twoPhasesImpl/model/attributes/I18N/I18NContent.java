@@ -1,13 +1,12 @@
 package org.javapagetemplates.twoPhasesImpl.model.attributes.I18N;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.I18nUtils;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -43,8 +42,8 @@ public class I18NContent extends JPTAttributeImpl implements DynamicAttribute {
 	
 	
 	public I18NContent(){}
-	public I18NContent(String namespaceUri, String content){
-		super(namespaceUri);
+	public I18NContent( String namespaceUri, String content ){
+		super( namespaceUri );
 		this.i18nKey = content;
 	}
 	
@@ -53,7 +52,7 @@ public class I18NContent extends JPTAttributeImpl implements DynamicAttribute {
 		return this.i18nKey;
 	}
 
-	public void setI18nKey(String i18nKey) {
+	public void setI18nKey( String i18nKey ) {
 		this.i18nKey = i18nKey;
 	}
 	
@@ -67,12 +66,12 @@ public class I18NContent extends JPTAttributeImpl implements DynamicAttribute {
 		return this.i18nKey;
 	}
 	
-	public String evaluate(Interpreter beanShell, I18NParams i18nParams) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException{
+	public String evaluate( EvaluationHelper evaluationHelper, I18NParams i18nParams ) 
+			throws ExpressionSyntaxException, EvaluationException {
 		
 		return I18nUtils.evaluateContent(
-				beanShell, 
+				evaluationHelper, 
 				this.i18nKey, 
-				i18nParams);
+				i18nParams );
 	}
 }

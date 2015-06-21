@@ -5,15 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToNumber;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -48,8 +47,8 @@ abstract public class ArithmethicExpression extends JPTExpressionImpl implements
 	
 	
 	public ArithmethicExpression(){}
-	public ArithmethicExpression(String stringExpression){
-		super(stringExpression);
+	public ArithmethicExpression( String stringExpression ){
+		super( stringExpression );
 	}
 	
 
@@ -57,26 +56,25 @@ abstract public class ArithmethicExpression extends JPTExpressionImpl implements
 		return this.expressions;
 	}
 
-	public void setExpressions(List<JPTExpression> expressions) {
+	public void setExpressions( List<JPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 
-	public void addExpression(JPTExpression expression){
-		this.expressions.add(expression);
+	public void addExpression( JPTExpression expression ){
+		this.expressions.add( expression );
 	}
 
-	abstract protected Number doOperation(Number value1, Number value2);
+	abstract protected Number doOperation( Number value1, Number value2 );
 
 	
-	static public void configure(String exp, ArithmethicExpression arithmethicExpression, 
-			String operationName, String initialChars) 
-			throws ExpressionSyntaxException {
+	static public void configure( String exp, ArithmethicExpression arithmethicExpression, 
+			String operationName, String initialChars ) throws ExpressionSyntaxException {
     	
     	// Check the expression and the number of segments
     	String expression = exp.substring( initialChars.length() ).trim();
         
         if ( expression.length() == 0 ) {
-            throw new ExpressionSyntaxException(operationName + " expression void.");
+            throw new ExpressionSyntaxException( operationName + " expression void." );
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( 
@@ -84,48 +82,48 @@ abstract public class ArithmethicExpression extends JPTExpressionImpl implements
         		TwoPhasesPageTemplate.EXPRESSION_DELIMITER );
         
         if ( segments.countTokens() == 1 ) {
-        	throw new ExpressionSyntaxException("Only one element in " + operationName 
+        	throw new ExpressionSyntaxException(
+        			"Only one element in " + operationName 
         			+ " expression, please add at least one more.");
         }
 
         // Set string expression
-        arithmethicExpression.setStringExpression(exp);
+        arithmethicExpression.setStringExpression( exp );
         
         // Iterate through segments
         String segment1 = segments.nextToken().trim();
         arithmethicExpression.addExpression(
-        		ExpressionUtils.generate(segment1) ); 
+        		ExpressionUtils.generate( segment1 ) ); 
         		
         while ( segments.hasMoreTokens() ) {
             String segment = segments.nextToken().trim();
             arithmethicExpression.addExpression(
-            		ExpressionUtils.generate(segment) ); 
+            		ExpressionUtils.generate( segment ) ); 
         }
 	}
 	
 	@Override
-	public Number evaluateToNumber(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Number evaluateToNumber( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		Iterator<JPTExpression> i = this.expressions.iterator();
 		
-		Number result = ExpressionUtils.evaluateToNumber(
-				i.next(), beanShell);
+		Number result = ExpressionUtils.evaluateToNumber( i.next(), evaluationHelper );
 		
-		while (i.hasNext()){
+		while ( i.hasNext() ){
 			JPTExpression expression = i.next();
 			
 			Number value = ExpressionUtils.evaluateToNumber(
-					expression, beanShell);
+					expression, evaluationHelper );
 			
-			result = this.doOperation(result, value);
+			result = this.doOperation( result, value );
 		}
 		
 		return result;
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return this.evaluateToNumber(beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return this.evaluateToNumber( evaluationHelper );
 	}
 
 }

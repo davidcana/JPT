@@ -6,10 +6,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
-
-import bsh.Interpreter;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -47,7 +46,7 @@ public class PropertyExpression implements NextPathToken {
 	
 	public PropertyExpression(){}
 
-	public PropertyExpression(String propertyName){
+	public PropertyExpression( String propertyName ){
 		this.propertyName = propertyName;
 	}
 
@@ -56,52 +55,49 @@ public class PropertyExpression implements NextPathToken {
 		return this.propertyName;
 	}
 
-	public void setPropertyName(String propertyName) {
+	public void setPropertyName( String propertyName ) {
 		this.propertyName = propertyName;
 	}
 
 	@Override
-	public Object evaluate(Object parent, Interpreter beanShell) 
-			throws ExpressionEvaluationException {
-		return evaluate(parent, this.propertyName);
+	public Object evaluate( Object parent, EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluate( parent, this.propertyName );
 	}
 	
-    private static final Object[] emptyArray = new Object[0];
+    private static final Object[] emptyArray = new Object[ 0 ];
     @SuppressWarnings("rawtypes")
-	public static final Object evaluate( Object object, String name ) 
-        throws ExpressionEvaluationException {
+	public static final Object evaluate( Object object, String name ) throws EvaluationException {
     	
         try {
             // If object is a Map, use it like a dictionary and 
             // use property name as key
             if ( object instanceof Map ) {
-                return ((Map)object).get( name );
+                return ( ( Map ) object ).get( name );
             }
 
             // Use Bean introspection to get property of an object
             BeanInfo beanInfo = Introspector.getBeanInfo( object.getClass() );
             PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
             for ( int i = 0; i < properties.length; i++ ) {
-                if ( properties[i].getName().equals( name ) ) {
-                    Method reader = properties[i].getReadMethod();
+                if ( properties[ i ].getName().equals( name ) ) {
+                    Method reader = properties[ i ].getReadMethod();
                     if ( reader == null ) {
-                        throw new ExpressionEvaluationException
-                            ( "property '" + name + "' of " + object.getClass().getName() + " can't be read" );
+                        throw new EvaluationException( 
+                        		"Property '" + name + "' of " + object.getClass().getName() + " can't be read" );
                     }
                     return reader.invoke( object, emptyArray );
                 }
             }
         }
-        catch( Exception e ) {
-            throw new ExpressionEvaluationException(
+        catch ( Exception e ) {
+            throw new EvaluationException(
             		e.getCause() != null? e.getCause(): e);
         }
-        throw new ExpressionEvaluationException( "no such property '" + name + "' of " + object.getClass().getName() );
+        throw new EvaluationException( "No such property '" + name + "' of " + object.getClass().getName() );
     }
 
-    public static final PropertyExpression generate( String propertyName ) 
-	        throws ExpressionSyntaxException {
-		return new PropertyExpression(propertyName);
+    public static final PropertyExpression generate( String propertyName ) throws ExpressionSyntaxException {
+		return new PropertyExpression( propertyName );
 	}
 	
 	@Override

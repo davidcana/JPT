@@ -42,10 +42,10 @@ public class JPTContext extends AbstractJPTContext {
 		return this.templateCache;
 	}
 	
-	public void setTemplateCache(TemplateCache templateCache) {
+	public void setTemplateCache( TemplateCache templateCache ) {
 		
-		if (templateCache == null){
-			throw new IllegalArgumentException("Unable to set templateCache to null");
+		if ( templateCache == null ){
+			throw new IllegalArgumentException( "Unable to set templateCache to null" );
 		}
 		
 		this.templateCache = templateCache;

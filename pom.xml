@@ -5,7 +5,7 @@
     <groupId>org.javapagetemplates</groupId>
     <artifactId>jpt</artifactId>
     <packaging>jar</packaging>
-    <version>0.11.0</version>
+    <version>0.12.0</version>
     <name>Java page templates</name>
     <url>http://javapagetemplates.org</url>
 
@@ -27,8 +27,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
         <skipTests>false</skipTests>
-        <skipWebTests>true</skipWebTests>
-        <tomcat.home>/usr/local/tomcat</tomcat.home>
     </properties>
   
     <repositories>
@@ -65,36 +63,42 @@
         </dependency>
 
         <dependency>
-            <groupId>org.xnap.commons</groupId>
+            <groupId>com.googlecode.gettext-commons</groupId>
             <artifactId>gettext-commons</artifactId>
-            <version>0.9.6</version>
+            <version>0.9.8</version>
         </dependency>
         
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.10</version>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>net.sourceforge.nekohtml</groupId>
             <artifactId>nekohtml</artifactId>
-            <version>1.9.14</version>
+            <version>1.9.22</version>
         </dependency>
         
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
+            <version>2.11.0</version>
         </dependency>
         
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
-            <version>1.0.b2</version>
+            <version>1.4.01</version>
         </dependency>
-
+        
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.2</version>
+        </dependency>
+        
     </dependencies>
   
     <build>
@@ -144,24 +148,12 @@
                 <version>2.12.2</version>
                 
                 <configuration>
-                    <skipTests>${skipTests}</skipTests> <!-- to run tests: mvn install -DskipTests=false -->
+                    <skipTests>${skipTests}</skipTests> <!-- to avoid run tests: mvn install -DskipTests=true -->
                     <excludes>
                         <exclude>**/*WebTests*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
-            
-	        <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-failsafe-plugin</artifactId>
-		        <version>2.12.3</version>
-		        <configuration>
-		            <skipTests>${skipWebTests}</skipTests> <!-- to run tests: mvn install -DskipWebTests=false -->
-                    <includes>
-                        <include>**/*WebTests*</include>
-                    </includes>
-		        </configuration>
-	        </plugin>
       
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

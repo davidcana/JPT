@@ -1,3 +1,10 @@
+New in 0.12.0
+ - Added support of tal:tag. Replaces the tag in the template by the evaluated expression unless it evaluates to null.
+ - Added generic support of expression evaluation. Added support of Groovy expressions.
+ - Added generic support of scripts depending of their extensions. Added support of Groovy scripts.
+ - Added some tests.
+ - Updated dependencies.
+ 
 New in 0.11.0
  - Migrated project from ant to maven.
  - Added support to tal:on-error.
@@ -27,6 +34,7 @@ New in 0.11.0
     - tal:content / i18n:content
     - tal:attributes / i18n:attributes
     - tal:omit-tag
+    - tal:tag
     - content
  - Fixed bug with parsing HTML fragments of void tags. Web browsers don't support some void tags (as textarea). Added support to set a list of tags that can be void (as br, input or img), the rest will never be void: if there is no content it will be added a single space.
  - Added support of no parsing HTML fragments (using JPTContext class).
@@ -35,18 +43,17 @@ New in 0.11.0
  - Full refactoring: Added a new implementation that works on two phases. At the first, we create a java model and save it to a cache; at the second one, we read the java model and generate the output. The next time we need to generate output we will get the java model from the cache and the performance will be better, we avoid reading the JPT file every time we need to generate the output. The old implementation is available at onePhaseImpl package, the new one is at twoPhasesImpl package.
  - Added support of doc type declaration in JPT files using two phases implementation.
  - Several bugs fixed.
- - Add some tests.
+ - Added some tests.
  
 New in 0.10.0
- - Integrated the BeanShell.  This allows evaluation of Java expressions and calling of external BeanShell scripts.
- - Structured (xml/html) content is now handled by nekohtml rather than Tidy.  Introduced HTMLFragment object which might potentially be useful in other apps.
+ - Integrated the BeanShell. This allows evaluation of Java expressions and calling of external BeanShell scripts.
+ - Structured (xml/html) content is now handled by nekohtml rather than Tidy. Introduced HTMLFragment object which might potentially be useful in other apps.
 
 New in 0.9.3
-
  - Added real namespace support (thank you nekohtml).
  - Added support for arrays.
  - Added bool/cond to bool helper
  - Added date helper.
  - Upgraded metal code to support slots definition and filling across multiple layers of macro.
  - Fixed bug with evaluating arrays inside method calls.
- - Added xercesImpl to lib as it is a dependency of nekohtml.  This didn't become a problem until I upgraded to ant 1.6.2.  Previous versions of ant must have included xerces in the classpath.
+ - Added xercesImpl to lib as it is a dependency of nekohtml. This didn't become a problem until I upgraded to ant 1.6.2. Previous versions of ant must have included xerces in the classpath.

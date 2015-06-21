@@ -1,14 +1,13 @@
 package org.javapagetemplates.twoPhasesImpl.model.attributes.TAL;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -45,9 +44,9 @@ public class TALCondition extends JPTAttributeImpl implements DynamicAttribute {
 	
 	
 	public TALCondition(){}
-	public TALCondition(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
-		this.condition = ExpressionUtils.generate(expression);
+	public TALCondition( String namespaceUri, String expression ) throws PageTemplateException {
+		super( namespaceUri );
+		this.condition = ExpressionUtils.generate( expression );
 	}
 	
 
@@ -55,7 +54,7 @@ public class TALCondition extends JPTAttributeImpl implements DynamicAttribute {
 		return this.condition;
 	}
 
-	public void setCondition(JPTExpression condition) {
+	public void setCondition( JPTExpression condition ) {
 		this.condition = condition;
 	}
 	
@@ -69,24 +68,24 @@ public class TALCondition extends JPTAttributeImpl implements DynamicAttribute {
 		return this.condition.toString();
 	}
 	
-	public boolean evaluate( Interpreter beanShell ) throws ExpressionEvaluationException {
+	public boolean evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		try {
 			return ExpressionUtils.evaluateToBoolean(
 					this.condition, 
-					beanShell);
+					evaluationHelper );
 			
-		} catch (ExpressionEvaluationException e) {
+		} catch ( EvaluationException e ) {
 			e.setInfo(
 					this.condition.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e;
 			
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					this.condition.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e2;
 		}
 	}

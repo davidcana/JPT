@@ -43,8 +43,8 @@ public class TALRepeat extends JPTAttributeImpl implements DynamicAttribute {
 	
 	public TALRepeat(){}
 	public TALRepeat(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
-		this.repeat = AttributesUtils.getDefinition(expression);
+		super( namespaceUri );
+		this.repeat = AttributesUtils.getDefinition( expression );
 	}
 	
 
@@ -63,6 +63,6 @@ public class TALRepeat extends JPTAttributeImpl implements DynamicAttribute {
 	
 	@Override
 	public String getValue() {
-		return AttributesUtils.getStringFromDefinition(this.repeat);
+		return AttributesUtils.getStringFromDefinition( this.repeat );
 	}
 }

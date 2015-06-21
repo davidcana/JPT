@@ -1,5 +1,6 @@
 package org.javapagetemplates.twoPhasesImpl;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
@@ -32,6 +33,7 @@ import java.net.URL;
  * @version $Revision: 1.3 $
  */
 public class URIResolver extends Resolver {
+	
     protected URI uri;
 
     public URIResolver( URI uri ) {
@@ -39,14 +41,16 @@ public class URIResolver extends Resolver {
     }
 
     @Override
-    public URL getResource( String path ) 
-        throws java.net.MalformedURLException
-    {
+    public URL getResource( String path ) throws MalformedURLException {
+    	
         URI resource = this.uri.resolve( path );
+        
         if ( resource != null ) {
             return resource.toURL();
         }
+        
         return null;
     }
+
 }
 

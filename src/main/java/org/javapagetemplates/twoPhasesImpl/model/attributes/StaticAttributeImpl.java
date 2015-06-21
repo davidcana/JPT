@@ -32,8 +32,8 @@ public class StaticAttributeImpl extends JPTAttributeImpl implements StaticAttri
 	private String attributeName;
 	private String value;
 	
-	public StaticAttributeImpl(String namespaceUri, String name, String value){
-		super(namespaceUri);
+	public StaticAttributeImpl( String namespaceUri, String name, String value ){
+		super( namespaceUri );
 		this.attributeName = name;
 		this.value = value;
 	}
@@ -43,7 +43,7 @@ public class StaticAttributeImpl extends JPTAttributeImpl implements StaticAttri
 		return this.attributeName;
 	}
 	
-	public void setAttributeName(String name) {
+	public void setAttributeName( String name ) {
 		this.attributeName = name;
 	}
 	
@@ -52,14 +52,14 @@ public class StaticAttributeImpl extends JPTAttributeImpl implements StaticAttri
 		return this.value;
 	}
 
-	public void setValue(String value) {
+	public void setValue( String value ) {
 		this.value = value;
 	}
 
 	@Override
 	public String getQualifiedName() {
 		
-		if (this.getNamespaceUri().isEmpty()){
+		if ( this.getNamespaceUri().isEmpty() ){
 			return this.attributeName;
 		}
 		

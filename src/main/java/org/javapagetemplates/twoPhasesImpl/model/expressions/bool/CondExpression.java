@@ -1,14 +1,13 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.bool;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
-
-import bsh.Interpreter;
 
 /**
  *  Java Page Templates
@@ -39,11 +38,11 @@ public class CondExpression extends JPTExpressionImpl {
 	private JPTExpression falseExpression;
 	
 	public CondExpression(){}
-	public CondExpression(String stringExpression){
-		super(stringExpression);
+	public CondExpression( String stringExpression ){
+		super( stringExpression );
 	}
-	public CondExpression(String stringExpression, JPTExpression condition, JPTExpression trueExpression, JPTExpression falseExpression){
-		super(stringExpression);
+	public CondExpression( String stringExpression, JPTExpression condition, JPTExpression trueExpression, JPTExpression falseExpression ){
+		super( stringExpression );
 		
 		this.condition = condition;
 		this.trueExpression = trueExpression;
@@ -51,14 +50,13 @@ public class CondExpression extends JPTExpressionImpl {
 	}
 	
 	
-	static public CondExpression generate(String exp) 
-			throws ExpressionSyntaxException {
+	static public CondExpression generate( String exp )	throws ExpressionSyntaxException {
         
 		String expression = exp.substring( TwoPhasesPageTemplate.EXPR_COND.length() ).trim();
         
 		// Check some conditions
         if ( expression.length() == 0 ) {
-            throw new ExpressionSyntaxException("Cond expression void.");
+            throw new ExpressionSyntaxException( "COND expression void." );
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( 
@@ -66,7 +64,7 @@ public class CondExpression extends JPTExpressionImpl {
         		TwoPhasesPageTemplate.EXPRESSION_DELIMITER );
         
         if ( segments.countTokens() != 3 ) {
-        	throw new ExpressionSyntaxException("3 element are needed in cond expression.");
+        	throw new ExpressionSyntaxException( "3 element are needed in COND expression." );
         }
         
         // Get segments
@@ -78,7 +76,7 @@ public class CondExpression extends JPTExpressionImpl {
         		exp, 
         		ExpressionUtils.generate( conditionSegment ), 
         		ExpressionUtils.generate( trueSegment ), 
-        		ExpressionUtils.generate( falseSegment ));
+        		ExpressionUtils.generate( falseSegment ) );
 	}
 	
 	
@@ -86,7 +84,7 @@ public class CondExpression extends JPTExpressionImpl {
 		return this.condition;
 	}
 
-	public void setCondition(JPTExpression condition) {
+	public void setCondition( JPTExpression condition ) {
 		this.condition = condition;
 	}
 
@@ -94,7 +92,7 @@ public class CondExpression extends JPTExpressionImpl {
 		return this.trueExpression;
 	}
 
-	public void setTrueExpression(JPTExpression trueExpression) {
+	public void setTrueExpression( JPTExpression trueExpression ) {
 		this.trueExpression = trueExpression;
 	}
 
@@ -102,30 +100,29 @@ public class CondExpression extends JPTExpressionImpl {
 		return this.falseExpression;
 	}
 
-	public void setFalseExpression(JPTExpression falseExpression) {
+	public void setFalseExpression( JPTExpression falseExpression ) {
 		this.falseExpression = falseExpression;
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
         // Evaluate first expression
         boolean fistExpressionResult = ExpressionUtils.evaluateToBoolean( 
-    			this.condition, beanShell );
+    			this.condition, evaluationHelper );
         
         // If true, evaluate second expression
-        if (fistExpressionResult){
-        	return this.trueExpression.evaluate( beanShell );
+        if ( fistExpressionResult ){
+        	return this.trueExpression.evaluate( evaluationHelper );
         }
 
         // If false, evaluate third expression
-    	return this.falseExpression.evaluate( beanShell );
+    	return this.falseExpression.evaluate( evaluationHelper );
 	}
 	
-	static public Object evaluate(String exp, Interpreter beanShell) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException {
-		return generate(exp).evaluate(beanShell);
+	static public Object evaluate( String exp, EvaluationHelper evaluationHelper ) 
+			throws ExpressionSyntaxException, EvaluationException {
+		return generate( exp ).evaluate( evaluationHelper );
 	}
 	
 }

@@ -4,9 +4,10 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.arithmethic.AddExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.arithmethic.DivExpression;
@@ -21,8 +22,6 @@ import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.EqualsEx
 import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.GreaterExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.LowerExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.PathExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -51,92 +50,92 @@ import bsh.Interpreter;
  */
 public class ExpressionUtils {
 
-    static public Number evaluateToNumber(JPTExpression expression, Interpreter beanShell) 
-    		throws ExpressionEvaluationException {
+    static public Number evaluateToNumber( JPTExpression expression, EvaluationHelper evaluationHelper ) 
+    		throws EvaluationException {
     	
     	try {
-			if (expression instanceof EvaluableToNumber){
-				EvaluableToNumber evaluableToInteger = (EvaluableToNumber) expression;
-				return evaluableToInteger.evaluateToNumber(beanShell);
+			if ( expression instanceof EvaluableToNumber ){
+				EvaluableToNumber evaluableToInteger = ( EvaluableToNumber ) expression;
+				return evaluableToInteger.evaluateToNumber( evaluationHelper );
 			}
 			
-			Object result = expression.evaluate(beanShell);
-			return Integer.valueOf(result.toString());
+			Object result = expression.evaluate( evaluationHelper );
+			return Integer.valueOf( result.toString() );
 			
-		} catch (Exception e) {
+		} catch ( Exception e ) {
 			String stringExpression = expression == null? null: expression.getStringExpression();
-			throw new ExpressionEvaluationException("Error trying to evaluate to number expression '"
-					+ stringExpression + "': " + e.getMessage());
+			throw new EvaluationException(
+					"Error trying to evaluate to number expression '"
+					+ stringExpression + "': " + e.getMessage() );
 		}
     }
     
-    static public Number evaluateToNumber(String string, Interpreter beanShell) 
-    		throws ExpressionEvaluationException, ExpressionSyntaxException{
+    static public Number evaluateToNumber( String string, EvaluationHelper evaluationHelper ) 
+    		throws EvaluationException, ExpressionSyntaxException {
     	
-    	Object result = StringExpression.evaluate(string, beanShell);
-    	return Integer.valueOf(result.toString());
+    	Object result = StringExpression.evaluate( string, evaluationHelper );
+    	return Integer.valueOf( result.toString() );
     }
     
-    static public Boolean evaluateToBoolean(JPTExpression expression, Interpreter beanShell) 
-    		throws ExpressionEvaluationException {
+    static public Boolean evaluateToBoolean( JPTExpression expression, EvaluationHelper evaluationHelper ) 
+    		throws EvaluationException {
     	
-    	if (expression instanceof EvaluableToBoolean){
-    		EvaluableToBoolean evaluableToBoolean = (EvaluableToBoolean) expression;
-    		return evaluableToBoolean.evaluateToBoolean(beanShell);
+    	if ( expression instanceof EvaluableToBoolean ){
+    		EvaluableToBoolean evaluableToBoolean = ( EvaluableToBoolean ) expression;
+    		return evaluableToBoolean.evaluateToBoolean( evaluationHelper );
     	}
     	
-    	return evaluateToBoolean(expression.evaluate(beanShell));
+    	return evaluateToBoolean( expression.evaluate( evaluationHelper ) );
     }
     
-    static public Boolean evaluateToBoolean(String string, Interpreter beanShell) 
+    static public Boolean evaluateToBoolean( String string, EvaluationHelper evaluationHelper ) 
     		throws PageTemplateException {
-    	return evaluateToBoolean(StringExpression.evaluate(string, beanShell));
+    	return evaluateToBoolean( StringExpression.evaluate( string, evaluationHelper ) );
     }
     
     @SuppressWarnings("rawtypes")
-    static public Boolean evaluateToBoolean(Object object) throws ExpressionEvaluationException {
+    static public Boolean evaluateToBoolean( Object object ) throws EvaluationException {
     	
         if ( object == null ) {
             return false;
         }
         
         else if ( object instanceof Boolean ) {
-            return ((Boolean)object).booleanValue();
+            return ( ( Boolean ) object ).booleanValue();
         }
         
         else if ( object instanceof String ) {
-            return ((String)object).length() != 0;
+            return ( ( String ) object ).length() != 0;
         }
         
         else if ( object instanceof Long ) {
-            return ((Long)object).longValue() != 0l;
+            return ( ( Long ) object ).longValue() != 0l;
         }
 
         else if ( object instanceof Integer ) {
-            return ((Integer)object).intValue() != 0;
+            return ( ( Integer) object ).intValue() != 0;
         }
 
         else if ( object instanceof Double ) {
-            return ((Double)object).doubleValue() != 0.0d;
+            return ( ( Double ) object ).doubleValue() != 0.0d;
         }
 
         else if ( object instanceof Long ) {
-            return ((Float)object).floatValue() != 0.0;
+            return ( ( Float ) object ).floatValue() != 0.0;
         }
         
         else if ( object instanceof Collection ) {
-            return ((Collection)object).size() != 0;
+            return ( ( Collection ) object ).size() != 0;
         }
         
         else if ( object instanceof Map ) {
-            return ((Map)object).size() != 0;
+            return ( ( Map ) object ).size() != 0;
         }
         
         return true;
     }
     
-    static public JPTExpression generate(String expression)
-    		throws ExpressionSyntaxException {
+    static public JPTExpression generate( String expression ) throws ExpressionSyntaxException {
 		
     	String effectiveExpression = ExpressionTokenizer.removeParenthesisIfAny(
 				expression ).trim();
@@ -153,41 +152,47 @@ public class ExpressionUtils {
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_JAVA ) ) {
         	return JavaExpression.generate( effectiveExpression );
         }
+        else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_BSH ) ) {
+        	return BeanShellExpression.generate( effectiveExpression );
+        }
+        else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_GROOVY ) ) {
+        	return GroovyExpression.generate( effectiveExpression );
+        }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_EQUALS ) ) {
-        	return EqualsExpression.generate(effectiveExpression);
+        	return EqualsExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_GREATER ) ) {
-        	return GreaterExpression.generate(effectiveExpression);
+        	return GreaterExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_LOWER ) ) {
-        	return LowerExpression.generate(effectiveExpression);
+        	return LowerExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_ADD ) ) {
-        	return AddExpression.generate(effectiveExpression);
+        	return AddExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_SUB ) ) {
         	return SubExpression.generate(effectiveExpression);
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_MUL ) ) {
-        	return MulExpression.generate(effectiveExpression);
+        	return MulExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_DIV ) ) {
-        	return DivExpression.generate(effectiveExpression);
+        	return DivExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_MOD ) ) {
-        	return ModExpression.generate(effectiveExpression);
+        	return ModExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_OR ) ) {
-        	return OrExpression.generate(effectiveExpression);
+        	return OrExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_AND ) ) {
-        	return AndExpression.generate(effectiveExpression);
+        	return AndExpression.generate( effectiveExpression );
         }
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_COND ) ) {
-        	return CondExpression.generate(effectiveExpression);
+        	return CondExpression.generate( effectiveExpression );
         }
 
-        return PathExpression.generate(effectiveExpression);
+        return PathExpression.generate( effectiveExpression );
     }
 
 }

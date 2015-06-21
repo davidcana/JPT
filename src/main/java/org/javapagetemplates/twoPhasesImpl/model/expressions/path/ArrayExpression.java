@@ -3,15 +3,14 @@ package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.StringExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -49,8 +48,8 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 	
 	public ArrayExpression(){}
 
-	public ArrayExpression(String stringExpression, JPTExpression arrayBase){
-		super(stringExpression);
+	public ArrayExpression( String stringExpression, JPTExpression arrayBase ){
+		super( stringExpression );
 		
 		this.arrayBase = arrayBase;
 	}
@@ -59,73 +58,75 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 		return this.indexes;
 	}
 
-	public void setIndexes(List<JPTExpression> indexes) {
+	public void setIndexes( List<JPTExpression> indexes ) {
 		this.indexes = indexes;
 	}
 
-	public void addIndex(JPTExpression index){
-		this.indexes.add(index);
+	public void addIndex( JPTExpression index ){
+		this.indexes.add( index );
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return evaluate(this.arrayBase, this.indexes, beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluate( this.arrayBase, this.indexes, evaluationHelper );
 	}
 	
-	static public Object evaluate(JPTExpression arrayBase, List<JPTExpression> indexes, Interpreter beanShell) 
-			throws ExpressionEvaluationException {
+	static public Object evaluate( JPTExpression arrayBase, List<JPTExpression> indexes, EvaluationHelper evaluationHelper ) 
+			throws EvaluationException {
 		
 		try {
-			Object object = arrayBase.evaluate(beanShell);
+			Object object = arrayBase.evaluate( evaluationHelper );
     		
-			if (object == null){
+			if ( object == null ){
 				return null;
 			}
 			
 			if ( ! object.getClass().isArray() ) {
-    			throw new ExpressionEvaluationException( arrayBase.getStringExpression() + " is not an array: " + object.getClass() );
+    			throw new EvaluationException( 
+    					arrayBase.getStringExpression() + " is not an array: " + object.getClass() );
     		}
 			
-			return evaluateArrayItem(object, indexes, beanShell);
+			return evaluateArrayItem( object, indexes, evaluationHelper );
 
-		} catch (Exception e) {
-			throw new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			throw new EvaluationException( e );
 		}
 	}
 	
-	static private Object evaluateArrayItem(Object object, List<JPTExpression> indexExpressions, Interpreter beanShell) 
+	static private Object evaluateArrayItem( Object object, List<JPTExpression> indexExpressions, EvaluationHelper evaluationHelper ) 
 			throws PageTemplateException {
 		
 		Integer index = ExpressionUtils.evaluateToNumber(
-				indexExpressions.get(0), 
-				beanShell).intValue();
+				indexExpressions.get( 0 ), 
+				evaluationHelper ).intValue();
 		
 		if ( ! object.getClass().isArray() ) {
-			throw new ExpressionEvaluationException( "Element in '" + object.toString() + "' is not an array: " + object.getClass() );
+			throw new EvaluationException( 
+					"Element in '" + object.toString() + "' is not an array: " + object.getClass() );
 		}
 		
 		if ( object.getClass().getComponentType().isPrimitive() ) {
 			object = convertPrimitiveArray( object );
 		}
 		
-		Object[] arrayInstance = (Object[]) object;
+		Object[] arrayInstance = ( Object[] ) object;
 		
-		if (indexExpressions.size() == 1){	
-			return arrayInstance[index];
+		if ( indexExpressions.size() == 1 ){	
+			return arrayInstance[ index ];
 		}
 		
-		List<JPTExpression> newIndexExpressions = new ArrayList<JPTExpression>(indexExpressions);
-		newIndexExpressions.remove(0);
+		List<JPTExpression> newIndexExpressions = new ArrayList<JPTExpression>( indexExpressions );
+		newIndexExpressions.remove( 0 );
 		
 		return evaluateArrayItem (
 				arrayInstance[ index ], 
 				newIndexExpressions,
-				beanShell);
+				evaluationHelper );
 	}
 	
-    static public final Object evaluate( 
-    		String tok, Object res, String acc, Interpreter beanShell ) 
-    				throws ExpressionSyntaxException, ExpressionEvaluationException {
+    static public final Object evaluate( String tok, Object res, String acc, EvaluationHelper evaluationHelper ) 
+    	throws ExpressionSyntaxException, EvaluationException {
+    	
     	Object result = res;
     	String token = tok;
     	String accessor = acc;
@@ -133,35 +134,39 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
     		// Array accessor must begin and end with brackets
     		int close = accessor.indexOf( ']' );
     		if ( accessor.charAt(0) != '[' || close == -1 ) {
-    			throw new ExpressionSyntaxException( "bad array accessor for " + token + ": "  + accessor );
+    			throw new ExpressionSyntaxException( 
+    					"Bad array accessor for " + token + ": "  + accessor );
     		}
 
     		// Array accessor must operate on an array
     		if ( !  result.getClass().isArray() ) {
-    			throw new ExpressionEvaluationException( token + " is not an array: " + result.getClass() );
+    			throw new EvaluationException( 
+    					token + " is not an array: " + result.getClass() );
     		}
 
     		if ( result.getClass().getComponentType().isPrimitive() ) {
     			result = convertPrimitiveArray( result );
     		}
     		Object[] array = (Object[])result;
-    		Object index = StringExpression.evaluate( accessor.substring( 1, close ), beanShell );
+    		Object index = StringExpression.evaluate( 
+    				accessor.substring( 1, close ), 
+    				evaluationHelper );
     		if ( ! ( index instanceof Integer ) ) {
-    			throw new ExpressionEvaluationException( "array index must be an integer" );
+    			throw new EvaluationException( "Array index must be an integer" );
     		}
-    		result = array[ ((Integer)index).intValue() ];
+    		result = array[ ( ( Integer) index ).intValue() ];
 
-    		// continue evaluating array access for multidimensional arrays
+    		// Continue evaluating array access for multidimensional arrays
     		close++;
     		if ( accessor.length() > close ) {
     			token += accessor.substring( 0, close );
     			accessor = accessor.substring( close );
-    			result = evaluate( token, result, accessor, beanShell );
+    			result = evaluate( token, result, accessor, evaluationHelper );
     		}
     		return result;
     		
-    	} catch( ArrayIndexOutOfBoundsException e ) {
-    		throw new ExpressionEvaluationException(e);
+    	} catch ( ArrayIndexOutOfBoundsException e ) {
+    		throw new EvaluationException( e );
     	}
     }
 
@@ -216,67 +221,66 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
     static public final Object[] convertPrimitiveArray( Object o ) {
         Object[] newArray = null;
         if ( o instanceof int[] ) {
-            int[] oldArray = (int[])o;
+            int[] oldArray = ( int[] ) o;
             newArray = new Integer[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Integer( oldArray[i] );
+                newArray[ i ] = new Integer( oldArray[ i ] );
             }
         }
         else if ( o instanceof long[] ) {
-            long[] oldArray = (long[])o;
+            long[] oldArray = ( long[] ) o;
             newArray = new Long[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Long( oldArray[i] );
+                newArray[ i ] = new Long( oldArray[ i ] );
             }
         }
         else if ( o instanceof boolean[] ) {
-            boolean[] oldArray = (boolean[])o;
+            boolean[] oldArray = ( boolean[] ) o;
             newArray = new Boolean[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Boolean( oldArray[i] );
+                newArray[ i ] = new Boolean( oldArray[ i ] );
             }
         }
         else if ( o instanceof char[] ) {
-            char[] oldArray = (char[])o;
+            char[] oldArray = ( char[] ) o;
             newArray = new Character[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Character( oldArray[i] );
+                newArray[ i ] = new Character( oldArray[i] );
             }
         }
         else if ( o instanceof byte[] ) {
-            byte[] oldArray = (byte[])o;
+            byte[] oldArray = ( byte[] ) o;
             newArray = new Byte[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Byte( oldArray[i] );
+                newArray[ i ] = new Byte( oldArray[ i ] );
             }
         }
         else if ( o instanceof float[] ) {
-            float[] oldArray = (float[])o;
+            float[] oldArray = ( float[] ) o;
             newArray = new Float[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Float( oldArray[i] );
+                newArray[ i ] = new Float( oldArray[ i ] );
             }
         }
         else if ( o instanceof double[] ) {
-            double[] oldArray = (double[])o;
+            double[] oldArray = ( double[] ) o;
             newArray = new Double[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Double( oldArray[i] );
+                newArray[ i ] = new Double( oldArray[ i ] );
             }
         }
         else if ( o instanceof short[] ) {
-            short[] oldArray = (short[])o;
+            short[] oldArray = ( short[] ) o;
             newArray = new Short[ oldArray.length ];
             for ( int i = 0; i < oldArray.length; i++ ) {
-                newArray[i] = new Short( oldArray[i] );
+                newArray[ i ] = new Short( oldArray[ i ] );
             }
         }
         return newArray;
     }
 
 	@Override
-	public Object evaluate(Object parent, Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Object evaluate( Object parent, EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		try {
 			String token = new String(this.stringExpression);
@@ -290,35 +294,35 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 			}
 
 			return evaluate( 
-					token, parent, arrayAccessor, beanShell ) ;
+					token, parent, arrayAccessor, evaluationHelper ) ;
 			
-		} catch (ExpressionSyntaxException e) {
-			throw new ExpressionEvaluationException(e);
+		} catch ( ExpressionSyntaxException e ) {
+			throw new EvaluationException( e );
 		}
 	}
 
-    static public final ArrayExpression generate( String tok, JPTExpression arrayBase, String acc ) 
-    				throws ExpressionSyntaxException {
+    static public final ArrayExpression generate( String tok, JPTExpression arrayBase, String acc ) throws ExpressionSyntaxException {
     	
-    	String accessor = new String(acc);
-    	String token = new String(tok);
+    	String accessor = new String( acc );
+    	String token = new String( tok );
     	try {
-    		ArrayExpression result = new ArrayExpression(token, arrayBase);
+    		ArrayExpression result = new ArrayExpression( token, arrayBase );
     		
     		boolean done = false;
     		
-    		while (!done){
+    		while ( ! done ){
     			
         		// Array accessor must begin and end with brackets
         		int close = accessor.indexOf( ']' );
         		if ( accessor.charAt(0) != '[' || close == -1 ) {
-        			throw new ExpressionSyntaxException( "bad array accessor for " + token + ": "  + accessor );
+        			throw new ExpressionSyntaxException( 
+        					"bad array accessor for " + token + ": "  + accessor );
         		}
 
         		// Get index JPTExpression
         		JPTExpression index = ExpressionUtils.generate( 
         				accessor.substring( 1, close ) );
-        		result.addIndex(index);
+        		result.addIndex( index );
         		
         		// continue processing array access for multidimensional arrays
         		close++;
@@ -332,8 +336,8 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 
     		return result;
     		
-    	} catch( ArrayIndexOutOfBoundsException e ) {
-    		throw new ExpressionSyntaxException(e);
+    	} catch ( ArrayIndexOutOfBoundsException e ) {
+    		throw new ExpressionSyntaxException( e );
     	}
     }
     

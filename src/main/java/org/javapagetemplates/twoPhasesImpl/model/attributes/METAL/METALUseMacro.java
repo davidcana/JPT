@@ -41,8 +41,8 @@ public class METALUseMacro extends JPTAttributeImpl implements DynamicAttribute 
 	
 	public METALUseMacro(){}
 	public METALUseMacro(String namespaceUri, String expression) throws PageTemplateException{
-		super(namespaceUri);
-		this.expression = ExpressionUtils.generate(expression);
+		super( namespaceUri );
+		this.expression = ExpressionUtils.generate( expression );
 	}
 
 	

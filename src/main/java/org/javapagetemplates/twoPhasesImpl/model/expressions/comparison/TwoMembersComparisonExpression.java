@@ -1,14 +1,17 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.comparison;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
 
-import bsh.Interpreter;
-
 /**
+ * <p>
+ *   Abstract class that defines an expression with 2 operators.
+ * </p>
+ * 
  *  Java Page Templates
  *
  *  This library is free software; you can redistribute it and/or
@@ -37,11 +40,11 @@ abstract public class TwoMembersComparisonExpression extends JPTExpressionImpl i
 	protected JPTExpression expression2;
 	
 	public TwoMembersComparisonExpression(){}
-	public TwoMembersComparisonExpression(String stringExpression){
-		super(stringExpression);
+	public TwoMembersComparisonExpression( String stringExpression ){
+		super( stringExpression );
 	}
-	public TwoMembersComparisonExpression(String stringExpression, JPTExpression expression1, JPTExpression expression2){
-		super(stringExpression);
+	public TwoMembersComparisonExpression( String stringExpression, JPTExpression expression1, JPTExpression expression2 ){
+		super( stringExpression );
 		
 		this.expression1 = expression1;
 		this.expression2 = expression2;
@@ -52,7 +55,7 @@ abstract public class TwoMembersComparisonExpression extends JPTExpressionImpl i
 		return this.expression1;
 	}
 
-	public void setExpression1(JPTExpression expression1) {
+	public void setExpression1( JPTExpression expression1 ) {
 		this.expression1 = expression1;
 	}
 
@@ -60,22 +63,20 @@ abstract public class TwoMembersComparisonExpression extends JPTExpressionImpl i
 		return this.expression2;
 	}
 
-	public void setExpression2(JPTExpression expression2) {
+	public void setExpression2( JPTExpression expression2 ) {
 		this.expression2 = expression2;
 	}
 
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return this.evaluateToBoolean(beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return this.evaluateToBoolean( evaluationHelper );
 	}
 
-	protected Number getNumber1(Interpreter beanShell) throws ExpressionEvaluationException {
-		return ExpressionUtils.evaluateToNumber(
-	    		this.expression1, beanShell);
+	protected Number getNumber1( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return ExpressionUtils.evaluateToNumber( this.expression1, evaluationHelper );
 	}
 	
-	protected Number getNumber2(Interpreter beanShell) throws ExpressionEvaluationException {
-		return ExpressionUtils.evaluateToNumber(
-	    		this.expression2, beanShell);
+	protected Number getNumber2( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return ExpressionUtils.evaluateToNumber( this.expression2, evaluationHelper );
 	}
 }

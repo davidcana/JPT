@@ -1,9 +1,9 @@
 package org.javapagetemplates.twoPhasesImpl;
 
-import bsh.EvalError;
-
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
@@ -49,12 +49,13 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALDefine;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALOmitTag;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALOnError;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALRepeat;
+import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALTag;
 import org.javapagetemplates.twoPhasesImpl.model.content.CDATANode;
 import org.javapagetemplates.twoPhasesImpl.model.content.TextNode;
 
 /**
  * <p>
- *   Read a JPT from a file (suing JNDI to locate it) or from a 
+ *   Read a JPT from a file (using JNDI to locate it) or from a 
  *   String instance and returns a JPTDocument instance.
  * </p>
  * 
@@ -91,7 +92,8 @@ public class JPTDocumentFactory {
     
     private static SAXReader htmlReader = null;
     static final SAXReader getHTMLReader() throws SAXNotRecognizedException, SAXNotSupportedException {
-        if ( htmlReader == null && JPTContext.getInstance().isUseHtmlReader()) {
+    	
+        if ( htmlReader == null && JPTContext.getInstance().isUseHtmlReader() ) {
             htmlReader = new SAXReader();
             SAXParser parser = new SAXParser();
             parser.setProperty( "http://cyberneko.org/html/properties/names/elems", "match" );
@@ -136,101 +138,89 @@ public class JPTDocumentFactory {
 
         return instance;
     }
-
-	/*
-    private Interpreter getInterpreter( URI uri )
-		    throws EvalError {
-		        
-        Interpreter result = new Interpreter();
-        NameSpace globalNameSpace = new NameSpace(
-        		JPTContext.getInstance().getBshClassManager(), 
-        		JPTContext.GLOBAL_NAMESPACE);
-        result.setNameSpace(globalNameSpace);
-        
-        return result;
-	}*/
     
-    public JPTDocument getJPTDocument( URL url ) 
-    		throws PageTemplateException {
+    
+    public JPTDocument getJPTDocument( URI uri ) throws PageTemplateException {
     	
         try {
-        	JPTDocument result = recoverFromCache( url );
+        	JPTDocument result = recoverFromCache( uri );
         	
-        	if (result != null){
+        	if ( result != null ){
         		return result;
         	}
         	
-        	result = getNewJPTDocument( url );
+        	result = getNewJPTDocument( uri );
         	
-        	saveToCache( url, result );
+        	saveToCache( uri, result );
+        	
+            return result;
+            
+        } catch ( Exception e ) {
+            throw new PageTemplateException( e );
+        }
+    }
+    
+    
+    public JPTDocument getJPTDocument( URI uri, String templateString ) throws PageTemplateException {
+    	
+        try {
+        	JPTDocument result = recoverFromCache( uri );
+        	
+        	if ( result != null ){
+        		return result;
+        	}
+        	
+        	result = getNewJPTDocument( uri, templateString );
+        	
+        	saveToCache( uri, result );
         	
             return result;
             
         } catch( Exception e ) {
-            throw new PageTemplateException(e);
-        }
-    }
-    
-    public JPTDocument getJPTDocument( URL url, String templateString ) 
-    		throws PageTemplateException {
-    	
-        try {
-        	JPTDocument result = recoverFromCache( url );
-        	
-        	if (result != null){
-        		return result;
-        	}
-        	
-        	result = getNewJPTDocument( url, templateString );
-        	
-        	saveToCache( url, result );
-        	
-            return result;
-            
-        } catch( Exception e ) {
-            throw new PageTemplateException(e);
+            throw new PageTemplateException( e );
         }
     }
 
-	static private JPTDocument recoverFromCache(URL url) throws PageTemplateException {
+	static private JPTDocument recoverFromCache( URI uri ) throws PageTemplateException {
     	
-        if (!JPTContext.getInstance().isCacheOn()){
+        if ( ! JPTContext.getInstance().isCacheOn() ){
         	return null;
         }
         
-		return JPTContext.getInstance().getJptDocumentCache().get( url );
+		return JPTContext.getInstance().getJptDocumentCache().get( uri );
 	}
     
-    static private void saveToCache(URL url, JPTDocument jptDocument) throws PageTemplateException {
+    static private void saveToCache( URI uri, JPTDocument jptDocument ) throws PageTemplateException {
 
-		if (!JPTContext.getInstance().isCacheOn()){
+		if ( ! JPTContext.getInstance().isCacheOn() ){
 			return;
 		}
 		
-		JPTContext.getInstance().getJptDocumentCache().put(url, jptDocument);
+		JPTContext.getInstance().getJptDocumentCache().put( uri, jptDocument );
 	}
     
-	private JPTDocument getNewJPTDocument(URL url) throws Exception,
+	private JPTDocument getNewJPTDocument( URI uri ) throws Exception,
 			DocumentException, URISyntaxException, SAXException,
-			PageTemplateException, IOException, EvalError {
+			PageTemplateException, IOException {
 		
 		return getNewJPTDocument( 
-					readTemplate(url), 
-					url );
+					readTemplate( uri ), 
+					uri );
 	}
 
-    static private JPTDocument getNewJPTDocument(URL url, String templateString) 
+    static private JPTDocument getNewJPTDocument( URI uri, String templateString ) 
     		throws DocumentException, URISyntaxException, SAXException, 
-    		PageTemplateException, IOException, EvalError {
+    		PageTemplateException, IOException {
     	
 		return getNewJPTDocument( 
 					readTemplate( templateString ), 
-					url );
+					uri );
 	}
     
-	static private Document readTemplate(URL url) 
-			throws DocumentException, SAXException {
+	static private Document readTemplate(URI uri) 
+			throws DocumentException, SAXException, MalformedURLException {
 		
+		URL url = uri.toURL();
 		SAXReader reader = getXMLReader();
 		try {
 		    return reader.read( url );
@@ -238,8 +228,8 @@ public class JPTDocumentFactory {
 		} catch( DocumentException e ) {
 		    try {
 		        reader = getHTMLReader();
-		        if (reader == null){
-		            throw (e);
+		        if ( reader == null ){
+		            throw ( e );
 		        }
 		        return reader.read( url );
 		        
@@ -254,19 +244,19 @@ public class JPTDocumentFactory {
 		
 	}
 
-	static private Document readTemplate(String stringTemplate) 
+	static private Document readTemplate( String stringTemplate ) 
 			throws DocumentException, SAXException {
 		
 		SAXReader reader = getXMLReader();
-		StringReader stringReader = new StringReader(stringTemplate);
+		StringReader stringReader = new StringReader( stringTemplate );
 		try {
 		    return reader.read( stringReader );
 		    
 		} catch( DocumentException e ) {
 		    try {
 		        reader = getHTMLReader();
-		        if (reader == null){
-		            throw (e);
+		        if ( reader == null ){
+		            throw ( e );
 		        }
 		        return reader.read( stringReader );
 		        
@@ -281,64 +271,60 @@ public class JPTDocumentFactory {
 		
 	}
 	
-	static private JPTDocument getNewJPTDocument(
-                         Document template,
-                         URL url)
+	static private JPTDocument getNewJPTDocument( Document template, URI uri)
         throws SAXException, PageTemplateException, IOException {
 		
         try {
-        	JPTDocument result = new JPTDocument(url);
+        	JPTDocument result = new JPTDocument( uri );
         	
             // Set up template name and doc type in jptDocument
         	result.setTemplateName(
-        			template.getName());
+        			template.getName() );
         	result.setDocType(
-        			DocType.generateDocTypeFromDom4jDocument(
-        					template));
+        			DocType.generateDocTypeFromDom4jDocument( template ) );
         	
             // Process root element and set it to jptDocument
         	result.setRoot(
             	getNewJPTElement( 
             		template.getRootElement(), 
             		result,
-            		new Stack<Map<String, Slot>>() ));
+            		new Stack<Map<String, Slot>>() ) );
         	
             return result;
             
-        } catch( Exception e ) {
-            throw new PageTemplateException(e);
+        } catch ( Exception e ) {
+            throw new PageTemplateException( e );
         }
     }
 
     static protected JPTElement getNewJPTElement( 
     		Element element, JPTDocument jptDocument,
-    		Stack <Map<String, Slot>>slotStack)
-        throws SAXException, PageTemplateException, IOException, EvalError {
+    		Stack <Map<String, Slot>>slotStack )
+        throws SAXException, PageTemplateException, IOException {
     	
     	// Create a new jptElement and set its name
     	JPTElement result = new JPTElement( 
     			element.getName(), 
     			element.getNamespace().getPrefix() );
     	
-    	// Map first namespaces to make all namepaces prefixes available
-    	mapNamespaces(element, result, jptDocument);
+    	// Map first namespaces to make all namespaces prefixes available
+    	mapNamespaces( element, result, jptDocument );
     	
 		// Get attributes
 		mapAttributes( element, result, jptDocument );
 		
 		// Continue processing if it is not define tal:content or i18n:content
-		if (processContentIsOn(result, jptDocument)){
-			mapContent( element, result, jptDocument, slotStack);
+		if ( processContentIsOn( result, jptDocument ) ){
+			mapContent( element, result, jptDocument, slotStack );
 		}
 
 		return result;
 	}
 
-	private static boolean processContentIsOn(JPTElement jptElement,
-			JPTDocument jptDocument) {
+	private static boolean processContentIsOn( JPTElement jptElement, JPTDocument jptDocument ) {
 		
-		return !jptElement.existsTalAttribute(TwoPhasesPageTemplate.TAL_CONTENT, jptDocument)
-				&& !jptElement.existsI18nAttribute(TwoPhasesPageTemplate.I18N_CONTENT, jptDocument);
+		return ! jptElement.existsTalAttribute( TwoPhasesPageTemplate.TAL_CONTENT, jptDocument )
+				&& ! jptElement.existsI18nAttribute( TwoPhasesPageTemplate.I18N_CONTENT, jptDocument );
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -346,7 +332,7 @@ public class JPTDocumentFactory {
                                  JPTElement jptElement,
                                  JPTDocument jptDocument,
                                  Stack <Map<String, Slot>>slotStack)
-        throws SAXException, PageTemplateException, IOException, EvalError {
+        throws SAXException, PageTemplateException, IOException {
     	
         // Use default template content
         for ( Iterator<Node> i = element.nodeIterator(); i.hasNext(); ) {
@@ -354,17 +340,17 @@ public class JPTDocumentFactory {
             switch( node.getNodeType() ) {
             case Node.ELEMENT_NODE:
             	jptElement.addContent(
-            			getNewJPTElement( (Element)node, jptDocument , slotStack ));
+            			getNewJPTElement( (Element) node, jptDocument , slotStack ) );
                 break;
                 
             case Node.TEXT_NODE:
             	jptElement.addContent(
-            			new TextNode( node.getText() ));
+            			new TextNode( node.getText() ) );
                 break;
                 
             case Node.CDATA_SECTION_NODE:
             	jptElement.addContent(
-            			new CDATANode( node.getText() ));
+            			new CDATANode( node.getText() ) );
                 break;
                 
             case Node.NAMESPACE_NODE:  // Already handled
@@ -394,12 +380,12 @@ public class JPTDocumentFactory {
 		
 		for ( Iterator<Attribute> i = element.nodeIterator(); i.hasNext(); ) {
 			Node node = i.next();
-			if (node.getNodeType() == Node.NAMESPACE_NODE){
-                Namespace declared = (Namespace)node;
-                if (jptDocument.isNamespaceToDeclare(declared)){
-                	jptDocument.addNamespace(declared);
+			if ( node.getNodeType() == Node.NAMESPACE_NODE ){
+                Namespace declared = ( Namespace ) node;
+                if ( jptDocument.isNamespaceToDeclare( declared ) ){
+                	jptDocument.addNamespace( declared );
                 } else {
-                	jptElement.addNamespaceStaticAttribute(declared);
+                	jptElement.addNamespaceStaticAttribute( declared );
                 }
 			}
 		}
@@ -426,7 +412,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new TALDefine( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
 
                 // tal:condition
@@ -434,7 +420,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new TALCondition( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
 
                 // tal:repeat
@@ -442,7 +428,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new TALRepeat( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
 
                 // tal:content
@@ -450,7 +436,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new TALContent( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
 
                 // tal:replace
@@ -459,7 +445,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new TALContent( 
                 					namespacePrefix,
-                					attribute.getValue() ));
+                					attribute.getValue() ) );
                 }
 
                 // tal:attributes
@@ -467,7 +453,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new TALAttributes( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
 
                 // tal:omit-tag
@@ -480,13 +466,21 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new TALOnError( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
+                }
+                
+                // tal:tag
+                else if ( name.equals( TwoPhasesPageTemplate.TAL_TAG ) ) {
+                	jptElement.addDynamicAttribute(
+                			new TALTag( 
+                					namespacePrefix,
+                					attribute.getValue() ) );
                 }
                 
                 // error
                 else {
-                    throw new PageTemplateException( "unknown TAL attribute: " + name 
-                            + " in template");
+                    throw new PageTemplateException( 
+                    		"Unknown TAL attribute: " + name + " in template");
                 }
             }
 			
@@ -497,7 +491,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new METALUseMacro( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // metal:define-slot
@@ -505,7 +499,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new METALDefineSlot( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
 
                 // metal:define-macro
@@ -513,7 +507,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new METALDefineMacro( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // metal:fill-slot
@@ -521,13 +515,13 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new METALFillSlot( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // error
                 else {
-                    throw new PageTemplateException( "unknown metal attribute: " + name 
-                            + " in template");
+                    throw new PageTemplateException( 
+                    		"Unknown metal attribute: " + name + " in template");
                 }
             }
             
@@ -538,7 +532,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new I18NDomain( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // i18n:define
@@ -546,7 +540,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new I18NDefine( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // i18n:content
@@ -554,7 +548,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new I18NContent( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // i18n:replace
@@ -563,7 +557,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new I18NContent( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // i18n:attributes
@@ -571,7 +565,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new I18NAttributes(
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // i18n:params
@@ -579,7 +573,7 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new I18NParams( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // i18n:on-error
@@ -587,13 +581,13 @@ public class JPTDocumentFactory {
                 	jptElement.addDynamicAttribute(
                 			new I18NOnError( 
                 					namespacePrefix,
-                					attribute.getValue()) );
+                					attribute.getValue() ) );
                 }
                 
                 // error
                 else {
-                    throw new PageTemplateException( "unknown i18n attribute: " + name 
-                            + " in template");
+                    throw new PageTemplateException( 
+                    		"Unknown i18n attribute: " + name + " in template");
                 }
             }
             
@@ -608,13 +602,13 @@ public class JPTDocumentFactory {
         }
         
         //  Add omit-tag
-        if (talOmitTag != null){
+        if ( talOmitTag != null ){
         	jptElement.addDynamicAttribute(
         			new TALOmitTag( 
         					jptDocument.getTalPrefix(),
         					talOmitTag ) );
         	
-        } else if (isReplace){
+        } else if ( isReplace ){
         	jptElement.addDynamicAttribute(
         			new TALOmitTag( 
         					jptDocument.getTalPrefix(),

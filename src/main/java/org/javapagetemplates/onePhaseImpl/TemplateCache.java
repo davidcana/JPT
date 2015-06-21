@@ -31,7 +31,22 @@ import org.javapagetemplates.common.exceptions.PageTemplateException;
  */
 public interface TemplateCache {
 	
-	public void put(String id, Document document) throws PageTemplateException;
+	/**
+	 * Put a dom4j document into the cache
+	 * 
+	 * @param id
+	 * @param document
+	 * @throws PageTemplateException
+	 */
+	public void put( String id, Document document ) throws PageTemplateException;
 	
-	public Document get(String id) throws PageTemplateException;
+	
+	/**
+	 * Get a dom4j document from the cache
+	 * 
+	 * @param id
+	 * @return
+	 * @throws PageTemplateException
+	 */
+	public Document get( String id ) throws PageTemplateException;
 }

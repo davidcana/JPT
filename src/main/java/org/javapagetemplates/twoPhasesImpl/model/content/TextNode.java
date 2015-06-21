@@ -37,7 +37,7 @@ public class TextNode implements ContentItem {
 	private String text;
 	
 	public TextNode(){}
-	public TextNode(String text){
+	public TextNode( String text ){
 		this.text = text;
 	}
 	
@@ -45,14 +45,14 @@ public class TextNode implements ContentItem {
 		return text;
 	}
 
-	public void setText(String text) {
+	public void setText( String text ) {
 		this.text = text;
 	}
 	
 	@Override
-	public void writeToXmlWriter(JPTXMLWriter xmlWriter) throws IOException,
+	public void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException,
 			SAXException {
-		xmlWriter.writeTextNode(this);
+		xmlWriter.writeTextNode( this );
 	}
 	
 }

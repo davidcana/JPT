@@ -1,7 +1,8 @@
 package org.javapagetemplates.twoPhasesImpl.model.attributes.TAL;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.HTMLFragment;
 import org.javapagetemplates.twoPhasesImpl.NullContent;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
@@ -9,8 +10,6 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TextEscapableAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -49,7 +48,7 @@ public class TALContent extends JPTAttributeImpl implements DynamicAttribute, Te
 	
 	public TALContent(){}
 	public TALContent(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
+		super( namespaceUri );
 		configureTextEscapableAttribute( this, expression );
 	}
 	
@@ -79,29 +78,29 @@ public class TALContent extends JPTAttributeImpl implements DynamicAttribute, Te
 	
 	@Override
 	public String getValue() {
-		return (this.escapeOn? "": TwoPhasesPageTemplate.STRING_EXPR_STRUCTURE)
+		return ( this.escapeOn? "": TwoPhasesPageTemplate.STRING_EXPR_STRUCTURE )
 				+ this.content.toString();
 	}
 	
-	public Object evaluate( Interpreter beanShell ) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		try {
-			Object result = this.content.evaluate(beanShell);
+			Object result = this.content.evaluate( evaluationHelper );
 			
-			if (result == null){
+			if ( result == null ){
 				return NULL_CONTENT;
 			}
 			
 			// If escape is off return a HTMLFragment instance
-			if (!this.escapeOn){
-				return new HTMLFragment(result.toString());
+			if ( ! this.escapeOn ){
+				return new HTMLFragment( result.toString() );
 			}
 			
 			// Escape is on
 			
 			// If result is a HTMLFragment escape it
-			if (result instanceof HTMLFragment){
-				return ((HTMLFragment)result).toString();
+			if ( result instanceof HTMLFragment ){
+				return ( ( HTMLFragment ) result ).toString();
 			}
 			
 			return result;
@@ -110,17 +109,17 @@ public class TALContent extends JPTAttributeImpl implements DynamicAttribute, Te
 					result:
 					new HTMLFragment(result.toString());*/
 			
-		} catch (ExpressionEvaluationException e) {
+		} catch ( EvaluationException e ) {
 			e.setInfo(
 					this.content.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e;
 			
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					this.content.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e2;
 		}
 	}

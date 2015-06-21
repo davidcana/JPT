@@ -1,11 +1,10 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.NoSuchPathException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -41,8 +40,8 @@ public class ExistsExpression extends JPTExpressionImpl implements EvaluableToBo
 	
 	
 	public ExistsExpression(){}
-	public ExistsExpression(String stringExpression, JPTExpression expression){
-		super(stringExpression);
+	public ExistsExpression( String stringExpression, JPTExpression expression ){
+		super( stringExpression );
 		this.expression = expression;
 	}
 
@@ -51,25 +50,25 @@ public class ExistsExpression extends JPTExpressionImpl implements EvaluableToBo
 		return this.expression;
 	}
 
-	public void setExpression(JPTExpression expression) {
+	public void setExpression( JPTExpression expression ) {
 		this.expression = expression;
 	}
 
-	static public ExistsExpression generate(String expression) 
+	static public ExistsExpression generate( String expression ) 
 			throws ExpressionSyntaxException {
 		
 		return new ExistsExpression(
 				expression, 
 				ExpressionUtils.generate(
-						expression.substring( TwoPhasesPageTemplate.EXPR_EXISTS.length() )));
+						expression.substring( TwoPhasesPageTemplate.EXPR_EXISTS.length() ) ) );
 	}
 	
 	@Override
-	public Boolean evaluateToBoolean(Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper )
+			throws EvaluationException {
 		
         try {
-            return this.expression.evaluate(beanShell) != null;
+            return this.expression.evaluate( evaluationHelper ) != null;
             
         } catch( NoSuchPathException e ) {}
 
@@ -77,13 +76,13 @@ public class ExistsExpression extends JPTExpressionImpl implements EvaluableToBo
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return this.evaluateToBoolean(beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return this.evaluateToBoolean( evaluationHelper );
 	}
 	
-	static public boolean evaluate(String string, Interpreter beanShell) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException {
-		return generate(string).evaluateToBoolean(beanShell);
+	static public boolean evaluate( String string, EvaluationHelper evaluationHelper ) 
+			throws ExpressionSyntaxException, EvaluationException {
+		return generate( string ).evaluateToBoolean( evaluationHelper );
 	}
 
 }

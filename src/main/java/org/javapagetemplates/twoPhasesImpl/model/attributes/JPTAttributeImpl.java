@@ -38,12 +38,12 @@ abstract public class JPTAttributeImpl implements JPTAttribute {
 	private String namespaceUri;
 	
 	public JPTAttributeImpl(){}
-	public JPTAttributeImpl(String namespaceUri){
+	public JPTAttributeImpl( String namespaceUri ){
 		this.namespaceUri = namespaceUri;
 	}
 	
 	
-	public void setNamespaceURI(String namespaceUri) {
+	public void setNamespaceURI( String namespaceUri ) {
 		this.namespaceUri = namespaceUri;
 	}
 
@@ -58,8 +58,7 @@ abstract public class JPTAttributeImpl implements JPTAttribute {
 	}
 	
 	protected static void configureTextEscapableAttribute(
-			TextEscapableAttribute textEscapableAttribute, String exp)
-			throws PageTemplateException {
+			TextEscapableAttribute textEscapableAttribute, String exp ) throws PageTemplateException {
 				
 		String stringExpression = null;
 		
@@ -77,4 +76,5 @@ abstract public class JPTAttributeImpl implements JPTAttribute {
 	    
 	    textEscapableAttribute.setContent ( ExpressionUtils.generate( stringExpression ) );
 	}
+	
 }

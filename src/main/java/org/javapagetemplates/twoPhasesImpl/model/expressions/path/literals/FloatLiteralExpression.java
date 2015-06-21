@@ -1,12 +1,11 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToNumber;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.FirstPathToken;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -45,28 +44,28 @@ public class FloatLiteralExpression implements EvaluableToNumber, FirstPathToken
 	
 	public FloatLiteralExpression(){}
 	
-	public FloatLiteralExpression(Float literal){
+	public FloatLiteralExpression( Float literal ){
 		this.literal = literal;
 	}
 
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		return this.literal;
 	}
 	
 	@Override
-	public Number evaluateToNumber(Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Number evaluateToNumber( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		return this.literal;
 	}
 	
-	static public FloatLiteralExpression generate(String expression){
+	static public FloatLiteralExpression generate( String expression ){
 		
 		if ( expression.endsWith( TwoPhasesPageTemplate.FLOAT_LITERAL_SUFFIX ) ) {
             try {
                 return new FloatLiteralExpression(
-                		new Float( expression.substring( 0, expression.length() - 1 ) ));
+                		new Float( 
+                				expression.substring( 0, expression.length() - 1 ) ));
             } catch( NumberFormatException e ) {}
 		}
 		
@@ -80,13 +79,11 @@ public class FloatLiteralExpression implements EvaluableToNumber, FirstPathToken
 		return null;
 	}
 	
-	static public Object evaluate(String expression, Interpreter beanShell) 
-			throws PageTemplateException {
+	static public Object evaluate( String expression, EvaluationHelper evaluationHelper ) throws PageTemplateException {
 		return new Float( expression.substring( 0, expression.length() - 1 ) );
 	}
 	
-	static public Object evaluate2(String expression, Interpreter beanShell) 
-			throws PageTemplateException {
+	static public Object evaluate2( String expression, EvaluationHelper evaluationHelper ) throws PageTemplateException {
 		return new Float( expression );
 	}
 	
@@ -99,5 +96,4 @@ public class FloatLiteralExpression implements EvaluableToNumber, FirstPathToken
 	public String toString(){
 		return '\'' + this.literal.toString() + '\'' ;
 	}
-	
 }

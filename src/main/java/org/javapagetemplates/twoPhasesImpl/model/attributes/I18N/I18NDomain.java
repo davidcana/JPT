@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
@@ -13,8 +14,6 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.xnap.commons.i18n.I18n;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -50,21 +49,21 @@ public class I18NDomain extends JPTAttributeImpl implements DynamicAttribute {
 	
 	
 	public I18NDomain(){}
-	public I18NDomain(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
-		this.expressions = AttributesUtils.getExpressions(expression);
+	public I18NDomain( String namespaceUri, String expression ) throws PageTemplateException {
+		super( namespaceUri );
+		this.expressions = AttributesUtils.getExpressions( expression );
 	}
 
 	public List<JPTExpression> getExpressions() {
 		return this.expressions;
 	}
 
-	public void setExpressions(List<JPTExpression> expressions) {
+	public void setExpressions( List<JPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 
-	public void addExpressions(JPTExpression expressions){
-		this.expressions.add(expressions);
+	public void addExpressions( JPTExpression expressions ){
+		this.expressions.add( expressions );
 	}
 	
 	@Override
@@ -74,39 +73,38 @@ public class I18NDomain extends JPTAttributeImpl implements DynamicAttribute {
 	
 	@Override
 	public String getValue() {
-		return AttributesUtils.getStringFromExpressions(this.expressions);
+		return AttributesUtils.getStringFromExpressions( this.expressions );
 	}
 	
-	public void process( Interpreter beanShell, 
-			List<String> varsToUnset, Map<String, Object> varsToSet )
-			throws ExpressionEvaluationException {
+	public void process( EvaluationHelper evaluationHelper, 
+			List<String> varsToUnset, Map<String, Object> varsToSet ) throws EvaluationException {
 		
 		JPTExpression expression = null;
         try {
             List<I18n> i18nList = new ArrayList<I18n>();
-            for (JPTExpression jptExpression: this.expressions){
+            for ( JPTExpression jptExpression: this.expressions ){
             	expression = jptExpression;
-            	i18nList.add( (I18n) jptExpression.evaluate(beanShell) );
+            	i18nList.add( (I18n) jptExpression.evaluate( evaluationHelper ) );
             }
             
             TwoPhasesPageTemplateImpl.setVar(
-            		beanShell, 
+            		evaluationHelper, 
             		varsToUnset, 
             		varsToSet, 
             		TwoPhasesPageTemplateImpl.I18N_DOMAIN_VAR_NAME, 
-            		i18nList);
+            		i18nList );
             
-		} catch (ExpressionEvaluationException e) {
+		} catch ( EvaluationException e ) {
 			e.setInfo(
 					expression == null? null: expression.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e;
 			
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					expression == null? null: expression.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e2;
 		}
 	}

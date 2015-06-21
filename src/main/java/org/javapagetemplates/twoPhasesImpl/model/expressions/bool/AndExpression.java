@@ -3,13 +3,12 @@ package org.javapagetemplates.twoPhasesImpl.model.expressions.bool;
 import java.util.Iterator;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -44,19 +43,18 @@ public class AndExpression extends BooleanExpression {
 	public AndExpression(){
 		super();
 	}
-	public AndExpression(String stringExpression){
-		super(stringExpression);
+	public AndExpression( String stringExpression ){
+		super( stringExpression );
 	}
 	
 	
-	static public AndExpression generate(String exp) 
-			throws ExpressionSyntaxException {
+	static public AndExpression generate( String exp ) throws ExpressionSyntaxException {
         
 		String expression = exp.substring( TwoPhasesPageTemplate.EXPR_AND.length() ).trim();
         
 		// Check some conditions
         if ( expression.length() == 0 ) {
-            throw new ExpressionSyntaxException("And expression void.");
+            throw new ExpressionSyntaxException( "AND expression void." );
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( 
@@ -64,27 +62,26 @@ public class AndExpression extends BooleanExpression {
         		TwoPhasesPageTemplate.EXPRESSION_DELIMITER );
         
         if ( segments.countTokens() == 1 ) {
-        	throw new ExpressionSyntaxException("Only one element in and expression, please add at least one more.");
+        	throw new ExpressionSyntaxException(
+        			"Only one element in AND expression, please add at least one more." );
         }
         
         // Iterate through segments
-        AndExpression result = new AndExpression(exp);
+        AndExpression result = new AndExpression( exp );
         
-        addExpressionsFromTokenizer(result, segments);
+        addExpressionsFromTokenizer( result, segments );
         
         return result;
 	}
 	
 	@Override
-	public Boolean evaluateToBoolean(Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		Iterator<JPTExpression> i = this.expressions.iterator();
 		
         while ( i.hasNext() ) {
         	JPTExpression currentExpression = i.next();
-        	if (!ExpressionUtils.evaluateToBoolean( 
-        			currentExpression, beanShell )){
+        	if ( ! ExpressionUtils.evaluateToBoolean( currentExpression, evaluationHelper ) ){
             	return false;
             }
         }
@@ -92,9 +89,9 @@ public class AndExpression extends BooleanExpression {
         return true;
 	}
 	
-	static public boolean evaluate(String exp, Interpreter beanShell) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException {
-		return generate(exp).evaluateToBoolean(beanShell);
+	static public boolean evaluate( String exp, EvaluationHelper evaluationHelper ) 
+			throws ExpressionSyntaxException, EvaluationException {
+		return generate( exp ).evaluateToBoolean( evaluationHelper );
 	}
 
 }

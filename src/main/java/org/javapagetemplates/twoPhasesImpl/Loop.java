@@ -1,7 +1,5 @@
 package org.javapagetemplates.twoPhasesImpl;
 
-import bsh.Interpreter;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -9,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.javapagetemplates.common.PageTemplate;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALRepeat;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.ArrayExpression;
@@ -53,8 +52,8 @@ public class Loop {
 
 
 	@SuppressWarnings("rawtypes")
-	public Loop( TALRepeat talRepeat, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet )
-			throws ExpressionEvaluationException {
+	public Loop( TALRepeat talRepeat, EvaluationHelper evaluationHelper, List<String> varsToUnset, Map<String, Object> varsToSet )
+			throws EvaluationException {
 
 		this.talRepeat = talRepeat;
 		JPTExpression expression = null;
@@ -62,78 +61,78 @@ public class Loop {
 			expression = this.talRepeat.getRepeat().getValue();
 
 			if ( expression == null ) {
-				throw new ExpressionEvaluationException("null expression in loop");   
+				throw new EvaluationException( "Null expression in loop" );   
 			}
 
 			this.variableName = talRepeat.getRepeat().getKey();
-			Object loop = expression.evaluate( beanShell );
+			Object loop = expression.evaluate( evaluationHelper );
 
 			if ( loop == null){
 				this.forceExit = true;
 				return;
 
 			} else if ( loop instanceof Iterator ) {
-				this.iterator = (Iterator)loop;
+				this.iterator = ( Iterator ) loop;
 
 			} else if ( loop instanceof Collection ) {
-				this.iterator = ((Collection)loop).iterator();
-				this.length = ((Collection)loop).size();
+				this.iterator = ( ( Collection ) loop ).iterator();
+				this.length = ( ( Collection )loop ).size();
 
 			} else if ( loop.getClass().isArray() ) {
 				if ( loop.getClass().getComponentType().isPrimitive() ) {
 					loop = ArrayExpression.convertPrimitiveArray( loop );
 				}
-				this.iterator = Arrays.asList((Object[])loop).iterator();
-				this.length = ((Object[])loop).length;
+				this.iterator = Arrays.asList( ( Object[] ) loop ).iterator();
+				this.length = ( ( Object[] ) loop ).length;
 
 			} else {
-				throw new ClassCastException
-				( "result of repeat expression must evaluate to an array, java.util.Iterator " +
+				throw new ClassCastException( 
+						"Result of repeat expression must evaluate to an array, java.util.Iterator " +
 						"or java.util.Collection: " +
 						expression + ": evaluates to " + loop.getClass().getName() );
 			}
 
-			this.registerVars(beanShell, varsToUnset, varsToSet);
+			this.registerVars( evaluationHelper, varsToUnset, varsToSet );
 
-		} catch (ExpressionEvaluationException e) {
+		} catch ( EvaluationException e ) {
 			e.setInfo(
 					expression == null? null: expression.getStringExpression(),
-							talRepeat.getQualifiedName());
+					talRepeat.getQualifiedName() );
 			throw e;
 
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					expression == null? null: expression.getStringExpression(),
-							talRepeat.getQualifiedName());
+					talRepeat.getQualifiedName() );
 			throw e2;
 		}
 	}
 
-	private void registerVars(Interpreter beanShell, List<String> varsToUnset,
-			Map<String, Object> varsToSet) throws ExpressionEvaluationException {
+	private void registerVars( EvaluationHelper evaluationHelper, List<String> varsToUnset,
+			Map<String, Object> varsToSet ) throws EvaluationException {
 
 		try {
 			TwoPhasesPageTemplateImpl.setVar(
-					beanShell, 
+					evaluationHelper, 
 					varsToUnset, 
 					varsToSet, 
 					this.variableName, 
-					null);
+					null );
 
 			TwoPhasesPageTemplateImpl.setVar(
-					beanShell, 
+					evaluationHelper, 
 					varsToUnset, 
 					varsToSet, 
 					PageTemplate.REPEAT_VAR_NAME, 
-					null);
+					null );
 
-		} catch (Exception e) {
-			throw new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			throw new EvaluationException( e );
 		}
 	}
 
-	public boolean repeat( Interpreter beanShell ) throws ExpressionEvaluationException {
+	public boolean repeat( EvaluationHelper evaluationHelper ) throws EvaluationException {
 
 		try {
 			if (this.forceExit){
@@ -149,19 +148,19 @@ public class Loop {
 
 			} else if ( this.iterator.hasNext() ) {
 				this.index++;
-				beanShell.set( this.variableName, this.iterator.next() );
-				beanShell.set( PageTemplate.REPEAT_VAR_NAME, this );
+				evaluationHelper.set( this.variableName, this.iterator.next() );
+				evaluationHelper.set( PageTemplate.REPEAT_VAR_NAME, this );
 				return true;
 
 			} else {
 				return false;
 			}
 
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					this.talRepeat.getValue(),
-					this.talRepeat.getQualifiedName());
+					this.talRepeat.getQualifiedName() );
 			throw e2;
 		}
 	}
@@ -217,11 +216,11 @@ public class Loop {
 		int index = ind;
 		StringBuffer buffer = new StringBuffer( 2 );
 		int digit = index % 26;
-		buffer.append( (char)(start + digit) );
+		buffer.append( ( char )( start + digit) );
 		while( index > 25 ) {
 			index /= 26;
 			digit = (index - 1 ) % 26;
-			buffer.append( (char)(start + digit) );
+			buffer.append( ( char )( start + digit) );
 		}
 		return buffer.reverse().toString();
 	}
@@ -251,12 +250,12 @@ public class Loop {
 			return "<overflow>";
 		}
 
-		StringBuffer buf = new StringBuffer(12);
+		StringBuffer buf = new StringBuffer( 12 );
 		for ( int decade = 0; n != 0; decade ++ ) {
 			int digit = n % 10;
 			if ( digit > 0 ) {
 				digit--;
-				buf.append( roman[decade][digit][capital] );
+				buf.append( roman[ decade ][ digit ][ capital ] );
 			}
 			n /= 10;
 		}

@@ -1,15 +1,14 @@
 package org.javapagetemplates.twoPhasesImpl.model.attributes.TAL;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals.BooleanLiteralExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -47,11 +46,11 @@ public class TALOmitTag extends JPTAttributeImpl implements DynamicAttribute {
 	
 	public TALOmitTag(){}
 	public TALOmitTag(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
+		super( namespaceUri );
 	
 		this.condition = expression.isEmpty()?
 				new BooleanLiteralExpression( true ):
-				ExpressionUtils.generate(expression);
+				ExpressionUtils.generate( expression );
 	}
 	
 
@@ -73,24 +72,24 @@ public class TALOmitTag extends JPTAttributeImpl implements DynamicAttribute {
 		return this.condition.toString();
 	}
 	
-	public boolean evaluate( Interpreter beanShell ) throws ExpressionEvaluationException {
+	public boolean evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		try {
 			return ExpressionUtils.evaluateToBoolean(
 					this.condition, 
-					beanShell);
+					evaluationHelper );
 			
-		} catch (ExpressionEvaluationException e) {
+		} catch ( EvaluationException e ) {
 			e.setInfo(
 					this.condition.getStringExpression(),
 					this.getQualifiedName());
 			throw e;
 			
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					this.condition.getStringExpression(),
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e2;
 		}
 	}

@@ -59,7 +59,7 @@ public class TestObject extends TestObjectSuperClass {
     TestObject(boolean twoPhases) {
     	
     	this.twoPhases = twoPhases;
-        people = new ArrayList<String>(5);
+        people = new ArrayList<String>( 5 );
         people.add( "Chris" );
         people.add( "Karen" );
         people.add( "Mike" );
@@ -68,17 +68,21 @@ public class TestObject extends TestObjectSuperClass {
     }
     
     public I18n getI18n1(String language) throws FileNotFoundException, IOException {
-    	return getI18n("labels1_", language);
+    	return getI18n( "labels1_", language );
     }
     public I18n getI18n2(String language) throws FileNotFoundException, IOException {
-    	return getI18n("labels2_", language);
+    	return getI18n( "labels2_", language );
     }
 	private I18n getI18n(String filePrefix, String language) throws IOException, FileNotFoundException {
 		
 		String i18nFileName = filePrefix + language + ".properties";
     	URL resource = getClass().getResource( "/" + i18nFileName );
-    	File file = new File (resource.getFile());
-    	I18n i18n = new I18n(new PropertyResourceBundle(new InputStreamReader(new FileInputStream(file), "UTF-8")));
+    	File file = new File ( resource.getFile() );
+    	I18n i18n = new I18n(
+    			new PropertyResourceBundle(
+    					new InputStreamReader(
+    							new FileInputStream( file ), 
+    							"UTF-8" ) ) );
     	
     	return i18n;
 	}
@@ -107,18 +111,16 @@ public class TestObject extends TestObjectSuperClass {
 
     
     public String treatError3(TemplateError error) throws EvalError {
-    	
-    	//TemplateError error = this.getTemplateError();
 
-    	if (error == null){
+    	if ( error == null ){
     		return "Error trying to get error!";
     	}
     	
     	StringBuilder sb = new StringBuilder();
-    	sb.append("<pre>" + '\n');
-    	sb.append("Error" + '\n');
-    	sb.append("Type: "+ error.getType() + '\n');
-    	sb.append("Value: " + error.getValue() + '\n');
+    	sb.append( "<pre>" + '\n' );
+    	sb.append( "Error" + '\n' );
+    	sb.append( "Type: "+ error.getType() + '\n' );
+    	sb.append( "Value: " + error.getValue() + '\n' );
     	
     	/*
     	sb.append("traceback: " + '\n');
@@ -130,7 +132,7 @@ public class TestObject extends TestObjectSuperClass {
     				+ element.getFileName() + " / "
     				+ element.getLineNumber() + '\n');
     	}*/
-    	sb.append("</pre>" + '\n');
+    	sb.append( "</pre>" + '\n' );
     	
     	return sb.toString();
     }
@@ -188,7 +190,7 @@ public class TestObject extends TestObjectSuperClass {
     	
     	String string = "<b>The cabinet</b> has <i>usurped</i> the authority of the <h3>president</h3>";
     	
-    	if (this.twoPhases){
+    	if ( this.twoPhases ){
     		return new org.javapagetemplates.twoPhasesImpl.HTMLFragment( string );
     	}
         
@@ -204,7 +206,7 @@ public class TestObject extends TestObjectSuperClass {
     }
     
     public List<Integer> getNumbers() {
-        List<Integer> numbers = new ArrayList<Integer>(100);
+        List<Integer> numbers = new ArrayList<Integer>( 100 );
         for ( int i = 100; i > 0; i-- ) {
             numbers.add( new Integer( i ) );
         }

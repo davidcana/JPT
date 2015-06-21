@@ -37,8 +37,8 @@ public class METALFillSlot extends JPTAttributeImpl implements DynamicAttribute 
 	
 	
 	public METALFillSlot(){}
-	public METALFillSlot(String namespaceUri, String name){
-		super(namespaceUri);
+	public METALFillSlot( String namespaceUri, String name ){
+		super( namespaceUri );
 		this.name = name;
 	}
 	
@@ -47,7 +47,7 @@ public class METALFillSlot extends JPTAttributeImpl implements DynamicAttribute 
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName( String name ) {
 		this.name = name;
 	}
 

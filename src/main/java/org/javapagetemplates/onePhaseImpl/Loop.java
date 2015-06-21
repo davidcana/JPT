@@ -1,8 +1,5 @@
 package org.javapagetemplates.onePhaseImpl;
 
-import bsh.EvalError;
-import bsh.Interpreter;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,6 +8,7 @@ import java.util.Map;
 
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -49,7 +47,8 @@ public class Loop {
     int length = -1; 
     
     @SuppressWarnings("rawtypes")
-	public Loop( String exp, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet ) throws PageTemplateException {
+	public Loop( String exp, EvaluationHelper evaluationHelper, List<String> varsToUnset, Map<String, Object> varsToSet ) 
+			throws PageTemplateException {
         
         String expression = exp;
         
@@ -62,87 +61,86 @@ public class Loop {
             expression = expression.trim();
             int space = expression.indexOf( ' ' );
             if ( space == -1 ) {
-                throw new ExpressionSyntaxException( "bad repeat expression: " + expression );
+                throw new ExpressionSyntaxException( "Bad repeat expression: " + expression );
             }
             this.variableName = expression.substring( 0, space );
             
             String loopExpression = expression.substring( space + 1 );
-            Object loop = Expression.evaluate( loopExpression, beanShell );
+            Object loop = Expression.evaluate( loopExpression, evaluationHelper );
             
             if ( loop == null){
                 this.forceExit = true;
                 return;
                 
             } else if ( loop instanceof Iterator ) {
-                this.iterator = (Iterator)loop;
+                this.iterator = ( Iterator ) loop;
             }
             else if ( loop instanceof Collection ) {
-                this.iterator = ((Collection)loop).iterator();
-                this.length = ((Collection)loop).size();
+                this.iterator = ( ( Collection ) loop ).iterator();
+                this.length = ( ( Collection ) loop ).size();
             }
             else if ( loop.getClass().isArray() ) {
                 if ( loop.getClass().getComponentType().isPrimitive() ) {
                     loop = Expression.convertPrimitiveArray( loop );
                 }
-                this.iterator = Arrays.asList((Object[])loop).iterator();
-                this.length = ((Object[])loop).length;
+                this.iterator = Arrays.asList( ( Object[] ) loop ).iterator();
+                this.length = ( ( Object[] ) loop ).length;
             }
             else {
-                throw new ClassCastException
-                    ( "result of repeat expression must evaluate to an array, java.util.Iterator " +
-                      "or java.util.Collection: " +
-                      expression + ": evaluates to " + loop.getClass().getName() );
+                throw new ClassCastException( 
+                		"Result of repeat expression must evaluate to an array, java.util.Iterator "
+                        + "or java.util.Collection: "
+                        + expression + ": evaluates to " + loop.getClass().getName() );
             }
 
-            this.registerVars(beanShell, varsToUnset, varsToSet);
+            this.registerVars( evaluationHelper, varsToUnset, varsToSet );
         }
     }
 
-	private void registerVars(Interpreter beanShell, List<String> varsToUnset,
-			Map<String, Object> varsToSet) throws PageTemplateException {
+	private void registerVars( EvaluationHelper evaluationHelper, List<String> varsToUnset,
+			Map<String, Object> varsToSet ) throws PageTemplateException {
 		
-		try {
-		    PageTemplateImpl.setVar(
-		    		beanShell, 
-		    		varsToUnset, 
-		    		varsToSet, 
-		    		this.variableName, 
-		    		null);
-		    PageTemplateImpl.setVar(
-		    		beanShell, 
-		    		varsToUnset, 
-		    		varsToSet, 
-		    		OnePhasePageTemplate.REPEAT_VAR_NAME, 
-		    		null);
-		} catch (EvalError e) {
-		    throw new PageTemplateException(e);
-		}
+	    PageTemplateImpl.setVar(
+	    		evaluationHelper, 
+	    		varsToUnset, 
+	    		varsToSet, 
+	    		this.variableName, 
+	    		null );
+	    
+	    PageTemplateImpl.setVar(
+	    		evaluationHelper, 
+	    		varsToUnset, 
+	    		varsToSet, 
+	    		OnePhasePageTemplate.REPEAT_VAR_NAME, 
+	    		null );
 	}
     
-    public boolean repeat( Interpreter beanShell ) throws PageTemplateException {
-        try {
-            if (this.forceExit){
-                return false;
-            }
-            if ( this.iterator == null ) {
-                if ( ! this.once ) {
-                    this.once = true;
-                    return true;
-                }
-                return false;
-            }
-            else if ( this.iterator.hasNext() ) {
-                this.index++;
-                beanShell.set( this.variableName, this.iterator.next() );
-                beanShell.set( OnePhasePageTemplate.REPEAT_VAR_NAME, this );
+    public boolean repeat( EvaluationHelper evaluationHelper ) throws PageTemplateException {
+    	
+        if ( this.forceExit ){
+            return false;
+        }
+        
+        if ( this.iterator == null ) {
+            if ( ! this.once ) {
+                this.once = true;
                 return true;
             }
-            else {
-                return false;
-            }
-        } catch( bsh.EvalError e ) {
-            throw new PageTemplateException(e);
+            return false;
         }
+        
+        if ( this.iterator.hasNext() ) {
+            this.index++;
+            evaluationHelper.set( 
+            		this.variableName, 
+            		this.iterator.next() );
+            evaluationHelper.set( 
+            		OnePhasePageTemplate.REPEAT_VAR_NAME, 
+            		this );
+            return true;
+        }
+        
+        return false;
     }
     
     public int getIndex() {
@@ -196,11 +194,11 @@ public class Loop {
         int index = ind;
         StringBuffer buffer = new StringBuffer( 2 );
         int digit = index % 26;
-        buffer.append( (char)(start + digit) );
+        buffer.append( ( char )( start + digit ) );
         while( index > 25 ) {
             index /= 26;
             digit = (index - 1 ) % 26;
-            buffer.append( (char)(start + digit) );
+            buffer.append( ( char ) ( start + digit ) );
         }
         return buffer.reverse().toString();
     }
@@ -235,7 +233,7 @@ public class Loop {
             int digit = n % 10;
             if ( digit > 0 ) {
                 digit--;
-                buf.append( roman[decade][digit][capital] );
+                buf.append( roman [ decade ][ digit ][ capital ] );
             }
             n /= 10;
         }

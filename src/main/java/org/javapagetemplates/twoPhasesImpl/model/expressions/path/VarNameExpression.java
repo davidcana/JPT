@@ -1,9 +1,7 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
-
-import bsh.EvalError;
-import bsh.Interpreter;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -54,19 +52,12 @@ public class VarNameExpression implements FirstPathToken {
 	}
 
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return evaluate(this.varName, beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluate( this.varName, evaluationHelper );
 	}
 	
-	static public Object evaluate(String varName, Interpreter beanShell) 
-			throws ExpressionEvaluationException {
-		
-		try {
-			return beanShell.get( varName );
-			
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException(e);
-		}
+	static public Object evaluate( String varName, EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluationHelper.get( varName );
 	}
 	
 	static public VarNameExpression generate(String varName){

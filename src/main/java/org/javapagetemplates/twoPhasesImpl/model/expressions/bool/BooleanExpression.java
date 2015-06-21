@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -46,8 +45,8 @@ abstract public class BooleanExpression extends JPTExpressionImpl implements Eva
 	
 	
 	public BooleanExpression(){}
-	public BooleanExpression(String stringExpression){
-		super(stringExpression);
+	public BooleanExpression( String stringExpression ){
+		super( stringExpression );
 	}
 
 	
@@ -55,30 +54,30 @@ abstract public class BooleanExpression extends JPTExpressionImpl implements Eva
 		return this.expressions;
 	}
 
-	public void setExpressions(List<JPTExpression> expressions) {
+	public void setExpressions( List<JPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 	
-	public void addExpression(JPTExpression expression){
-		this.expressions.add(expression);
+	public void addExpression( JPTExpression expression ){
+		this.expressions.add( expression );
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return this.evaluateToBoolean(beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return this.evaluateToBoolean( evaluationHelper );
 	}
 	
-	protected static void addExpressionsFromTokenizer(BooleanExpression booleanExpression,
-			ExpressionTokenizer segments) throws ExpressionSyntaxException {
+	protected static void addExpressionsFromTokenizer( BooleanExpression booleanExpression,
+			ExpressionTokenizer segments ) throws ExpressionSyntaxException {
 				
 		String segment1 = segments.nextToken().trim();
 	    booleanExpression.addExpression(
-	    		ExpressionUtils.generate(segment1) ); 
+	    		ExpressionUtils.generate( segment1 ) ); 
 	    		
 	    while ( segments.hasMoreTokens() ) {
 	        String segment = segments.nextToken().trim();
 	        booleanExpression.addExpression(
-	        		ExpressionUtils.generate(segment) ); 
+	        		ExpressionUtils.generate( segment ) ); 
 	    }
 	}
 }

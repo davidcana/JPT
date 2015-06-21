@@ -29,7 +29,7 @@ import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  */
 public interface TextEscapableAttribute {
 
-	public void setEscapeOn(boolean escapeOn);
+	public void setEscapeOn( boolean escapeOn );
 	
-	public void setContent(JPTExpression content);
+	public void setContent( JPTExpression content );
 }

@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.NoSuchPathException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
@@ -17,8 +18,6 @@ import org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals.Float
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals.IntegerLiteralExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals.LongLiteralExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals.StringLiteralExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -58,25 +57,25 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
 	
 	public PathExpression(){}
 
-	public PathExpression(String stringExpression, Path path){
-		super(stringExpression);
+	public PathExpression( String stringExpression, Path path ){
+		super( stringExpression );
 		
-		this.expressions.add(path);
+		this.expressions.add( path );
 	}
 
 
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		NoSuchPathException exception = null;
 		
-		for (JPTExpression jptExpression: this.expressions){
+		for ( JPTExpression jptExpression: this.expressions ){
 			try {
-				Object result = jptExpression.evaluate(beanShell);
-				if (result != null){
+				Object result = jptExpression.evaluate( evaluationHelper );
+				if ( result != null ){
 					return result;
 				}
-			} catch (NoSuchPathException e) {
+			} catch ( NoSuchPathException e ) {
 				exception = e;
 			}
 		}
@@ -88,18 +87,18 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
 		return null;
 	}
 	
-	static public Object evaluate(String pathExpression, Interpreter beanShell) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException {
-		return generate(pathExpression).evaluate(beanShell);
+	static public Object evaluate( String pathExpression, EvaluationHelper evaluationHelper ) 
+		throws ExpressionSyntaxException, EvaluationException {
+		return generate( pathExpression ).evaluate( evaluationHelper );
 	}
 	
-	static public JPTExpression generate(String exp) throws ExpressionSyntaxException {
+	static public JPTExpression generate( String exp ) throws ExpressionSyntaxException {
 		
         String expression = exp;
         
         // Blank expression evaluates to blank string
         if ( expression.trim().length() == 0 ) {
-            return new StringLiteralExpression(StringExpression.VOID_STRING);
+            return new StringLiteralExpression( StringExpression.VOID_STRING );
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( 
@@ -113,19 +112,20 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         PathExpression result = new PathExpression();
         while ( segments.hasMoreTokens() ) {
             String segment = segments.nextToken().trim();
-            result.expressions.add(new GeneralPathExpressionItem(segment));
+            result.expressions.add(
+            		new GeneralPathExpressionItem( segment ) );
         }
         
         return result;
 	}
 	
     private static final JPTExpression generateFromPathSegment( String expression ) 
-            throws ExpressionSyntaxException {
+    	throws ExpressionSyntaxException {
     	
         // Blank expression evaluates to blank string
         if ( expression.length() == 0 ) {
         	return new Path(
-        			new StringLiteralExpression(StringExpression.VOID_STRING) );
+        			new StringLiteralExpression( StringExpression.VOID_STRING ) );
         }
      
         // Evaluate first token
@@ -134,22 +134,22 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         FirstPathToken firstPathToken = generateFirstPathToken( token );
         
         // If the path has only one token, return a single expression
-        if (!tokenizer.hasMoreTokens()){
+        if ( ! tokenizer.hasMoreTokens() ){
         	return new Path( firstPathToken );
         }
         
         // Otherwise, generate a Path for the PathExpression
-        Path path = new Path(firstPathToken);
+        Path path = new Path( firstPathToken );
         
         // Traverse the portalObjectPath
         while ( tokenizer.hasMoreTokens() ) {
             token = tokenizer.nextToken().trim();
             NextPathToken nextPathToken = generateNextPathToken( token, path, expression );
             
-            if (nextPathToken instanceof ArrayExpression){
-            	path = new Path( (FirstPathToken)nextPathToken );
+            if ( nextPathToken instanceof ArrayExpression ){
+            	path = new Path( ( FirstPathToken ) nextPathToken );
             } else {
-            	path.addToken( nextPathToken);
+            	path.addToken( nextPathToken );
             }
         }
 
@@ -157,10 +157,9 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
     }
     
 
-    private static final FirstPathToken generateFirstPathToken( String tok )
-        throws ExpressionSyntaxException {
+    private static final FirstPathToken generateFirstPathToken( String tok ) throws ExpressionSyntaxException {
     	
-        String token = new String(tok);
+        String token = new String( tok );
         
         // Separate identifier from any array accessors
         String arrayAccessor = null;
@@ -173,7 +172,7 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         // First token must come from scope or be a literal
 
         // First see if it's a string literal
-        FirstPathToken result = StringLiteralExpression.generate(token);
+        FirstPathToken result = StringLiteralExpression.generate( token );
         if ( result == null ) {
 
 	        // If it's not, try to see if it's a number
@@ -181,19 +180,19 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
 	        if ( result == null ) {
 	        	
 	            // Maybe it's a boolean literal
-	            result = BooleanLiteralExpression.generate(token);
+	            result = BooleanLiteralExpression.generate( token );
 	            if ( result == null ) {
 	            
 	                // It could be a class, for a static method call
-	                result = StaticCallExpression.generate(token);
+	                result = StaticCallExpression.generate( token );
 	                if ( result == null ) {
 	                    
 	                	// Or it could be an actual reference to a class object
-	                    result = ClassExpression.generate(token);
+	                    result = ClassExpression.generate( token );
 	                    if ( result == null ) {
 	                        
 	                    	// Must be an object in scope
-	                        result = VarNameExpression.generate(token);
+	                        result = VarNameExpression.generate( token );
 	                    }
 	                }
 	            }
@@ -202,36 +201,36 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         
         // If it is an array
         if ( arrayAccessor != null && result instanceof JPTExpression) {
-        	result = ArrayExpression.generate( token, (JPTExpression) result, arrayAccessor);
+        	result = ArrayExpression.generate( token, ( JPTExpression ) result, arrayAccessor);
         }
         
         return result;
     }
     
-	private static FirstPathToken generateNumericLiteralExpression(String token) {
+	private static FirstPathToken generateNumericLiteralExpression( String token ) {
 		
-		FirstPathToken result = LongLiteralExpression.generate(token);
+		FirstPathToken result = LongLiteralExpression.generate( token );
         if ( result != null ) {
             return result;
         }
         
-		result = DoubleLiteralExpression.generate(token);
+		result = DoubleLiteralExpression.generate( token );
         if ( result != null ) {
             return result;
         }
         
-		result = FloatLiteralExpression.generate(token);
+		result = FloatLiteralExpression.generate( token );
         if ( result != null ) {
             return result;
         }
         
-		return IntegerLiteralExpression.generate(token);
+		return IntegerLiteralExpression.generate( token );
 	}
 
     private static final NextPathToken generateNextPathToken( String tok, Path path, String stringExpression )
         throws ExpressionSyntaxException {
     	
-        String token = new String(tok);
+        String token = new String( tok );
         
         // Separate identifier from any array accessors
         String arrayAccessor = null;
@@ -245,11 +244,11 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         NextPathToken result = null;
         
         // Test for indirection
-        result = Indirection.generate(token);
+        result = Indirection.generate( token );
 
         if (result == null){
 	        // A method call?
-	        result = MethodCallExpression.generate(token);
+	        result = MethodCallExpression.generate( token );
 	        
 	        if (result == null){
 	            // A property
@@ -259,20 +258,20 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         
         // If it is an array
         if ( arrayAccessor != null ) {
-        	path.addToken(result);
+        	path.addToken( result );
         	result = ArrayExpression.generate( 
         			token, 
-        			new PathExpression(stringExpression, path), 
-        			arrayAccessor);
+        			new PathExpression( stringExpression, path ), 
+        			arrayAccessor );
         }
         
         return result;
     }
     
-    public static Object evaluateNextPathToken( String tok, Object parent, Interpreter beanShell )
-            throws ExpressionSyntaxException, ExpressionEvaluationException {
+    public static Object evaluateNextPathToken( String tok, Object parent, EvaluationHelper evaluationHelper )
+            throws ExpressionSyntaxException, EvaluationException {
     	
-        String token = new String(tok);
+        String token = new String( tok );
         
         // Separate identifier from any array accessors
         String arrayAccessor = null;
@@ -286,37 +285,38 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         Object result = null;
         
         // Test for indirection
-        Indirection indirection = Indirection.generate(token);
-        if (indirection != null){
-        	result = indirection.evaluate(parent, beanShell);
+        Indirection indirection = Indirection.generate( token );
+        if ( indirection != null ){
+        	result = indirection.evaluate( parent, evaluationHelper );
         }
 
-        if (result == null){
+        if ( result == null ){
 	        // A method call?
-        	MethodCallExpression methodCallExpression = MethodCallExpression.generate(token);
-        	if (methodCallExpression != null){
-        		result = methodCallExpression.evaluate(parent, beanShell);
+        	MethodCallExpression methodCallExpression = MethodCallExpression.generate( token );
+        	if ( methodCallExpression != null ){
+        		result = methodCallExpression.evaluate( parent, evaluationHelper );
         	}
 	        
-	        if (result == null){
+	        if ( result == null ){
 	            // A property
 	        	PropertyExpression propertyExpression = PropertyExpression.generate( token );
-	        	if (propertyExpression != null){
-	        		result = propertyExpression.evaluate(parent, beanShell);
+	        	if ( propertyExpression != null ){
+	        		result = propertyExpression.evaluate( parent, evaluationHelper );
 	        	}
 	        }
         }
         
         // If it is an array
         if ( arrayAccessor != null && result instanceof JPTExpression) {
-        	ArrayExpression arrayExpression = ArrayExpression.generate( token, (JPTExpression) result, arrayAccessor);
-        	return arrayExpression.evaluate(parent, beanShell);
+        	ArrayExpression arrayExpression = ArrayExpression.generate( 
+        			token, ( JPTExpression ) result, arrayAccessor );
+        	return arrayExpression.evaluate( parent, evaluationHelper );
         }
         
         // It could be a script
-        BeanShellScriptExpression beanShellScriptExpression = BeanShellScriptExpression.generate(result);
-        if (beanShellScriptExpression != null){
-        	return beanShellScriptExpression.evaluate(parent, beanShell);
+        ScriptExpression beanShellScriptExpression = ScriptExpression.generate( result );
+        if ( beanShellScriptExpression != null ){
+        	return beanShellScriptExpression.evaluate( parent, evaluationHelper );
         }
         
         return result;

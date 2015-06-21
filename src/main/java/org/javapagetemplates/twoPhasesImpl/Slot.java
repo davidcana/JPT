@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.JPTElement;
 import org.xml.sax.SAXException;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -42,7 +41,7 @@ public interface Slot {
 
 	void process( JPTXMLWriter xmlWriter,
     		      JPTElement jptElement, 
-    			  Interpreter beanShell,
+    		      EvaluationHelper evaluationHelper,
                   Stack <Map<String, Slot>>slotStack )
         throws PageTemplateException, IOException, SAXException;
 

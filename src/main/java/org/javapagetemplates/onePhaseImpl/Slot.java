@@ -1,8 +1,5 @@
 package org.javapagetemplates.onePhaseImpl;
 
-import bsh.EvalError;
-import bsh.Interpreter;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Stack;
@@ -10,7 +7,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -43,7 +42,7 @@ public interface Slot {
 
 	void process( ContentHandler contentHandler, 
                   LexicalHandler lexicalHandler, 
-                  Interpreter beanShell,
+                  EvaluationHelper evaluationHelper,
                   Stack <Map<String, Slot>>slotStack )
-        throws SAXException, PageTemplateException, IOException, EvalError;
+        throws SAXException, PageTemplateException, IOException, EvaluationException;
 }

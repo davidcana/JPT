@@ -38,18 +38,16 @@ public class DefaultTemplateCache implements TemplateCache {
 	
 	private Map<String, Document> documents = new TreeMap<String, Document>();
 	
-	
 	DefaultTemplateCache(){}
-
 	
 	@Override
-	public void put(String id, Document document) throws PageTemplateException {
-		this.documents.put(id, document);
+	public void put( String id, Document document ) throws PageTemplateException {
+		this.documents.put( id, document );
 	}
 
 	@Override
-	public Document get(String id) throws PageTemplateException {
-		return this.documents.get(id);
+	public Document get( String id ) throws PageTemplateException {
+		return this.documents.get( id );
 	}
 	
 }

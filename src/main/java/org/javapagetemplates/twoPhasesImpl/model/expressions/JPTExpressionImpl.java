@@ -32,12 +32,11 @@ abstract public class JPTExpressionImpl implements JPTExpression {
 	protected String stringExpression;
 	
 	public JPTExpressionImpl(){}
-	public JPTExpressionImpl(String stringExpression){
+	public JPTExpressionImpl( String stringExpression ){
 		this.stringExpression = stringExpression;
 	}
 	
-	
-	public void setStringExpression(String stringExpression) {
+	public void setStringExpression( String stringExpression ) {
 		this.stringExpression = stringExpression;
 	}
 

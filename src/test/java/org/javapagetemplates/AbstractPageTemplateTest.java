@@ -18,6 +18,8 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import org.javapagetemplates.common.AbstractJPTContext;
+import org.javapagetemplates.common.scripting.beanShell.BeanShellEvaluator;
+import org.javapagetemplates.common.scripting.groovy.GroovyEvaluator;
 import org.javapagetemplates.twoPhasesImpl.JPTOutputFormat;
 import org.junit.Test;
 
@@ -46,7 +48,7 @@ import org.junit.Test;
 abstract public class AbstractPageTemplateTest {
 
 
-	protected abstract void testPageTemplate(String test, Map<String, Object> dictionary, 
+	protected abstract void testPageTemplate( String test, Map<String, Object> dictionary, 
 			JPTOutputFormat jptOutputFormat ) throws Exception;
 	protected abstract void testStringTemplate( String test, String templateText, Map<String, Object> dictionary, 
 			JPTOutputFormat jptOutputFormat ) throws Exception;
@@ -60,15 +62,72 @@ abstract public class AbstractPageTemplateTest {
     }
 	
 	@Test
-    public void testExpressions() throws Exception {
-        Map<String, Object> dictionary = new HashMap<String, Object>();
-        dictionary.put( "opinions", "everybodysgotone" );
-        dictionary.put( "helper", new TestObject(this.isTwoPhases()) );
-        dictionary.put( "acquaintance", "friend" );
+    public void testExpressionsUsingBSH() throws Exception {
+		testExpressions( "expressionsUsingBSH" );
+    }
+    
+	@Test
+    public void testExpressionsUsingGroovy() throws Exception {
 
-        testPageTemplate( "expressions", dictionary, null );
+		try {
+			this.getContext().setExpressionEvaluator( 
+					GroovyEvaluator.getInstance() );
+			testExpressions( "expressionsUsingGroovy" );
+			
+		} catch ( Exception e ) {
+			throw ( e );
+			
+		} finally {
+			this.getContext().setExpressionEvaluator( 
+					BeanShellEvaluator.getInstance() );
+		}
     }
 	
+	@Test
+    public void testAmpersandsInExpressions() throws Exception {
+		testPageTemplate( "ampersandsInExpressions", null, null );
+    }
+	
+    private void testExpressions( String template ) throws Exception {
+        Map<String, Object> dictionary = new HashMap<String, Object>();
+        dictionary.put( "opinions", "everybodysgotone" );
+        dictionary.put( "helper", new TestObject( this.isTwoPhases() ) );
+        dictionary.put( "acquaintance", "friend" );
+
+        testPageTemplate( template, dictionary, null );
+    }
+	
+	@Test
+    public void testBSHScriptsAndExpressions() throws Exception {
+		testPageTemplate( "bshScriptsAndExpressions", null, null );
+    }
+	
+	@Test
+    public void testGroovyScriptsAndExpressions() throws Exception {
+		testPageTemplate( "groovyScriptsAndExpressions", null, null );
+    }
+	
+	@Test
+    public void testForcedExpressionsBSHDefault() throws Exception {
+		testPageTemplate( "forcedExpressionsBshDefault", null, null );
+    }
+	
+	@Test
+    public void testForcedExpressionsGroovyDefault() throws Exception {
+
+		try {
+			this.getContext().setExpressionEvaluator( 
+					GroovyEvaluator.getInstance() );
+			testPageTemplate( "forcedExpressionsGroovyDefault", null, null );
+			
+		} catch ( Exception e ) {
+			throw ( e );
+			
+		} finally {
+			this.getContext().setExpressionEvaluator( 
+					BeanShellEvaluator.getInstance() );
+		}
+    }
 	@Test
     public void testNamespace() throws Exception {
         testPageTemplate( "namespace", null, null );
@@ -87,7 +146,7 @@ abstract public class AbstractPageTemplateTest {
 	@Test
     public void testOnError() throws Exception {
         Map<String, Object> dictionary = new HashMap<String, Object>();
-        dictionary.put( "helper", new TestObject(this.isTwoPhases()) );
+        dictionary.put( "helper", new TestObject( this.isTwoPhases() ) );
         
         testPageTemplate( "on-error", dictionary, null );
     }
@@ -95,7 +154,7 @@ abstract public class AbstractPageTemplateTest {
 	@Test
     public void testOnError2() throws Exception {
         Map<String, Object> dictionary = new HashMap<String, Object>();
-        dictionary.put( "helper", new TestObject(this.isTwoPhases()) );
+        dictionary.put( "helper", new TestObject( this.isTwoPhases() ) );
         
         testPageTemplate( "on-error2", dictionary, null );
     }
@@ -103,7 +162,7 @@ abstract public class AbstractPageTemplateTest {
 	@Test
     public void testI18n() throws Exception {
         Map<String, Object> dictionary = new HashMap<String, Object>();
-        dictionary.put( "helper", new TestObject(this.isTwoPhases()) );
+        dictionary.put( "helper", new TestObject( this.isTwoPhases() ) );
         
         testPageTemplate( "i18n", dictionary, null );
     }
@@ -111,11 +170,16 @@ abstract public class AbstractPageTemplateTest {
 	@Test
     public void testJavaOff() throws Exception {
 		
-		this.getContext().setJavaExpressionsOn(false);
-		
-        testPageTemplate( "javaOff", null, null );
-        
-        this.getContext().setJavaExpressionsOn(true);
+		try {
+			this.getContext().setScriptExpressionsOn( false );
+			testPageTemplate( "javaOff", null, null );
+			
+		} catch ( Exception e ) {
+			throw ( e );
+			
+		} finally {
+			this.getContext().setScriptExpressionsOn( true );
+		}
     }
 	
 	
@@ -137,6 +201,41 @@ abstract public class AbstractPageTemplateTest {
 	@Test
     public void testMacroOmitTag() throws Exception {
         testPageTemplate( "macroOmitTag", null, null );
+    }
+	
+	@Test
+    public void testScopeWithBSH() throws Exception {
+        testPageTemplate( "scopeWithBSH", null, null );
+    }
+	
+	@Test
+    public void testScopeWithGroovy() throws Exception {
+
+		try {
+			this.getContext().setExpressionEvaluator( 
+					GroovyEvaluator.getInstance() );
+			testPageTemplate( "scopeWithGroovy", null, null );
+			
+		} catch ( Exception e ) {
+			throw ( e );
+			
+		} finally {
+			this.getContext().setExpressionEvaluator( 
+					BeanShellEvaluator.getInstance() );
+		}
+    }
+	
+	@Test
+    public void testLazyEvaluation() throws Exception {
+        Map<String, Object> dictionary = new HashMap<String, Object>();
+        dictionary.put( "helper", new TestObject( this.isTwoPhases() ) );
+        
+        testPageTemplate( "lazyEvaluation", dictionary, null );
+    }
+	
+	@Test
+    public void testConfigurableTags() throws Exception {
+        testPageTemplate( "configurableTags", null, null );
     }
 	
 	@Test
@@ -164,9 +263,9 @@ abstract public class AbstractPageTemplateTest {
     	sb.append("    </body>" + '\n');
     	sb.append("</html>" + '\n');
     	
-    	testStringTemplate("string", sb.toString(), null, null);
+    	testStringTemplate( "string", sb.toString(), null, null );
     }
-    
+	
     /*
     static final void saveStringToFile(String string, File file) throws IOException{
 
@@ -186,7 +285,7 @@ abstract public class AbstractPageTemplateTest {
         fileOutputStream.close();
     }*/
 
-    protected void checkText(URL resource, ByteArrayOutputStream buffer, String html)
+    protected void checkText( URL resource, ByteArrayOutputStream buffer, String html )
 			throws UnsupportedEncodingException, Exception,
 			FileNotFoundException, IOException {
 				
@@ -195,9 +294,10 @@ abstract public class AbstractPageTemplateTest {
 	    String result = fixCRLF( new String( resultBinary, "UTF-8" ) );
 	    String expected = fixCRLF( loadTextFile( getClass().getResourceAsStream( html ) ) );
 	    
-	    if ( ! filterText( result ).equals( filterText(expected) )){
-	    	File parent = (new File(resource.getFile())).getParentFile();
-	    	File file = new File (parent.getPath() + newHtml);
+	    if ( ! filterText( result ).equals( 
+	    		filterText( expected ) )){
+	    	File parent = ( new File( resource.getFile() ) ).getParentFile();
+	    	File file = new File ( parent.getPath() + newHtml );
 	        FileOutputStream out = new FileOutputStream( file );
 	        out.write( resultBinary );
 	        out.close();
@@ -234,14 +334,16 @@ abstract public class AbstractPageTemplateTest {
     
     static final String filterText( String source ) {
     	
-    	String text = source.replaceAll("\\r|\\n|\\t", "");
+    	String text = source.replaceAll( "\\r|\\n|\\t", "" );
     	
     	StringBuilder sb = new StringBuilder();
 
     	Scanner scanner = new Scanner( text );
-    	while (scanner.hasNextLine()) {
+    	while ( scanner.hasNextLine() ) {
     	  String line = scanner.nextLine();
-    	  sb.append( line.trim().replaceAll("\\s+", " ") );
+    	  sb.append( 
+    			  line.trim().replaceAll( 
+    					  "\\s+", " " ) );
     	}
     	
     	return sb.toString();

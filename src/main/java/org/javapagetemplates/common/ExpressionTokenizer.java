@@ -57,22 +57,22 @@ public class ExpressionTokenizer {
         
         int parenLevel = 0;
         boolean inQuote = false;
-        char previousCh = (char)0;
+        char previousCh = ( char ) 0;
         
         // Scan for delimiters
         int length = expression.length();
         for ( int i = 0; i < length; i++ ) {
-            char ch = expression.charAt(i);
+            char ch = expression.charAt( i );
             
             if ( ch == delimiter ) {
                 // If delimiter is not buried in parentheses or a quote
                 if ( parenLevel == 0 && ! inQuote  ) {
                 	
-                	if (avoidRepeatedSeparators && previousCh == delimiter){
+                	if ( avoidRepeatedSeparators && previousCh == delimiter ){
                 		continue;
                 	}
                 	
-                    char nextCh = ( i + 1 < length ) ? expression.charAt( i + 1 ) : (char)0;
+                    char nextCh = ( i + 1 < length ) ? expression.charAt( i + 1 ) : ( char ) 0;
                     
                     // And if delimiter is not escaped
                     if ( ! ( escape && nextCh == delimiter ) ) {
@@ -83,8 +83,7 @@ public class ExpressionTokenizer {
                         // Somewhat inefficient way to pare the
                         // escaped delimiter down to a single
                         // character without breaking our stride
-                        expression = expression.substring( 0, i + 1 ) +
-                            expression.substring( i + 2 );
+                        expression = expression.substring( 0, i + 1 ) + expression.substring( i + 2 );
                         length--;
                     }
                 }
@@ -100,8 +99,8 @@ public class ExpressionTokenizer {
                 parenLevel--;
                 // If unmatched right parenthesis
                 if ( parenLevel < 0 ) {
-                    throw new ExpressionSyntaxException
-                        ( "syntax error: unmatched right parenthesis: " + expression );
+                    throw new ExpressionSyntaxException( 
+                    		"Syntax error: unmatched right parenthesis: " + expression );
                 }
             }
             
@@ -115,14 +114,14 @@ public class ExpressionTokenizer {
         
         // If unmatched left parenthesis
         if ( parenLevel > 0 ) {
-            throw new ExpressionSyntaxException
-                ( "syntax error: unmatched left parenthesis: " + expression );
+            throw new ExpressionSyntaxException( 
+            		"Syntax error: unmatched left parenthesis: " + expression );
         }
         
         // If runaway quote
         if ( inQuote ) {
-            throw new ExpressionSyntaxException
-                ( "syntax error: runaway quotation: " + expression );
+            throw new ExpressionSyntaxException(
+            		"Syntax error: runaway quotation: " + expression );
         }
         
         this.expression = expression;
@@ -136,37 +135,37 @@ public class ExpressionTokenizer {
     public String nextToken() {
     	
         if ( this.iterator.hasNext() ) {
-            int delim = ((Integer)this.iterator.next()).intValue();
+            int delim = ( ( Integer ) this.iterator.next() ).intValue();
             String token = this.expression.substring( this.currIndex, delim ).trim();
             this.currIndex = delim + 1;
             this.delimiterCount--;
             
-            return removeParenthesisIfAny(token);
+            return removeParenthesisIfAny( token );
         }
         
         String token = this.expression.substring( this.currIndex ).trim();
         this.currIndex = this.expression.length();
         
-        return removeParenthesisIfAny(token);
+        return removeParenthesisIfAny( token );
     }
     
-    static public String removeParenthesisIfAny(String token){
+    static public String removeParenthesisIfAny( String token ){
     	
 		String effectiveToken = token.trim();
 		
-		if (effectiveToken.isEmpty()){
+		if ( effectiveToken.isEmpty() ){
 			return effectiveToken;
 		}
 		
-		if (effectiveToken.charAt(0) == '('){
-			return effectiveToken.substring(1, effectiveToken.lastIndexOf(')')).trim();		
-			//return token.substring(1, token.length() - 1);
+		if ( effectiveToken.charAt(0) == '(' ){
+			return effectiveToken.substring( 1, effectiveToken.lastIndexOf( ')' ) ).trim();		
 		}
 		
 		return effectiveToken;
     }
     
     public int countTokens() {
+    	
         if ( hasMoreTokens() ) {
             return this.delimiterCount + 1;
         }

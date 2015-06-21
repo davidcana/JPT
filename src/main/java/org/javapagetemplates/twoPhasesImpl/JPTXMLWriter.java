@@ -58,31 +58,30 @@ public class JPTXMLWriter extends XMLWriter {
 	private JPTOutputFormat jptOutputFormat;
 	
 	
-	public JPTXMLWriter(Writer writer, JPTOutputFormat jptOutputFormat){
-		super(writer, jptOutputFormat.getOutputFormat());
+	public JPTXMLWriter( Writer writer, JPTOutputFormat jptOutputFormat ){
+		super( writer, jptOutputFormat.getOutputFormat() );
 		
 		this.jptOutputFormat = jptOutputFormat;
 	}
 	
-	public JPTXMLWriter(OutputStream outputStream, JPTOutputFormat jptOutputFormat) 
+	public JPTXMLWriter( OutputStream outputStream, JPTOutputFormat jptOutputFormat )  
 			throws UnsupportedEncodingException {
-		super(outputStream, jptOutputFormat.getOutputFormat());
+		super( outputStream, jptOutputFormat.getOutputFormat() );
 		
 		this.jptOutputFormat = jptOutputFormat;
 	}
-	
 	
 	public JPTOutputFormat getJptOutputFormat() {
-		return jptOutputFormat;
+		return this.jptOutputFormat;
 	}
 
-	public void writeDocType(JPTDocument jptDocument) throws IOException, SAXException {
+	public void writeDocType( JPTDocument jptDocument ) throws IOException, SAXException {
 		
 		DocType docType = jptDocument.getDocType() != null? 
 				jptDocument.getDocType():
 				this.jptOutputFormat.getDocType();
 		
-		if (docType == null){
+		if ( docType == null ){
 			return;
 		}
 		
@@ -94,13 +93,14 @@ public class JPTXMLWriter extends XMLWriter {
 		this.writeNewLine();
 	}
 	
-	public void writeJPTElement(JPTElement jptElement) throws IOException, SAXException {
+	public void writeJPTElement( JPTElement jptElement ) throws IOException, SAXException {
 		
 		// Special empty tags
 		if (jptElement.isEmpty() 
 				&& JPTContext.getInstance().isOmitElementCloseSet( jptElement.getName() )){
+			
 			// Write empty tag
-			this.writeEmptyElement(jptElement);
+			this.writeEmptyElement( jptElement );
 			return;
 		}
 		
@@ -109,10 +109,10 @@ public class JPTXMLWriter extends XMLWriter {
 				jptElement.getNamespace(), 
 				jptElement.getName(), 
 				jptElement.getQualifiedName(),
-				jptElement.generateAttributes());
+				jptElement.generateAttributes() );
 
-		for (ContentItem contentItem: jptElement.getContents()){
-			contentItem.writeToXmlWriter(this);
+		for ( ContentItem contentItem: jptElement.getContents() ){
+			contentItem.writeToXmlWriter( this );
 		}
 		
 		this.endElement( 
@@ -121,7 +121,7 @@ public class JPTXMLWriter extends XMLWriter {
 				jptElement.getQualifiedName() );
 	}
 	
-    public void writeEmptyElement(JPTElement jptElement)
+    public void writeEmptyElement( JPTElement jptElement )
             throws IOException, SAXException {
         this.writeEmptyElement( jptElement, jptElement.generateAttributes() );
         /*
@@ -136,72 +136,69 @@ public class JPTXMLWriter extends XMLWriter {
     }
     
     
-    public void writeEmptyElement(JPTElement jptElement, AttributesImpl attributes)
+    public void writeEmptyElement( JPTElement jptElement, AttributesImpl attributes )
             throws IOException, SAXException {
         
-    	this.writer.write(OPEN_EMPTY_TAG);
-        this.writer.write(jptElement.getQualifiedName());
+    	this.writer.write( OPEN_EMPTY_TAG );
+        this.writer.write( jptElement.getQualifiedName() );
         writeNamespaces();
-        writeAttributes(attributes);
+        writeAttributes( attributes );
         this.writer.write(
         		this.jptOutputFormat.isXmlMode()? 
         		CLOSE_XML_EMPTY_TAG:
-        		CLOSE_HTML_TAG);
+        		CLOSE_HTML_TAG );
     }
     
-	public void writeCDATANode(CDATANode cdataNode) throws IOException, SAXException {
+	public void writeCDATANode( CDATANode cdataNode ) throws IOException, SAXException {
 
 		this.startCDATA();
-		this.writeText(cdataNode.getText());
+		this.writeText( cdataNode.getText() );
 		this.endCDATA();
 	}
     
 	
-	public void writeTextNode(TextNode textNode) throws IOException,
-			SAXException {
-        this.writeText(textNode.getText());
+	public void writeTextNode( TextNode textNode ) throws IOException, SAXException {
+        this.writeText( textNode.getText() );
 	}
 	
 	
-	public void writeText(String text) throws SAXException {
+	public void writeText( String text ) throws SAXException {
 		char[] cdata = text == null? NullContent.NULL_CHAR_ARRAY: text.toCharArray();
         this.characters( cdata, 0, cdata.length );
 	}
 	
-	public void writeHTML(Element element) throws IOException {
+	public void writeHTML( Element element ) throws IOException {
 		
         for ( @SuppressWarnings("unchecked")
 		Iterator<Node> i = element.nodeIterator(); i.hasNext(); ) {
-            Node node = (Node)i.next();
+            Node node = ( Node ) i.next();
             this.write( node );
         }
 	}
 	
 	public void writeNewLine() throws SAXException {
-		this.writeText(NEW_LINE);
+		this.writeText( NEW_LINE );
 	}
 	
-    public void endElement(String namespaceURI, String localName, String qName)
-            throws SAXException {
+    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     	
-    	if (! this.jptOutputFormat.isXmlMode() 
+    	if ( ! this.jptOutputFormat.isXmlMode() 
     			&& JPTContext.getInstance().isOmitElementCloseSet( localName )){
     		return;
     	}
     	
-    	super.endElement(namespaceURI, localName, qName);
+    	super.endElement( namespaceURI, localName, qName );
     }
     
 	@Override
-    protected void writeEmptyElementClose(String qualifiedName)
-            throws IOException {
+    protected void writeEmptyElementClose( String qualifiedName ) throws IOException {
 
-		if (JPTContext.getInstance().isEmptyTag(qualifiedName)){
-        	this.writer.write("/>");
+		if ( JPTContext.getInstance().isEmptyTag( qualifiedName ) ){
+        	this.writer.write( "/>" );
         } else {
-        	this.writer.write("></");
-        	this.writer.write(qualifiedName);
-        	this.writer.write(">");
+        	this.writer.write( "></" );
+        	this.writer.write( qualifiedName );
+        	this.writer.write( ">" );
         }
     }
 

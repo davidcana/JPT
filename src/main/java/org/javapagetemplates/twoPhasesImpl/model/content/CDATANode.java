@@ -37,7 +37,7 @@ public class CDATANode implements ContentItem {
 	private String text;
 	
 	public CDATANode(){}
-	public CDATANode(String text){
+	public CDATANode( String text ){
 		this.text = text;
 	}
 	
@@ -45,14 +45,14 @@ public class CDATANode implements ContentItem {
 		return text;
 	}
 
-	public void setText(String text) {
+	public void setText( String text ) {
 		this.text = text;
 	}
 	
 	@Override
-	public void writeToXmlWriter(JPTXMLWriter xmlWriter) throws IOException,
+	public void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException,
 			SAXException {
-		xmlWriter.writeCDATANode(this);
+		xmlWriter.writeCDATANode( this );
 	}
 	
 }

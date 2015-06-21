@@ -54,7 +54,7 @@ public class HTMLFragment implements Serializable {
         
     	this.html = html;
         
-        if (JPTContext.getInstance().isParseHTMLFragments()){ 
+        if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
         	parseFragment();
         }
     }
@@ -77,20 +77,19 @@ public class HTMLFragment implements Serializable {
             return buffer.toString();
             
         } catch( IOException e ) {
-            throw new PageTemplateException(e);
+            throw new PageTemplateException( e );
         }
     }
 	
     @SuppressWarnings({ "unchecked" })
-	public void toXhtml( Writer writer )
-        throws PageTemplateException, IOException {
+	public void toXhtml( Writer writer ) throws PageTemplateException, IOException {
     	
         if ( this.dom == null ) {
             parseFragment();
         }
         
         for ( Iterator<Node> i = this.dom.nodeIterator(); i.hasNext(); ) {
-            Node node = (Node)i.next();
+            Node node = ( Node ) i.next();
             node.write( writer );
         }
     }
@@ -107,11 +106,12 @@ public class HTMLFragment implements Serializable {
             SAXReader reader = JPTDocumentFactory.getXMLReader();
             try {
                 this.dom = reader.read( input ).getRootElement().element( BODY );
+                
             } catch( DocumentException e ) {
                 try {
                     reader = JPTDocumentFactory.getHTMLReader();
-                    if (reader == null){
-                        throw (e);
+                    if ( reader == null ){
+                        throw ( e );
                     }
                     input.close();
                     input = new StringReader( fragment.toString() );
@@ -126,7 +126,7 @@ public class HTMLFragment implements Serializable {
             }
         }
         catch( Exception e ) {
-            throw new PageTemplateException(e);
+            throw new PageTemplateException( e );
         }
     }
     
@@ -137,11 +137,10 @@ public class HTMLFragment implements Serializable {
     
     public Element getDom() throws PageTemplateException{
     	
-    	if (this.dom == null){
+    	if ( this.dom == null ){
     		this.parseFragment();
     	}
     	
     	return this.dom;
     }
 }
-

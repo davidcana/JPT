@@ -7,14 +7,13 @@ import java.util.List;
 import org.javapagetemplates.common.ExpressionTokenizer;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 import org.javapagetemplates.twoPhasesImpl.model.JPTDocument;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.xml.sax.helpers.AttributesImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -43,8 +42,7 @@ import bsh.Interpreter;
  */
 public class AttributesUtils {
 	
-	static public List<JPTExpression> getExpressions(String string) 
-			throws PageTemplateException {
+	static public List<JPTExpression> getExpressions( String string ) throws PageTemplateException {
 		
 		List<JPTExpression> result = new ArrayList<JPTExpression>();
 		
@@ -57,31 +55,30 @@ public class AttributesUtils {
         while( tokens.hasMoreTokens() ) {
             String expression = tokens.nextToken().trim();
             result.add(
-            		ExpressionUtils.generate(expression));
+            		ExpressionUtils.generate( expression ) );
         }
 		
 		return result;
 	}
 	
-	static public String getStringFromExpressions(List<JPTExpression> expressions) {
+	static public String getStringFromExpressions( List<JPTExpression> expressions ) {
 		
 		StringBuilder result = new StringBuilder();
 		
 		Iterator<JPTExpression> i = expressions.iterator();
 		
-		while (i.hasNext()){
+		while ( i.hasNext() ){
 			JPTExpression jptExpression = i.next();
-			result.append(jptExpression.toString());
-			if (i.hasNext()){
-				result.append('\n');
+			result.append( jptExpression.toString() );
+			if ( i.hasNext() ){
+				result.append( '\n' );
 			}
 		}
 		
 		return result.toString();
 	}
 	
-	static public KeyValuePair<JPTExpression> getDefinition(String string) 
-			throws PageTemplateException {
+	static public KeyValuePair<JPTExpression> getDefinition( String string ) throws PageTemplateException {
 		
         String variable = string.trim();
         int space = variable.indexOf( TwoPhasesPageTemplate.IN_DEFINE_DELIMITER );
@@ -94,11 +91,10 @@ public class AttributesUtils {
         
         return new KeyValuePair<JPTExpression>(
         		name,
-        		ExpressionUtils.generate(expression));
+        		ExpressionUtils.generate( expression ) );
 	}
 	
-	static public List<KeyValuePair<JPTExpression>> getDefinitions(String string) 
-			throws PageTemplateException {
+	static public List<KeyValuePair<JPTExpression>> getDefinitions( String string ) throws PageTemplateException {
 		
 		List<KeyValuePair<JPTExpression>> result = new ArrayList<KeyValuePair<JPTExpression>>();
 		
@@ -106,12 +102,12 @@ public class AttributesUtils {
         		string, 
         		TwoPhasesPageTemplate.DEFINE_DELIMITER, true );
         
-        while( tokens.hasMoreTokens() ) {
+        while ( tokens.hasMoreTokens() ) {
             String variable = tokens.nextToken().trim();
             int space = variable.indexOf( TwoPhasesPageTemplate.IN_DEFINE_DELIMITER );
             if ( space == -1 ) {
-                throw new ExpressionSyntaxException( "bad variable definition: " + variable 
-                        + " in template");
+                throw new ExpressionSyntaxException( 
+                		"Bad variable definition: " + variable + " in template");
             }
 
             String name = variable.substring( 0, space );
@@ -119,36 +115,35 @@ public class AttributesUtils {
             
             KeyValuePair<JPTExpression> keyValuePair = new KeyValuePair<JPTExpression>(
             		name,
-            		ExpressionUtils.generate(expression));
-            result.add(keyValuePair);
+            		ExpressionUtils.generate( expression ) );
+            result.add( keyValuePair );
         }
 		
 		return result;
 	}
 	
-	static public <T> String getStringFromDefinitions(List<KeyValuePair<T>> definitions){
+	static public <T> String getStringFromDefinitions( List<KeyValuePair<T>> definitions ){
 		
 		StringBuilder result = new StringBuilder();
 		Iterator<KeyValuePair<T>> i = definitions.iterator();
 		
-		while (i.hasNext()){
+		while ( i.hasNext() ){
 			KeyValuePair<T> keyValuePair = i.next();
-			result.append(keyValuePair.toString(" "));
-			if (i.hasNext()){
-				result.append(TwoPhasesPageTemplate.DEFINE_DELIMITER);
-				result.append('\n');
+			result.append( keyValuePair.toString(" ") );
+			if ( i.hasNext() ){
+				result.append( TwoPhasesPageTemplate.DEFINE_DELIMITER );
+				result.append( '\n' );
 			}
 		}
 		
 		return result.toString();
 	}
 	
-	static public <T> String getStringFromDefinition(KeyValuePair<T> definition){
-		return definition.toString(" ");
+	static public <T> String getStringFromDefinition( KeyValuePair<T> definition ){
+		return definition.toString( " " );
 	}
 	
-	static public List<KeyValuePair<String>> getDefinitionsFromString(String string) 
-			throws PageTemplateException {
+	static public List<KeyValuePair<String>> getDefinitionsFromString( String string ) throws PageTemplateException {
 		
 		List<KeyValuePair<String>> result = new ArrayList<KeyValuePair<String>>();
 		
@@ -156,12 +151,12 @@ public class AttributesUtils {
         		string, 
         		TwoPhasesPageTemplate.DEFINE_DELIMITER, true );
         
-        while( tokens.hasMoreTokens() ) {
+        while ( tokens.hasMoreTokens() ) {
             String variable = tokens.nextToken().trim();
             int space = variable.indexOf( TwoPhasesPageTemplate.IN_DEFINE_DELIMITER );
             if ( space == -1 ) {
-                throw new ExpressionSyntaxException( "bad variable definition: " + variable 
-                        + " in template");
+                throw new ExpressionSyntaxException( 
+                		"Bad variable definition: " + variable + " in template");
             }
 
             String name = variable.substring( 0, space );
@@ -169,27 +164,27 @@ public class AttributesUtils {
             
             KeyValuePair<String> keyValuePair = new KeyValuePair<String>(
             		name,
-            		expression);
-            result.add(keyValuePair);
+            		expression );
+            result.add( keyValuePair );
         }
 		
 		return result;
 	}
 
-	static public void processStaticAttributes(List<StaticAttribute> staticAttributes,
-			Interpreter beanShell, AttributesImpl attributesImpl , JPTDocument jptDocument)
+	static public void processStaticAttributes( List<StaticAttribute> staticAttributes,
+			EvaluationHelper evaluationHelper, AttributesImpl attributesImpl , JPTDocument jptDocument )
 			throws PageTemplateException {
 		
-		for (StaticAttribute attribute: staticAttributes){
+		for ( StaticAttribute attribute: staticAttributes ){
             String qualifiedName = attribute.getQualifiedName();
             Object value = attribute.getValue();
             
-            addAttribute(qualifiedName, value, attributesImpl, jptDocument);
+            addAttribute( qualifiedName, value, attributesImpl, jptDocument );
     	}
 	}
 	
-	static public void addAttribute(String qualifiedName, Object value,
-			AttributesImpl attributesImpl, JPTDocument jptDocument) {
+	static public void addAttribute( String qualifiedName, Object value,
+			AttributesImpl attributesImpl, JPTDocument jptDocument ) {
 		
 		removeAttribute( attributesImpl, qualifiedName );
 		

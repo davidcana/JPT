@@ -36,8 +36,8 @@ public class METALDefineMacro extends JPTAttributeImpl implements DynamicAttribu
 	
 	
 	public METALDefineMacro(){}
-	public METALDefineMacro(String namespaceUri, String name){
-		super(namespaceUri);
+	public METALDefineMacro( String namespaceUri, String name ){
+		super( namespaceUri );
 		this.name = name;
 	}
 
@@ -45,7 +45,7 @@ public class METALDefineMacro extends JPTAttributeImpl implements DynamicAttribu
 		return this.name;
 	}
 
-	public void setName(String name) {
+	public void setName( String name ) {
 		this.name = name;
 	}
 	

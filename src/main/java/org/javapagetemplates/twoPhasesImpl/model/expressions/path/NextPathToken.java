@@ -2,9 +2,8 @@ package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
 import java.io.Serializable;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
-
-import bsh.Interpreter;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -34,7 +33,7 @@ import bsh.Interpreter;
  */
 public interface NextPathToken extends Serializable {
 
-	public Object evaluate(Object parent, Interpreter beanShell) throws ExpressionEvaluationException;
+	public Object evaluate( Object parent, EvaluationHelper evaluationHelper ) throws EvaluationException;
 	
 	public String getStringExpression();
 }

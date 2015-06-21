@@ -1,7 +1,8 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.arithmethic.AddExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.arithmethic.DivExpression;
@@ -16,8 +17,6 @@ import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.EqualsEx
 import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.GreaterExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.LowerExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.PathExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -56,8 +55,8 @@ public class StringExpression extends JPTExpressionImpl {
 	
 	public StringExpression(){}
 	
-	public StringExpression(String stringExpression, String string){
-		super(stringExpression);
+	public StringExpression( String stringExpression, String string ){
+		super( stringExpression );
 		
 		this.string = string;
 	}
@@ -67,98 +66,102 @@ public class StringExpression extends JPTExpressionImpl {
 		return this.string;
 	}
 
-	public void setString(String string) {
+	public void setString( String string ) {
 		this.string = string;
 	}
 
-	static public StringExpression generate(String expression){
+	static public StringExpression generate( String expression ){
 		
 		return new StringExpression(
 				expression, 
-				expression.substring( TwoPhasesPageTemplate.EXPR_STRING.length() ));
+				expression.substring( TwoPhasesPageTemplate.EXPR_STRING.length() ) );
 	}
 
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
         try {
-			return evaluateString(this.string, beanShell);
+			return evaluateString( this.string, evaluationHelper );
 			
-		} catch (ExpressionSyntaxException e) {
-			throw new ExpressionEvaluationException(e);
+		} catch ( ExpressionSyntaxException e ) {
+			throw new EvaluationException( e );
 		}
 	}
 
-	public static final Object evaluate( String string, Interpreter beanShell ) 
-	        throws ExpressionSyntaxException, ExpressionEvaluationException {
+	public static final Object evaluate( String string, EvaluationHelper evaluationHelper ) 
+	        throws ExpressionSyntaxException, EvaluationException {
+		
         try {
             Object result;
             if ( string.startsWith( TwoPhasesPageTemplate.EXPR_STRING ) ) {
-                result = evaluateIntern( string, beanShell );
+                result = evaluateIntern( string, evaluationHelper );
             }
-            //else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_STRINP ) ) {
-            //	result = StrinpExpression.evaluate(string, beanShell);
-            //}
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_EXISTS ) ) {
-            	result = ExistsExpression.evaluate(string, beanShell);
+            	result = ExistsExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_NOT ) ) {
-            	result = NotExpression.evaluate(string, beanShell);
+            	result = NotExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_JAVA ) ) {
-            	result = JavaExpression.evaluate(string, beanShell);
+            	result = JavaExpression.evaluate( string, evaluationHelper );
+            }
+            else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_BSH ) ) {
+            	result = BeanShellExpression.evaluate( string, evaluationHelper );
+            }
+            else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_GROOVY ) ) {
+            	result = GroovyExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_EQUALS ) ) {
-            	result = EqualsExpression.evaluate(string, beanShell);
+            	result = EqualsExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_GREATER ) ) {
-            	result = GreaterExpression.evaluate(string, beanShell);
+            	result = GreaterExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_LOWER ) ) {
-            	result = LowerExpression.evaluate(string, beanShell);
+            	result = LowerExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_ADD ) ) {
-            	result = AddExpression.evaluate(string, beanShell);
+            	result = AddExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_SUB ) ) {
-            	result = SubExpression.evaluate(string, beanShell);
+            	result = SubExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_MUL ) ) {
-            	result = MulExpression.evaluate(string, beanShell);
+            	result = MulExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_DIV ) ) {
-            	result = DivExpression.evaluate(string, beanShell);
+            	result = DivExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_MOD ) ) {
-            	result = ModExpression.evaluate(string, beanShell);
+            	result = ModExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_OR ) ) {
-            	result = OrExpression.evaluate(string, beanShell);
+            	result = OrExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_AND ) ) {
-            	result = AndExpression.evaluate(string, beanShell);
+            	result = AndExpression.evaluate( string, evaluationHelper );
             }
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_COND ) ) {
-            	result = CondExpression.evaluate(string, beanShell);
+            	result = CondExpression.evaluate( string, evaluationHelper );
             }
             else {
-            	result = PathExpression.evaluate(string, beanShell);
+            	result = PathExpression.evaluate( string, evaluationHelper );
             }
             
             return result;
         }
-        catch( ExpressionEvaluationException e ) {
+        catch ( EvaluationException e ) {
             e.setExpression( string );
             throw e;
         }
     }
 	
-    private static Object evaluateIntern(String expression, Interpreter beanShell) 
-    		throws ExpressionEvaluationException, ExpressionSyntaxException {
+    private static Object evaluateIntern( String expression, EvaluationHelper evaluationHelper ) 
+    		throws EvaluationException, ExpressionSyntaxException {
 		
 		return evaluateString(
 				expression.substring( TwoPhasesPageTemplate.EXPR_EXISTS.length() ),
-				beanShell);
+				evaluationHelper );
 	}
 
 
@@ -167,10 +170,10 @@ public class StringExpression extends JPTExpressionImpl {
     private static final int STATE_IN_EXPRESSION = 2;
     private static final int STATE_IN_BRACKETED_EXPRESSION = 3;
     
-	public static final String evaluateString( String string, Interpreter beanShell ) 
-	        throws ExpressionEvaluationException, ExpressionSyntaxException {
+	public static final String evaluateString( String string, EvaluationHelper evaluationHelper ) 
+	        throws EvaluationException, ExpressionSyntaxException {
 		
-		String expression = new String(string);
+		String expression = new String( string );
 		
         // empty expression evaluates to empty string
         if ( expression.isEmpty() ) {
@@ -180,13 +183,13 @@ public class StringExpression extends JPTExpressionImpl {
         StringBuilder result = new StringBuilder( expression.length() * 2 );
         
         // Let's use a finite state machine
-        StringBuilder subexpression = new StringBuilder(20);
+        StringBuilder subexpression = new StringBuilder( 20 );
         int state = STATE_SCANNING;
         int length = expression.length();
         for ( int i = 0; i < length; i++ ) {
-            char ch = expression.charAt(i);
+            char ch = expression.charAt( i );
 
-            switch( state ) {
+            switch ( state ) {
                 // In the string part of the expression
                 case STATE_SCANNING:
                     // Found a dollar sign
@@ -209,13 +212,13 @@ public class StringExpression extends JPTExpressionImpl {
 
                     // Beginning of a bracketed expression
                     else if ( ch == '{' ) {
-                        subexpression.setLength(0);
+                        subexpression.setLength( 0 );
                         state = STATE_IN_BRACKETED_EXPRESSION;
                     }
 
                     // Beginning of a non bracketed expression
                     else {
-                        subexpression.setLength(0);
+                        subexpression.setLength( 0 );
                         subexpression.append( ch );
                         state = STATE_IN_EXPRESSION;
                     }
@@ -227,7 +230,9 @@ public class StringExpression extends JPTExpressionImpl {
                     // Check for end
                     if ( ( state == STATE_IN_BRACKETED_EXPRESSION && ch == '}' ) ||
                          ( state == STATE_IN_EXPRESSION && Character.isWhitespace( ch ) ) ) {
-                        result.append( String.valueOf( evaluate( subexpression.toString(), beanShell ) ) );
+                        result.append( 
+                        		String.valueOf( 
+                        				evaluate( subexpression.toString(), evaluationHelper ) ) );
                         if ( state == STATE_IN_EXPRESSION ) {
                             result.append( ch );
                         }
@@ -243,16 +248,16 @@ public class StringExpression extends JPTExpressionImpl {
 
         // Ended in unclosed bracket
         if ( state == STATE_IN_BRACKETED_EXPRESSION ) {
-            throw new ExpressionSyntaxException( "unclosed left curly brace: " + expression );
+            throw new ExpressionSyntaxException( 
+            		"Unclosed left curly brace: " + expression );
         }
 
         // Ended at expression
         else if ( state == STATE_IN_EXPRESSION ) {
-            result.append( evaluate( subexpression.toString(), beanShell ) );
+            result.append( 
+            		evaluate( subexpression.toString(), evaluationHelper ) );
         }
 
         return result.toString();
-    }
-	
+    }	
 }
-

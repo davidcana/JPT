@@ -36,4 +36,5 @@ public interface JPTAttribute extends Serializable {
 	public String getNamespaceUri();
 	
 	public String getValue();
+	
 }

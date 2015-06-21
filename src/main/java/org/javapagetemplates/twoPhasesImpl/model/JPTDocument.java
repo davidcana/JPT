@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -57,9 +56,9 @@ public class JPTDocument {
 	
 	
 	public JPTDocument(){}
-	public JPTDocument(URL url) throws URISyntaxException {
-		this.id = url.toString();
-		this.uri = new URI( url.toString() );
+	public JPTDocument( URI uri ) throws URISyntaxException {
+		this.id = uri.toString();
+		this.uri = uri;
 	}
 	
 
@@ -67,7 +66,7 @@ public class JPTDocument {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId( String id ) {
 		this.id = id;
 	}
 	
@@ -75,7 +74,7 @@ public class JPTDocument {
 		return uri;
 	}
 	
-	public void setUri(URI uri) {
+	public void setUri( URI uri ) {
 		this.uri = uri;
 	}
 	
@@ -83,7 +82,7 @@ public class JPTDocument {
 		return docType;
 	}
 	
-	public void setDocType(DocType docType) {
+	public void setDocType( DocType docType ) {
 		this.docType = docType;
 	}
 	
@@ -91,35 +90,35 @@ public class JPTDocument {
 		return this.root;
 	}
 	
-	public void setRoot(JPTElement root) {
+	public void setRoot( JPTElement root ) {
 		this.root = root;
 	}
 
-	public void addNamespace(Namespace namespace){
+	public void addNamespace( Namespace namespace ){
 		this.namespaces.put( namespace.getPrefix(), namespace.getURI() ); 
 	}
 	
-	public boolean isNamespaceToDeclare(Namespace namespace){
-		return ! namespace.getURI().startsWith(HTTP_WWW_W3_ORG);
+	public boolean isNamespaceToDeclare( Namespace namespace ){
+		return ! namespace.getURI().startsWith( HTTP_WWW_W3_ORG );
 	}
 	
 	public String getTemplateName() {
 		return this.templateName;
 	}
 
-	public void setTemplateName(String templateName) {
+	public void setTemplateName( String templateName ) {
 		this.templateName = templateName;
 	}
 	
-	public String getNamespace(String prefix){
-		return this.namespaces.get(prefix);
+	public String getNamespace( String prefix ){
+		return this.namespaces.get( prefix );
 	}
 	
 	public String getTalPrefix(){
 		
-		if (this.talPrefix == null){
+		if ( this.talPrefix == null ){
 			this.talPrefix = this.searchByPrefixByUri(
-					TwoPhasesPageTemplate.TAL_NAMESPACE_URI);
+					TwoPhasesPageTemplate.TAL_NAMESPACE_URI );
 		}
 		
 		return this.talPrefix;
@@ -127,9 +126,9 @@ public class JPTDocument {
 	
 	public String getI18nPrefix(){
 		
-		if (this.i18nPrefix == null){
+		if ( this.i18nPrefix == null ){
 			this.i18nPrefix = this.searchByPrefixByUri(
-					TwoPhasesPageTemplate.I18N_NAMESPACE_URI);
+					TwoPhasesPageTemplate.I18N_NAMESPACE_URI );
 		}
 		
 		return this.i18nPrefix;
@@ -137,20 +136,20 @@ public class JPTDocument {
 	
 	public String getMetalPrefix(){
 		
-		if (this.metalPrefix == null){
+		if ( this.metalPrefix == null ){
 			this.metalPrefix = this.searchByPrefixByUri(
-					TwoPhasesPageTemplate.METAL_NAMESPACE_URI);
+					TwoPhasesPageTemplate.METAL_NAMESPACE_URI );
 		}
 		
 		return this.metalPrefix;
 	}
 	
-	private String searchByPrefixByUri(String talNamespaceUri) {
+	private String searchByPrefixByUri( String talNamespaceUri ) {
 		
-		for (Map.Entry<String, String> mapEntry: this.namespaces.entrySet()){
+		for ( Map.Entry<String, String> mapEntry: this.namespaces.entrySet() ){
 			String uri = mapEntry.getValue();
 			
-			if (talNamespaceUri.equals(uri)){
+			if ( talNamespaceUri.equals( uri ) ){
 				return mapEntry.getKey();
 			}
 		}
@@ -163,8 +162,8 @@ public class JPTDocument {
 		Writer writer = new StringWriter();
 		
 		JPTXMLWriter xmlWriter = new JPTXMLWriter(
-				writer, JPTOutputFormat.getDefault());
-		this.writeToXmlWriter(xmlWriter);
+				writer, JPTOutputFormat.getDefault() );
+		this.writeToXmlWriter( xmlWriter );
 		xmlWriter.close();
 		
 		String result = writer.toString();
@@ -173,10 +172,10 @@ public class JPTDocument {
 		return result;
 	}
 	
-	private void writeToXmlWriter(JPTXMLWriter xmlWriter) throws IOException, SAXException {
+	private void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException, SAXException {
 		
 		xmlWriter.startDocument();
-		this.root.writeToXmlWriter(xmlWriter);
+		this.root.writeToXmlWriter( xmlWriter );
 		xmlWriter.endDocument();
 	}
 }

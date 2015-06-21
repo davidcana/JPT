@@ -1,14 +1,13 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.bool;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -44,8 +43,8 @@ public class NotExpression extends JPTExpressionImpl implements EvaluableToBoole
 	
 	public NotExpression(){}
 	
-	public NotExpression(String stringExpression, JPTExpression expression){
-		super(stringExpression);
+	public NotExpression( String stringExpression, JPTExpression expression ){
+		super( stringExpression );
 		
 		this.expression = expression;
 	}
@@ -54,32 +53,31 @@ public class NotExpression extends JPTExpressionImpl implements EvaluableToBoole
 		return this.expression;
 	}
 
-	public void setExpression(JPTExpression expression) {
+	public void setExpression( JPTExpression expression ) {
 		this.expression = expression;
 	}
 
-	static public NotExpression generate(String expression) 
-			throws ExpressionSyntaxException {
+	static public NotExpression generate( String expression ) throws ExpressionSyntaxException {
 		
 		return new NotExpression(
 				expression, 
 				ExpressionUtils.generate( 
-						expression.substring( TwoPhasesPageTemplate.EXPR_NOT.length() ).trim() ));
+						expression.substring( TwoPhasesPageTemplate.EXPR_NOT.length() ).trim() ) );
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return evaluateToBoolean( beanShell );
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluateToBoolean( evaluationHelper );
 	}
 
 	@Override
-	public Boolean evaluateToBoolean(Interpreter beanShell)
-			throws ExpressionEvaluationException {
-		return ! ExpressionUtils.evaluateToBoolean( this.expression, beanShell );
+	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper )
+			throws EvaluationException {
+		return ! ExpressionUtils.evaluateToBoolean( this.expression, evaluationHelper );
 	}
 	
-	static public Object evaluate(String exp, Interpreter beanShell) 
-			throws ExpressionEvaluationException, ExpressionSyntaxException {
-		return generate(exp).evaluateToBoolean(beanShell); 
+	static public Object evaluate( String exp, EvaluationHelper evaluationHelper ) 
+			throws EvaluationException, ExpressionSyntaxException {
+		return generate( exp ).evaluateToBoolean( evaluationHelper ); 
 	}
 }

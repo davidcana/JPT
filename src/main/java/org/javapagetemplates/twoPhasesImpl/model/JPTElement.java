@@ -33,6 +33,7 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALDefine;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALOmitTag;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALOnError;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALRepeat;
+import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALTag;
 import org.javapagetemplates.twoPhasesImpl.model.content.ContentItem;
 
 import org.xml.sax.SAXException;
@@ -84,7 +85,7 @@ public class JPTElement implements ContentItem {
 	
 	
 	public JPTElement(){}
-	public JPTElement(String name, String namespace){
+	public JPTElement( String name, String namespace ){
 		this.namespace = namespace;
 		this.name = name;
 	}
@@ -94,7 +95,7 @@ public class JPTElement implements ContentItem {
 		return this.namespace;
 	}
 	
-	public void setNamespace(String namespace) {
+	public void setNamespace( String namespace ) {
 		this.namespace = namespace;
 	}
 	
@@ -102,7 +103,7 @@ public class JPTElement implements ContentItem {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	public void setName( String name ) {
 		this.name = name;
 	}
 
@@ -117,7 +118,7 @@ public class JPTElement implements ContentItem {
 		return this.dynamicAttributes;
 	}
 
-	public void setDynamicAttributes(List<DynamicAttribute> dynamicAttributes) {
+	public void setDynamicAttributes( List<DynamicAttribute> dynamicAttributes ) {
 		this.dynamicAttributes = dynamicAttributes;
 	}
 
@@ -125,7 +126,7 @@ public class JPTElement implements ContentItem {
 		return this.staticAttributes;
 	}
 
-	public void setStaticAttributes(List<StaticAttribute> staticAttributes) {
+	public void setStaticAttributes( List<StaticAttribute> staticAttributes ) {
 		this.staticAttributes = staticAttributes;
 	}
 	
@@ -133,27 +134,27 @@ public class JPTElement implements ContentItem {
 		return this.contents == null || this.contents.isEmpty();
 	}
 
-	public void addDynamicAttribute(DynamicAttribute dynamicAttribute){
+	public void addDynamicAttribute( DynamicAttribute dynamicAttribute ){
 		
 		String key = dynamicAttribute.getQualifiedName();
 		
 		// Remove static attribute if exists a static one with the same qualified name
-		if (this.staticAttributesMap.containsKey(key)){
-			this.staticAttributesMap.remove(key);
+		if ( this.staticAttributesMap.containsKey( key ) ){
+			this.staticAttributesMap.remove( key );
 		}
 		
-		this.dynamicAttributes.add(dynamicAttribute);
+		this.dynamicAttributes.add( dynamicAttribute );
 		this.dynamicAttributesMap.put(
 				key, 
-				dynamicAttribute);
+				dynamicAttribute );
 	}
 	
-	public DynamicAttribute getDynamicAttribute(String attributeName){
-		return this.dynamicAttributesMap.get(attributeName);
+	public DynamicAttribute getDynamicAttribute( String attributeName ){
+		return this.dynamicAttributesMap.get( attributeName );
 	}
 	
-	public boolean existsDynamicAttribute(String attributeName){
-		return this.dynamicAttributesMap.containsKey(attributeName);
+	public boolean existsDynamicAttribute( String attributeName ){
+		return this.dynamicAttributesMap.containsKey( attributeName );
 	}
 	
 	public void addStaticAttribute(StaticAttribute staticAttribute){
@@ -161,31 +162,31 @@ public class JPTElement implements ContentItem {
 		String key = staticAttribute.getQualifiedName();
 		
 		// Don't add attribute if exists a dynamic one with the same qualified name
-		if (this.dynamicAttributesMap.containsKey(key)){
+		if ( this.dynamicAttributesMap.containsKey( key ) ){
 			return;
 		}
 		
-		this.staticAttributes.add(staticAttribute);
+		this.staticAttributes.add( staticAttribute );
 		this.staticAttributesMap.put(
 				key, 
-				staticAttribute);
+				staticAttribute );
 	}
 	
-	public StaticAttribute getStaticAttribute(String attributeName){
-		return this.staticAttributesMap.get(attributeName);
+	public StaticAttribute getStaticAttribute( String attributeName ){
+		return this.staticAttributesMap.get( attributeName );
 	}
 	
 	public List<ContentItem> getContents() {
 		return contents;
 	}
 	
-	public void setContents(List<ContentItem> contents) {
+	public void setContents( List<ContentItem> contents ) {
 		this.contents = contents;
 		this.jptElementContents = null;
 	}
 
-	public void addContent(ContentItem contentItem){
-		this.contents.add(contentItem);
+	public void addContent( ContentItem contentItem ){
+		this.contents.add( contentItem );
 		this.jptElementContents = null;
 	}
 	
@@ -202,9 +203,9 @@ public class JPTElement implements ContentItem {
 		
 		List<JPTElement> result = new ArrayList<JPTElement>();
 		
-		for (ContentItem contentItem: this.contents){
-			if (contentItem instanceof JPTElement){
-				result.add( (JPTElement)contentItem  );
+		for ( ContentItem contentItem : this.contents ){
+			if ( contentItem instanceof JPTElement ){
+				result.add( ( JPTElement ) contentItem );
 			}
 		}
 		
@@ -217,73 +218,73 @@ public class JPTElement implements ContentItem {
 		for ( DynamicAttribute dynamicAttribute: this.dynamicAttributes ){
 			this.dynamicAttributesMap.put(
 					dynamicAttribute.getQualifiedName(), 
-					dynamicAttribute);
+					dynamicAttribute );
 		}
 		
 		this.staticAttributesMap = new TreeMap<String, StaticAttribute>();
 		for ( StaticAttribute staticAttribute: this.staticAttributes ){
 			this.staticAttributesMap.put(
 					staticAttribute.getQualifiedName(), 
-					staticAttribute);
+					staticAttribute );
 		}
 	
 		return this; 
 	}
 	
-	public String getTalQualifiedName(String attributeName, JPTDocument jptDocument){
+	public String getTalQualifiedName( String attributeName, JPTDocument jptDocument ){
 		return jptDocument.getTalPrefix() + QUALIFIED_NAME_DELIMITER + attributeName;
 	}
-	public String getMetalQualifiedName(String attributeName, JPTDocument jptDocument){
+	public String getMetalQualifiedName( String attributeName, JPTDocument jptDocument ){
 		return jptDocument.getMetalPrefix() + QUALIFIED_NAME_DELIMITER + attributeName;
 	}
-	public String getI18nQualifiedName(String attributeName, JPTDocument jptDocument){
+	public String getI18nQualifiedName( String attributeName, JPTDocument jptDocument ){
 		return jptDocument.getI18nPrefix() + QUALIFIED_NAME_DELIMITER + attributeName;
 	}
 	
-	public boolean existsTalAttribute(String attributeName, JPTDocument jptDocument){
+	public boolean existsTalAttribute( String attributeName, JPTDocument jptDocument ){
 		return this.existsDynamicAttribute(
-				this.getTalQualifiedName(attributeName, jptDocument));
+				this.getTalQualifiedName( attributeName, jptDocument ) );
 	}
-	public boolean existsMetalAttribute(String attributeName, JPTDocument jptDocument){
+	public boolean existsMetalAttribute( String attributeName, JPTDocument jptDocument ){
 		return this.existsDynamicAttribute(
-				this.getMetalQualifiedName(attributeName, jptDocument));
+				this.getMetalQualifiedName( attributeName, jptDocument ) );
 	}
-	public boolean existsI18nAttribute(String attributeName, JPTDocument jptDocument){
+	public boolean existsI18nAttribute( String attributeName, JPTDocument jptDocument ){
 		return this.existsDynamicAttribute(
-				this.getI18nQualifiedName(attributeName, jptDocument));
+				this.getI18nQualifiedName( attributeName, jptDocument ) );
 	}
 	
-	public DynamicAttribute getTalAttribute(String attributeName, JPTDocument jptDocument){
+	public DynamicAttribute getTalAttribute( String attributeName, JPTDocument jptDocument ){
 		return this.dynamicAttributesMap.get(
-				this.getTalQualifiedName(attributeName, jptDocument));
+				this.getTalQualifiedName( attributeName, jptDocument ) );
 	}
-	public DynamicAttribute getMetalAttribute(String attributeName, JPTDocument jptDocument){
+	public DynamicAttribute getMetalAttribute( String attributeName, JPTDocument jptDocument ){
 		return this.dynamicAttributesMap.get(
-				this.getMetalQualifiedName(attributeName, jptDocument));
+				this.getMetalQualifiedName( attributeName, jptDocument ) );
 	}
-	public DynamicAttribute getI18nAttribute(String attributeName, JPTDocument jptDocument){
+	public DynamicAttribute getI18nAttribute( String attributeName, JPTDocument jptDocument ){
 		return this.dynamicAttributesMap.get(
-				this.getI18nQualifiedName(attributeName, jptDocument));
+				this.getI18nQualifiedName( attributeName, jptDocument ) );
 	}
 	
 	public AttributesImpl generateAttributes(){
 		
 		AttributesImpl result = new AttributesImpl();
 		
-		for (StaticAttribute attribute: this.staticAttributes){
-			addAttribute(result, attribute);
+		for ( StaticAttribute attribute: this.staticAttributes ){
+			addAttribute( result, attribute );
 		}
 		
-		for (DynamicAttribute attribute: this.dynamicAttributes){
-			addAttribute(result, attribute);
+		for ( DynamicAttribute attribute: this.dynamicAttributes ){
+			addAttribute( result, attribute );
 		}
 		
         return result;
 	}
 	
-	private void addAttribute(AttributesImpl result, JPTAttribute attribute) {
+	private void addAttribute(AttributesImpl attributesImpl, JPTAttribute attribute) {
 		
-		result.addAttribute( 
+		attributesImpl.addAttribute( 
 			attribute.getNamespaceUri(), 
 			attribute.getAttributeName(), 
 			attribute.getQualifiedName(), 
@@ -292,312 +293,329 @@ public class JPTElement implements ContentItem {
 	}
 
 	@Override
-	public void writeToXmlWriter(JPTXMLWriter xmlWriter) throws IOException, SAXException {
-		xmlWriter.writeJPTElement(this);
+	public void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException, SAXException {
+		xmlWriter.writeJPTElement( this );
 	}
 	
-	public TALAttributes getTALAttributes(JPTDocument jptDocument) throws PageTemplateException {
+	public TALAttributes getTALAttributes( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getTalAttribute(
 				TwoPhasesPageTemplate.TAL_ATTRIBUTES, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof TALAttributes){
-			return (TALAttributes)result;
+		if ( result instanceof TALAttributes ){
+			return ( TALAttributes ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.TAL_ATTRIBUTES);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_ATTRIBUTES );
 	}
 	
 	public TALCondition getTALCondition(JPTDocument jptDocument) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getTalAttribute(
 				TwoPhasesPageTemplate.TAL_CONDITION, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof TALCondition){
-			return (TALCondition)result;
+		if ( result instanceof TALCondition ){
+			return ( TALCondition ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.TAL_CONDITION);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_CONDITION );
 	}
 	
 	public TALContent getTALContent(JPTDocument jptDocument) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getTalAttribute(
 				TwoPhasesPageTemplate.TAL_CONTENT, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof TALContent){
-			return (TALContent)result;
+		if ( result instanceof TALContent ){
+			return ( TALContent ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.TAL_CONTENT);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_CONTENT );
 	}
 	
-	public TALDefine getTALDefine(JPTDocument jptDocument) throws PageTemplateException {
+	public TALDefine getTALDefine( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getTalAttribute(
 				TwoPhasesPageTemplate.TAL_DEFINE, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof TALDefine){
-			return (TALDefine)result;
+		if ( result instanceof TALDefine ){
+			return ( TALDefine ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.TAL_DEFINE);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_DEFINE );
 	}
 	
-	public TALOmitTag getTALOmitTag(JPTDocument jptDocument) throws PageTemplateException {
+	public TALOmitTag getTALOmitTag( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getTalAttribute(
 				TwoPhasesPageTemplate.TAL_OMIT_TAG, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof TALOmitTag){
-			return (TALOmitTag)result;
+		if ( result instanceof TALOmitTag ){
+			return ( TALOmitTag ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.TAL_OMIT_TAG);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_OMIT_TAG );
 	}
 	
-	public TALOnError getTALOnError(JPTDocument jptDocument) throws PageTemplateException {
+	public TALOnError getTALOnError( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getTalAttribute(
 				TwoPhasesPageTemplate.TAL_ON_ERROR, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof TALOnError){
-			return (TALOnError)result;
+		if ( result instanceof TALOnError ){
+			return ( TALOnError ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.TAL_ON_ERROR);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_ON_ERROR );
 	}
 	
-	public TALRepeat getTALRepeat(JPTDocument jptDocument) throws PageTemplateException {
+	public TALRepeat getTALRepeat( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getTalAttribute(
 				TwoPhasesPageTemplate.TAL_REPEAT, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof TALRepeat){
-			return (TALRepeat)result;
+		if ( result instanceof TALRepeat ){
+			return ( TALRepeat ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.TAL_REPEAT);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_REPEAT );
+	}
+
+	public TALTag getTALTag( JPTDocument jptDocument ) throws PageTemplateException {
+		
+		DynamicAttribute result = this.getTalAttribute(
+				TwoPhasesPageTemplate.TAL_TAG, 
+				jptDocument );
+		
+		if ( result == null ){
+			return null;
+		}
+		
+		if ( result instanceof TALTag ){
+			return ( TALTag ) result;
+		}
+		
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.TAL_TAG );
 	}
 	
-	public METALDefineMacro getMETALDefineMacro(JPTDocument jptDocument) throws PageTemplateException {
+	public METALDefineMacro getMETALDefineMacro( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getMetalAttribute(
 				TwoPhasesPageTemplate.METAL_DEFINE_MACRO, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof METALDefineMacro){
-			return (METALDefineMacro)result;
+		if ( result instanceof METALDefineMacro ){
+			return ( METALDefineMacro ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.METAL_DEFINE_MACRO);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.METAL_DEFINE_MACRO );
 	}
 	
-	public METALDefineSlot getMETALDefineSlot(JPTDocument jptDocument) throws PageTemplateException {
+	public METALDefineSlot getMETALDefineSlot( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getMetalAttribute(
 				TwoPhasesPageTemplate.METAL_DEFINE_SLOT, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof METALDefineSlot){
-			return (METALDefineSlot)result;
+		if ( result instanceof METALDefineSlot ){
+			return ( METALDefineSlot ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.METAL_DEFINE_SLOT);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.METAL_DEFINE_SLOT );
 	}
 	
-	public METALFillSlot getMETALFillSlot(JPTDocument jptDocument) throws PageTemplateException {
+	public METALFillSlot getMETALFillSlot( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getMetalAttribute(
 				TwoPhasesPageTemplate.METAL_FILL_SLOT, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof METALFillSlot){
-			return (METALFillSlot)result;
+		if ( result instanceof METALFillSlot ){
+			return ( METALFillSlot ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.METAL_FILL_SLOT);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.METAL_FILL_SLOT );
 	}
 	
 	public METALUseMacro getMETALUseMacro(JPTDocument jptDocument) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getMetalAttribute(
 				TwoPhasesPageTemplate.METAL_USE_MACRO, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof METALUseMacro){
-			return (METALUseMacro)result;
+		if ( result instanceof METALUseMacro ){
+			return ( METALUseMacro ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.METAL_USE_MACRO);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.METAL_USE_MACRO );
 	}
 	
 	public I18NAttributes getI18NAttributes(JPTDocument jptDocument) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getI18nAttribute(
 				TwoPhasesPageTemplate.I18N_ATTRIBUTES, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof I18NAttributes){
-			return (I18NAttributes)result;
+		if ( result instanceof I18NAttributes ){
+			return ( I18NAttributes ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.I18N_ATTRIBUTES);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.I18N_ATTRIBUTES );
 	}
 	
-	public I18NContent getI18NContent(JPTDocument jptDocument) throws PageTemplateException {
+	public I18NContent getI18NContent( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getI18nAttribute(
 				TwoPhasesPageTemplate.I18N_CONTENT, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof I18NContent){
-			return (I18NContent)result;
+		if ( result instanceof I18NContent ){
+			return ( I18NContent ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.I18N_CONTENT);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.I18N_CONTENT );
 	}
 	
 	public I18NDefine getI18NDefine(JPTDocument jptDocument) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getI18nAttribute(
 				TwoPhasesPageTemplate.I18N_DEFINE, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof I18NDefine){
-			return (I18NDefine)result;
+		if ( result instanceof I18NDefine ){
+			return ( I18NDefine ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.I18N_DEFINE);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.I18N_DEFINE );
 	}
 	
 	public I18NDomain getI18NDomain(JPTDocument jptDocument) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getI18nAttribute(
 				TwoPhasesPageTemplate.I18N_DOMAIN, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof I18NDomain){
-			return (I18NDomain)result;
+		if ( result instanceof I18NDomain ){
+			return ( I18NDomain ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.I18N_DOMAIN);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.I18N_DOMAIN );
 	}
 	
-	public I18NOnError getI18NOnError(JPTDocument jptDocument) throws PageTemplateException {
+	public I18NOnError getI18NOnError( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getI18nAttribute(
 				TwoPhasesPageTemplate.I18N_ON_ERROR, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof I18NOnError){
-			return (I18NOnError)result;
+		if ( result instanceof I18NOnError ){
+			return ( I18NOnError ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.I18N_ON_ERROR);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.I18N_ON_ERROR );
 	}
 	
-	public I18NParams getI18NParams(JPTDocument jptDocument) throws PageTemplateException {
+	public I18NParams getI18NParams( JPTDocument jptDocument ) throws PageTemplateException {
 		
 		DynamicAttribute result = this.getI18nAttribute(
 				TwoPhasesPageTemplate.I18N_PARAMS, 
-				jptDocument);
+				jptDocument );
 		
-		if (result == null){
+		if ( result == null ){
 			return null;
 		}
 		
-		if (result instanceof I18NParams){
-			return (I18NParams)result;
+		if ( result instanceof I18NParams ){
+			return ( I18NParams ) result;
 		}
 		
-		throw generateAttributeInstanceException(TwoPhasesPageTemplate.I18N_PARAMS);
+		throw generateAttributeInstanceException( TwoPhasesPageTemplate.I18N_PARAMS );
 	}
 	
-	static private PageTemplateException generateAttributeInstanceException(String attributeName) 
+	static private PageTemplateException generateAttributeInstanceException( String attributeName ) 
 			throws PageTemplateException {
 		
-		return new PageTemplateException("Attribute " + attributeName + " is not of type "
-				+ attributeName);
+		return new PageTemplateException( 
+				"Attribute " + attributeName + " is not of type " + attributeName );
 	}
 	
-	public void addNamespaceStaticAttribute(Namespace namespace){
+	public void addNamespaceStaticAttribute( Namespace namespace ){
 		
 		this.addStaticAttribute(
 				new StaticAttributeImpl(
 						namespace.getPrefix(), 
 						XMLNS, 
-						namespace.getURI()) );
+						namespace.getURI() ) );
 	}
 }

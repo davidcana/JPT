@@ -49,6 +49,7 @@ public interface PageTemplate {
     static final String TAL_ATTRIBUTES = "attributes";
     static final String TAL_OMIT_TAG = "omit-tag";
     static final String TAL_ON_ERROR = "on-error";
+    static final String TAL_TAG = "tag";
     
     // Metal namespace
     static final String METAL_USE_MACRO = "use-macro";
@@ -66,23 +67,24 @@ public interface PageTemplate {
     static final String I18N_ON_ERROR = TAL_ON_ERROR;
     
     // Expressions
-    static final String EXPRESSION_SUFIX = ":";
-    static final String EXPR_STRING = "string" + EXPRESSION_SUFIX;
-    //static final String EXPR_STRINP = "strinp" + EXPRESSION_SUFIX;
-    static final String EXPR_EXISTS = "exists" + EXPRESSION_SUFIX;
-    static final String EXPR_NOT = "not" + EXPRESSION_SUFIX;
-    static final String EXPR_JAVA = "java" + EXPRESSION_SUFIX;
-    static final String EXPR_EQUALS = "equals" + EXPRESSION_SUFIX;
-    static final String EXPR_GREATER = "greater" + EXPRESSION_SUFIX;
-    static final String EXPR_LOWER = "lower" + EXPRESSION_SUFIX;
-    static final String EXPR_ADD = "+" + EXPRESSION_SUFIX;
-    static final String EXPR_SUB = "-" + EXPRESSION_SUFIX;
-    static final String EXPR_MUL = "*" + EXPRESSION_SUFIX;
-    static final String EXPR_DIV = ":" + EXPRESSION_SUFIX;
-    static final String EXPR_MOD = "%" + EXPRESSION_SUFIX;
-    static final String EXPR_OR = "or" + EXPRESSION_SUFIX;
-    static final String EXPR_AND = "and" + EXPRESSION_SUFIX;
-    static final String EXPR_COND = "cond" + EXPRESSION_SUFIX;
+    static final String EXPRESSION_SUFFIX = ":";
+    static final String EXPR_STRING = "string" + EXPRESSION_SUFFIX;
+    static final String EXPR_EXISTS = "exists" + EXPRESSION_SUFFIX;
+    static final String EXPR_NOT = "not" + EXPRESSION_SUFFIX;
+    static final String EXPR_JAVA = "java" + EXPRESSION_SUFFIX;
+    static final String EXPR_BSH = "bsh" + EXPRESSION_SUFFIX;
+    static final String EXPR_GROOVY = "groovy" + EXPRESSION_SUFFIX;
+    static final String EXPR_EQUALS = "equals" + EXPRESSION_SUFFIX;
+    static final String EXPR_GREATER = "greater" + EXPRESSION_SUFFIX;
+    static final String EXPR_LOWER = "lower" + EXPRESSION_SUFFIX;
+    static final String EXPR_ADD = "+" + EXPRESSION_SUFFIX;
+    static final String EXPR_SUB = "-" + EXPRESSION_SUFFIX;
+    static final String EXPR_MUL = "*" + EXPRESSION_SUFFIX;
+    static final String EXPR_DIV = ":" + EXPRESSION_SUFFIX;
+    static final String EXPR_MOD = "%" + EXPRESSION_SUFFIX;
+    static final String EXPR_OR = "or" + EXPRESSION_SUFFIX;
+    static final String EXPR_AND = "and" + EXPRESSION_SUFFIX;
+    static final String EXPR_COND = "cond" + EXPRESSION_SUFFIX;
     
     // String expressions
     static final String STRING_EXPRESSION_SUFIX = " ";
@@ -114,15 +116,13 @@ public interface PageTemplate {
 	static final String DATE_HELPER_VAR_NAME = "date";
 	static final String REPEAT_VAR_NAME = "repeat";               // Only defined inside a tal:repeat
 	public static final String TEMPLATE_ERROR_VAR_NAME = "error"; // Only defined inside a tal:on-error
-	
+	static final String SHELL_VAR_NAME = "shell";
+	 
 	// Methods
     void process( OutputStream output, Object context )
         throws PageTemplateException;
 	void process( OutputStream output, Object context, Map<String, Object> dictionary )
         throws PageTemplateException;
-    
-	//public Object evaluateVar(String varName) throws ExpressionEvaluationException;
-	//public TemplateError getError() throws ExpressionEvaluationException;
 	
     String toLetter( int n );
     String toCapitalLetter( int n );

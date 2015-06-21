@@ -43,21 +43,21 @@ public class I18NParams extends JPTAttributeImpl implements DynamicAttribute {
 	
 	
 	public I18NParams(){}
-	public I18NParams(String namespaceUri, String expression) throws PageTemplateException {
-		super(namespaceUri);
-		this.params = AttributesUtils.getExpressions(expression);
+	public I18NParams( String namespaceUri, String expression ) throws PageTemplateException {
+		super( namespaceUri );
+		this.params = AttributesUtils.getExpressions( expression );
 	}
 
 	public List<JPTExpression> getParams() {
 		return this.params;
 	}
 
-	public void setParams(List<JPTExpression> params) {
+	public void setParams( List<JPTExpression> params ) {
 		this.params = params;
 	}
 
-	public void addParam(JPTExpression params){
-		this.params.add(params);
+	public void addParam( JPTExpression params ){
+		this.params.add( params );
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class I18NParams extends JPTAttributeImpl implements DynamicAttribute {
 	
 	@Override
 	public String getValue() {
-		return AttributesUtils.getStringFromExpressions(this.params);
+		return AttributesUtils.getStringFromExpressions( this.params );
 	}
 	
 }

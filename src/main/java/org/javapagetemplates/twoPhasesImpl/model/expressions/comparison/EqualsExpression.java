@@ -5,15 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -48,8 +47,8 @@ public class EqualsExpression extends JPTExpressionImpl implements EvaluableToBo
 	
 	
 	public EqualsExpression(){}
-	public EqualsExpression(String stringExpression){
-		super(stringExpression);
+	public EqualsExpression( String stringExpression ){
+		super( stringExpression );
 	}
 
 	
@@ -57,59 +56,58 @@ public class EqualsExpression extends JPTExpressionImpl implements EvaluableToBo
 		return this.expressions;
 	}
 
-	public void setExpressions(List<JPTExpression> expressions) {
+	public void setExpressions( List<JPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 
-	public void addExpression(JPTExpression expression){
-		this.expressions.add(expression);
+	public void addExpression( JPTExpression expression ){
+		this.expressions.add( expression );
 	}
 
-	static public EqualsExpression generate(String exp) 
-			throws ExpressionSyntaxException {
+	static public EqualsExpression generate( String exp ) throws ExpressionSyntaxException {
         
 		String expression = exp.substring( TwoPhasesPageTemplate.EXPR_EQUALS.length() ).trim();
         
 		// Check some conditions
         if ( expression.length() == 0 ) {
-            throw new ExpressionSyntaxException("Equals expression void.");
+            throw new ExpressionSyntaxException( "EQUALS expression void." );
         }
         ExpressionTokenizer segments = new ExpressionTokenizer( 
         		expression, 
         		TwoPhasesPageTemplate.EXPRESSION_DELIMITER );
         
         if ( segments.countTokens() == 1 ) {
-        	throw new ExpressionSyntaxException("Only one element in equals expression, please add at least one more.");
+        	throw new ExpressionSyntaxException(
+        			"Only one element in EQUALS expression, please add at least one more." );
         }
         
         // Iterate through segments
-        EqualsExpression result = new EqualsExpression(exp);
+        EqualsExpression result = new EqualsExpression( exp );
         
         String segment1 = segments.nextToken().trim();
         result.addExpression(
-        		ExpressionUtils.generate(segment1) ); 
+        		ExpressionUtils.generate( segment1 ) ); 
         		
         while ( segments.hasMoreTokens() ) {
             String segment = segments.nextToken().trim();
             result.addExpression(
-            		ExpressionUtils.generate(segment) ); 
+            		ExpressionUtils.generate( segment ) ); 
         }
         
         return result;
 	}
 	
 	@Override
-	public Boolean evaluateToBoolean(Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		Iterator<JPTExpression> i = this.expressions.iterator();
 		JPTExpression expression1 = i.next();
-        Object result1 = expression1.evaluate( beanShell );
+        Object result1 = expression1.evaluate( evaluationHelper );
         
         while ( i.hasNext() ) {
         	JPTExpression expression = i.next();
-        	Object result = expression.evaluate( beanShell );
-			if (!areEquivalent(result1, result)){
+        	Object result = expression.evaluate( evaluationHelper );
+			if ( ! areEquivalent( result1, result ) ){
             	return false;
             }
         }
@@ -117,26 +115,26 @@ public class EqualsExpression extends JPTExpressionImpl implements EvaluableToBo
         return true;
 	}
     
-	static boolean areEquivalent(Object object1, Object object2){
+	static boolean areEquivalent( Object object1, Object object2 ){
     	
-    	if (object1 instanceof Number && object2 instanceof Number){
-    		Number number1 = (Number) object1;
-    		Number number2 = (Number) object2;
+    	if ( object1 instanceof Number && object2 instanceof Number ){
+    		Number number1 = ( Number ) object1;
+    		Number number2 = ( Number ) object2;
     		
     		return number1.longValue() == number2.longValue();
     	}
     	
-    	return object1.equals(object2);
+    	return object1.equals( object2 );
     }
     
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return this.evaluateToBoolean(beanShell);
+	public Object evaluate(EvaluationHelper evaluationHelper) throws EvaluationException {
+		return this.evaluateToBoolean( evaluationHelper );
 	}
 	
-	static public Object evaluate(String exp, Interpreter beanShell) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException {
-		return generate(exp).evaluate(beanShell); 
+	static public Object evaluate(String exp, EvaluationHelper evaluationHelper) 
+			throws ExpressionSyntaxException, EvaluationException {
+		return generate( exp ).evaluate( evaluationHelper ); 
 	}
 
 }

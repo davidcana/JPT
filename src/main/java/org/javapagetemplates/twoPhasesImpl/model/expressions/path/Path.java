@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.javapagetemplates.common.BeanShellScript;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.NoSuchPathException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
+import org.javapagetemplates.common.scripting.Script;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.EvalError;
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -49,10 +47,10 @@ public class Path implements JPTExpression {
 	private List<NextPathToken> tokens = new ArrayList<NextPathToken>();
 	
 	public Path(){}
-	public Path(FirstPathToken firstToken){
+	public Path( FirstPathToken firstToken ){
 		this.firstToken = firstToken;
 	}
-	public Path(FirstPathToken firstToken, List<NextPathToken> tokens){
+	public Path( FirstPathToken firstToken, List<NextPathToken> tokens ){
 		this.firstToken = firstToken;
 		this.tokens = tokens;
 	}
@@ -61,7 +59,7 @@ public class Path implements JPTExpression {
 		return this.firstToken;
 	}
 
-	public void setFirstToken(FirstPathToken firstToken) {
+	public void setFirstToken( FirstPathToken firstToken ) {
 		this.firstToken = firstToken;
 	}
 
@@ -69,57 +67,53 @@ public class Path implements JPTExpression {
 		return this.tokens;
 	}
 
-	public void setTokens(List<NextPathToken> tokens) {
+	public void setTokens( List<NextPathToken> tokens ) {
 		this.tokens = tokens;
 	}
 	
-	public void addToken(NextPathToken token){
-		this.tokens.add(token);
+	public void addToken( NextPathToken token ){
+		this.tokens.add( token );
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
-		try {
-			String expression = this.getStringExpression();
-			Object result = this.firstToken.evaluate(beanShell);
-			String token = this.firstToken.toString();
-			Iterator<NextPathToken> i = this.tokens.iterator();
+		String expression = this.getStringExpression();
+		Object result = this.firstToken.evaluate( evaluationHelper );
+		String token = this.firstToken.toString();
+		Iterator<NextPathToken> i = this.tokens.iterator();
 
-			while (i.hasNext()){
-				
-			    // Only last element can be null
-			    if ( result == null ) {
-			        throw new NoSuchPathException( new NullPointerException( token + " in '" + expression + "' is null" ) );
-			    }
-			    
-				NextPathToken nextPathToken = i.next();
-				
-				result = nextPathToken.evaluate(result, beanShell);
-				
-				if (result instanceof BeanShellScript){
-					BeanShellScript script = (BeanShellScript) result;
-					result = script.evaluate(beanShell);
-				}
-				token = nextPathToken.getStringExpression();
+		while ( i.hasNext() ){
+			
+		    // Only last element can be null
+		    if ( result == null ) {
+		        throw new NoSuchPathException( 
+		        		new NullPointerException( token + " in '" + expression + "' is null" ) );
+		    }
+		    
+			NextPathToken nextPathToken = i.next();
+			
+			result = nextPathToken.evaluate( result, evaluationHelper );
+			
+			if ( result instanceof Script ){
+				Script script = ( Script ) result;
+				result = script.evaluate( evaluationHelper );
 			}
-			
-			return result;
-			
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException(e);
+			token = nextPathToken.getStringExpression();
 		}
+		
+		return result;
 	}
 	
 	@Override
 	public String getStringExpression(){
 		
 		StringBuilder sb = new StringBuilder(
-				this.firstToken.getStringExpression());
+				this.firstToken.getStringExpression() );
 		
-		for (NextPathToken nextPathToken: this.tokens){
-			sb.append('/');
-			sb.append(nextPathToken.getStringExpression());
+		for ( NextPathToken nextPathToken: this.tokens ){
+			sb.append( '/' );
+			sb.append( nextPathToken.getStringExpression() );
 		}
 		
 		return sb.toString();

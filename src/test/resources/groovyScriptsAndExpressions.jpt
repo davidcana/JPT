@@ -1,0 +1,49 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <head>
+    <title>This is a test</title>
+  </head>
+  <body>
+      Bean shell expressions
+      <ul tal:define="sDragons 'dragons'; 
+                      sMermaids 'mermaids';
+                      sRock 'rock';
+                      sTree 'tree';
+                      sPrimate 'primate'">
+        <li> true <span tal:replace="java: true __ true ">not false</span></li>
+        <li> false <span tal:replace="java: false __ true">not true</span></li>
+        <li> true <span tal:replace="java: true || false">not false</span></li>
+        <li> false <span tal:replace="java: false __ false ">not true</span></li>
+        <li> true <span tal:replace="java: ( dragon == undef ) __ ( here != undef )">not false</span></li>
+        <li> mermaids <span tal:replace="java: (dragons != undef) ? dragons : sMermaids">a fantastic creature</span></li>
+        <li> 1 <span tal:replace="java: true ? 1 : 2">a number</span></li>
+        <li> tree <span tal:replace="java: true ? ( false ? sRock : sTree ) : sPrimate">shrub</span></li>
+      </ul>
+      
+      Arithmetics
+      <ul>
+        <li> 9 <span tal:replace="java: 5 + 4">5 + 4</span></li>
+        <li> 1 <span tal:replace="java: 5 - 4">5 - 4</span></li>
+        <li> 20 <span tal:replace="java: 5 * 4">5 * 4</span></li>
+        <li> 23 <span tal:replace="java: 69 / 3">69 / 3</span></li>
+        <li> 2 <span tal:replace="java: 23 % 7">23 % 7</span></li>
+      </ul>
+      
+      Dates
+      <ul tal:define="dateFormatString 'EEE MMMM d, yyyy h:mm:ss a';
+                      dateFormat java:new java.text.SimpleDateFormat( dateFormatString )">
+        <li>my birthday <span tal:replace="dateFormat/format( here/birthday )">a date</span></li>
+      </ul>
+      
+      Invoke a groovy script
+      <p tal:content="resolver/getScript( 'helloworld.groovy' )">
+         Howdy!
+      </p>
+      
+      Invoke it again
+      <ul>
+        <li>String <span tal:replace="resolver/getScript( 'helloworld.groovy' )/class/name">The Class</span></li>
+        <li>20 <span tal:replace="resolver/getScript( 'helloworld.groovy' )/length()">length</span></li>
+      </ul>
+
+  </body>
+</html>

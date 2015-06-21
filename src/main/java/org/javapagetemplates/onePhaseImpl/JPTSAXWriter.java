@@ -41,7 +41,7 @@ public class JPTSAXWriter extends SAXWriter {
 	
     public JPTSAXWriter(ContentHandler contentHandler,
             LexicalHandler lexicalHandler) {
-    	super(contentHandler, lexicalHandler);
+    	super( contentHandler, lexicalHandler );
     }
     
     
@@ -49,18 +49,17 @@ public class JPTSAXWriter extends SAXWriter {
 	protected void write(Element element, NamespaceStack namespaceStack)
 			throws SAXException {
 		
-		if (!element.hasContent() && !JPTContext.getInstance().isEmptyTag(element.getName())){
+		if ( !element.hasContent() && !JPTContext.getInstance().isEmptyTag( element.getName() ) ){
 	        int stackSize = namespaceStack.size();
-	        AttributesImpl namespaceAttributes = startPrefixMapping(element,
-	                namespaceStack);
-	        startElement(element, namespaceAttributes);
-	        write(SPACE);
-	        endElement(element);
-	        endPrefixMapping(namespaceStack, stackSize);
+	        AttributesImpl namespaceAttributes = startPrefixMapping( element, namespaceStack );
+	        startElement( element, namespaceAttributes );
+	        write( SPACE );
+	        endElement( element );
+	        endPrefixMapping( namespaceStack, stackSize );
 			return;
 		}
 		
-		super.write(element, namespaceStack);
+		super.write( element, namespaceStack );
 	}
 
 }

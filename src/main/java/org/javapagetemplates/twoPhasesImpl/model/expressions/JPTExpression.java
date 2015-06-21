@@ -2,9 +2,8 @@ package org.javapagetemplates.twoPhasesImpl.model.expressions;
 
 import java.io.Serializable;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
-
-import bsh.Interpreter;
+import org.javapagetemplates.common.exceptions.EvaluationException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -33,7 +32,7 @@ import bsh.Interpreter;
  */
 public interface JPTExpression extends Serializable {
 	
-	public Object evaluate( Interpreter beanShell ) throws ExpressionEvaluationException;
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException;
 	
 	public String getStringExpression();
 }

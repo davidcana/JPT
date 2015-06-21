@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -50,8 +49,8 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
 	
 	public MethodCallExpression(){}
 
-	public MethodCallExpression(String stringExpression, String methodName){
-		super(stringExpression, methodName);
+	public MethodCallExpression( String stringExpression, String methodName ){
+		super( stringExpression, methodName );
 	}
 
 
@@ -59,17 +58,17 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
 		return this.arguments;
 	}
 
-	public void setArguments(List<JPTExpression> arguments) {
+	public void setArguments( List<JPTExpression> arguments ) {
 		this.arguments = arguments;
 	}
 	
-	public void addArgument(JPTExpression argument){
-		this.arguments.add(argument);
+	public void addArgument( JPTExpression argument ){
+		this.arguments.add( argument );
 	}
 	
 	@Override
-	public Object evaluate(Object parent, Interpreter beanShell) 
-			throws ExpressionEvaluationException {
+	public Object evaluate( Object parent, EvaluationHelper evaluationHelper ) 
+			throws EvaluationException {
 		
         Object object;
         @SuppressWarnings("rawtypes")
@@ -81,54 +80,53 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
             if ( parent instanceof StaticCall ) {
                 // Must be static method
                 object = null;
-                clazz = ((StaticCall)parent).clazz;
+                clazz = ( ( StaticCall ) parent ).clazz;
             }
             else {
                 object = parent;
                 clazz = parent.getClass();
             }
 
-            return evaluateNonLazyMethodCall(this.methodName, this.arguments, beanShell, object, clazz);
+            return evaluateNonLazyMethodCall( this.methodName, this.arguments, evaluationHelper, object, clazz );
             
-        }   catch( Exception e ) {
-            if (e instanceof InvocationTargetException){
-                InvocationTargetException e2 = (InvocationTargetException) e;
-                throw new ExpressionEvaluationException(e2.getTargetException());
+        } catch( Exception e ) {
+            if ( e instanceof InvocationTargetException ){
+                InvocationTargetException e2 = ( InvocationTargetException ) e;
+                throw new EvaluationException( e2.getTargetException() );
             }
-            throw new ExpressionEvaluationException(e);
+            throw new EvaluationException( e );
         }
 	}
 	
 	@SuppressWarnings({ "rawtypes" })
-	private static Object evaluateNonLazyMethodCall(String methodName,
-			List<JPTExpression> argumentExpressions, Interpreter beanShell, Object object,
-			Class clazz) throws PageTemplateException, IllegalAccessException,
-			InvocationTargetException {
+	private static Object evaluateNonLazyMethodCall( String methodName,
+			List<JPTExpression> argumentExpressions, EvaluationHelper evaluationHelper, Object object,
+			Class clazz ) 
+					throws PageTemplateException, IllegalAccessException, InvocationTargetException {
 		
 		// Parse and evaluate arguments
 
 		Object[] arguments = new Object[ argumentExpressions.size() ];
 		for ( int i = 0; i < arguments.length; i++ ) {
-			JPTExpression expression = argumentExpressions.get(i);
-		    arguments[i] = expression.evaluate( beanShell );
+			JPTExpression expression = argumentExpressions.get( i );
+		    arguments[ i ] = expression.evaluate( evaluationHelper );
 		}
 		
-		Method method = generateMethod(methodName, clazz, arguments);
+		Method method = generateMethod( methodName, clazz, arguments );
 		if ( method != null ) {
 		    return method.invoke( object, arguments );
 		}
 		
-        throw new ExpressionEvaluationException( 
-        		generateErrorMessage(methodName, clazz, arguments) );
+        throw new EvaluationException( 
+        		generateErrorMessage( methodName, clazz, arguments ) );
 	}
 	
-    static public final MethodCallExpression generate( String token ) 
-    		throws ExpressionSyntaxException {
+    static public final MethodCallExpression generate( String token ) throws ExpressionSyntaxException {
     	
         int leftParen = token.indexOf( '(' );
         if ( leftParen != -1 ) {
             if ( ! token.endsWith( ")" ) ) {
-                throw new ExpressionSyntaxException( "syntax error: bad method call: " + token );
+                throw new ExpressionSyntaxException( "Syntax error: bad method call: " + token );
             }
             String methodName = token.substring( 0, leftParen ).trim();
             String argumentString = token.substring( leftParen + 1, token.length() - 1 );
@@ -136,10 +134,8 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
             MethodCallExpression result = new MethodCallExpression( token, methodName);
             
             // Parse arguments
-            ExpressionTokenizer argumentTokens = new ExpressionTokenizer(
-            		argumentString, 
-            		',' );
-            while (argumentTokens.hasMoreTokens()){
+            ExpressionTokenizer argumentTokens = new ExpressionTokenizer( argumentString, ',' );
+            while ( argumentTokens.hasMoreTokens() ){
             	String argumentExpression = argumentTokens.nextToken().trim();
             	result.addArgument(
             			ExpressionUtils.generate( argumentExpression ) );
@@ -150,5 +146,4 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
         
         return null;
 	}
-	
 }

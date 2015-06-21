@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>This is a test</title>
+  </head>
+  <body>
+  
+    Not defined var
+    <p>
+        var does not exist: OK
+        var value: null null
+    </p>
+    
+    Nested vars
+    <p>
+        var exists: OK
+        check value: OK
+        var value: 1 1
+        
+        <div>
+            var exists: OK
+            check value: OK
+            var value: 2 2
+            
+            <div>
+                var exists: OK
+                check value: OK
+                var value: three three
+                
+                var2 exists: OK
+                check value: OK
+                var2 value: 4 4
+            </div>
+            
+            var exists: OK
+            check value: OK
+            var value: 2 2
+            
+            var2 does not exist: OK
+            var2 value: null null
+        </div>
+        
+        var exists: OK
+        check value: OK
+        var value: 1 1
+        
+        var2 does not exist: OK
+        var2 value: null null
+    </p>
+    
+    Out of scope var
+    <p>
+        var does not exist: OK
+        the var value: null null
+        
+        var2 does not exist: OK
+        var2 value: null null
+    </p>
+  </body>
+</html>

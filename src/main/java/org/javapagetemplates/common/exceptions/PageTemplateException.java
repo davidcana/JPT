@@ -1,6 +1,10 @@
 package org.javapagetemplates.common.exceptions;
 
 /**
+ * <p>
+ *   Generic exception about JPT. Others exceptions in this package extends this.
+ * </p>
+ * 
  *  Java Page Templates
  *
  *  This library is free software; you can redistribute it and/or

@@ -1,12 +1,11 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path.literals;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.EvaluableToNumber;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.FirstPathToken;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -44,33 +43,32 @@ public class DoubleLiteralExpression implements EvaluableToNumber, FirstPathToke
 	
 	public DoubleLiteralExpression(){}
 	
-	public DoubleLiteralExpression(Double literal){
+	public DoubleLiteralExpression( Double literal ){
 		this.literal = literal;
 	}
 
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		return this.literal;
 	}
 	
 	@Override
-	public Number evaluateToNumber(Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Number evaluateToNumber( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		return this.literal;
 	}
 	
-	static public Object evaluate(String expression, Interpreter beanShell) 
-			throws PageTemplateException {
+	static public Object evaluate( String expression, EvaluationHelper evaluationHelper ) throws PageTemplateException {
 		return new Double( expression.substring( 0, expression.length() - 1 ) );
 	}
 	
-	static public DoubleLiteralExpression generate(String expression){
+	static public DoubleLiteralExpression generate( String expression ){
 		
 		if ( expression.endsWith( TwoPhasesPageTemplate.DOUBLE_LITERAL_SUFFIX ) ) {
             try {
                 return new DoubleLiteralExpression(
-                		new Double( expression.substring( 0, expression.length() - 1 ) ));
+                		new Double( 
+                				expression.substring( 0, expression.length() - 1 ) ));
                 
             } catch( NumberFormatException e ) {}
         }

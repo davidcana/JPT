@@ -1,10 +1,9 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.arithmethic;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -42,12 +41,11 @@ public class DivExpression extends ArithmethicExpression {
 
 	
 	@Override
-	protected Number doOperation(Number value1, Number value2) {
+	protected Number doOperation( Number value1, Number value2 ) {
 		return value1.intValue() / value2.intValue();
 	}
 	
-	static public DivExpression generate(String exp) 
-			throws ExpressionSyntaxException {
+	static public DivExpression generate( String exp ) throws ExpressionSyntaxException {
 		
 		DivExpression result = new DivExpression();
 		
@@ -55,13 +53,13 @@ public class DivExpression extends ArithmethicExpression {
 				exp,
 				result,
 				NAME,
-				TwoPhasesPageTemplate.EXPR_DIV);
+				TwoPhasesPageTemplate.EXPR_DIV );
 		
 		return result;
 	}
 	
-	static public Integer evaluate(String exp, Interpreter beanShell) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException {
-		return generate(exp).evaluateToNumber(beanShell).intValue();
+	static public Integer evaluate( String exp, EvaluationHelper evaluationHelper ) 
+			throws ExpressionSyntaxException, EvaluationException {
+		return generate( exp ).evaluateToNumber( evaluationHelper ).intValue();
 	}
 }

@@ -1,10 +1,9 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.StringExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -40,7 +39,7 @@ public class Indirection implements NextPathToken {
 	private String expression;
 	
 	public Indirection(){}
-	public Indirection(String expression){
+	public Indirection( String expression ){
 		this.expression = expression;
 	}
 	
@@ -54,15 +53,14 @@ public class Indirection implements NextPathToken {
 	}
 	
 	@Override
-	public Object evaluate(Object parent, Interpreter beanShell)
-			throws ExpressionEvaluationException {
+	public Object evaluate( Object parent, EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		try {
-			String token = StringExpression.evaluate(this.expression, beanShell).toString();
-			return PathExpression.evaluateNextPathToken(token, parent, beanShell);
+			String token = StringExpression.evaluate( this.expression, evaluationHelper ).toString();
+			return PathExpression.evaluateNextPathToken( token, parent, evaluationHelper );
 			
-		} catch (ExpressionSyntaxException e) {
-			throw new ExpressionEvaluationException(e);
+		} catch ( ExpressionSyntaxException e ) {
+			throw new EvaluationException( e );
 		}
 	}
 
@@ -71,13 +69,12 @@ public class Indirection implements NextPathToken {
 		return this.expression;
 	}
 	
-    static public final Indirection generate( String token ) 
-    		throws ExpressionSyntaxException {
+    static public final Indirection generate( String token ) throws ExpressionSyntaxException {
     	
-    	if ( token.charAt(0) != '?' ) {
+    	if ( token.charAt( 0 ) != '?' ) {
     		return null;
     	}
     	
-    	return new Indirection(token.substring(1));
+    	return new Indirection( token.substring( 1 ) );
     }
 }

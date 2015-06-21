@@ -1,9 +1,8 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
-
-import bsh.Interpreter;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
@@ -47,28 +46,27 @@ public class StaticCallExpression implements FirstPathToken {
 
 
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return evaluate(this.expression);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return evaluate( this.expression );
 	}
 	
-	static public Object evaluate(String expression) 
-			throws ExpressionEvaluationException {
+	static public Object evaluate( String expression ) throws EvaluationException {
 		
 		try {
 			return new StaticCall( Class.forName( expression ) );
 			
-		} catch (ClassNotFoundException e) {
-			throw new ExpressionEvaluationException(e);
+		} catch ( ClassNotFoundException e ) {
+			throw new EvaluationException( e );
 		}
 	}
 	
-	static public StaticCallExpression generate(String expression){
+	static public StaticCallExpression generate( String expression ){
 		
 		try {
-			evaluate(expression);
-			return new StaticCallExpression(expression);
+			evaluate( expression );
+			return new StaticCallExpression( expression );
 			
-		} catch (PageTemplateException e) {}
+		} catch ( PageTemplateException e ) {}
 		
 		return null;
 	}

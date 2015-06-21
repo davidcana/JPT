@@ -1,11 +1,10 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.Interpreter;
 
 /**
  *  Java Page Templates
@@ -35,10 +34,10 @@ public class GeneralPathExpressionItem implements JPTExpression {
 	private JPTExpression jptExpression;
 	
 	public GeneralPathExpressionItem(){}
-	public GeneralPathExpressionItem(String stringExpression) throws ExpressionSyntaxException {
-		this.jptExpression = ExpressionUtils.generate(stringExpression);
+	public GeneralPathExpressionItem( String stringExpression ) throws ExpressionSyntaxException {
+		this.jptExpression = ExpressionUtils.generate( stringExpression );
 	}
-	public GeneralPathExpressionItem(JPTExpression jptExpression){
+	public GeneralPathExpressionItem( JPTExpression jptExpression ){
 		this.jptExpression = jptExpression;
 	}
 
@@ -47,13 +46,13 @@ public class GeneralPathExpressionItem implements JPTExpression {
 		return jptExpression;
 	}
 
-	public void setJptExpression(JPTExpression jptExpression) {
+	public void setJptExpression( JPTExpression jptExpression ) {
 		this.jptExpression = jptExpression;
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return this.jptExpression.evaluate(beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		return this.jptExpression.evaluate( evaluationHelper );
 	}
 
 	@Override

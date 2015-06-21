@@ -1,5 +1,6 @@
 package org.javapagetemplates.twoPhasesImpl;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
@@ -36,15 +37,14 @@ public class DefaultResolver extends Resolver {
     private URIResolver uriResolver;
     
 
-    DefaultResolver(URI uri) {
+    DefaultResolver( URI uri ) {
         if ( uri != null ) {
             this.uriResolver = new URIResolver( uri );
         }
     }
     
     @Override
-    public URL getResource( String path ) 
-        throws java.net.MalformedURLException {
+    public URL getResource( String path ) throws MalformedURLException {
     	
         URL resource = null;
 
@@ -57,7 +57,7 @@ public class DefaultResolver extends Resolver {
     
     @Override
     public TwoPhasesPageTemplate getPageTemplate( String path )
-        throws PageTemplateException, java.net.MalformedURLException {
+        throws PageTemplateException {
     	
     	TwoPhasesPageTemplate template = null;
 
@@ -67,4 +67,5 @@ public class DefaultResolver extends Resolver {
 
         return template;
     }
+
 }

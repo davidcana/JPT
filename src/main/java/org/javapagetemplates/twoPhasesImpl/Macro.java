@@ -1,12 +1,11 @@
 package org.javapagetemplates.twoPhasesImpl;
 
-import bsh.Interpreter;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Stack;
 
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.model.JPTElement;
 import org.xml.sax.SAXException;
 
@@ -41,7 +40,7 @@ public interface Macro {
 	
 	void process(JPTXMLWriter xmlWriter,
     		      JPTElement jptElement, 
-                  Interpreter beanShell,
+    		      EvaluationHelper evaluationHelper,
                   Stack <Map<String, Slot>>slotStack )
         throws PageTemplateException, IOException, SAXException;
 }

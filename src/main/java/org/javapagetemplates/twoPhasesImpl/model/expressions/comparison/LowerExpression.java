@@ -1,13 +1,12 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions.comparison;
 
 import org.javapagetemplates.common.ExpressionTokenizer;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -40,19 +39,18 @@ public class LowerExpression extends TwoMembersComparisonExpression {
 	private static final long serialVersionUID = -1973025855031855661L;
 
 	public LowerExpression(){}
-	public LowerExpression(String stringExpression, JPTExpression expression1, JPTExpression expression2){
-		super(stringExpression, expression1, expression2);
+	public LowerExpression( String stringExpression, JPTExpression expression1, JPTExpression expression2 ){
+		super( stringExpression, expression1, expression2 );
 	}
 
 	
-	static public LowerExpression generate(String exp) 
-			throws ExpressionSyntaxException {
+	static public LowerExpression generate( String exp ) throws ExpressionSyntaxException {
         
         String expression = exp.substring( TwoPhasesPageTemplate.EXPR_LOWER.length() ).trim();
         
         // Check some conditions
         if ( expression.length() == 0 ) {
-            throw new ExpressionSyntaxException("Lower expression void.");
+            throw new ExpressionSyntaxException( "LOWER expression void." );
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( 
@@ -60,7 +58,8 @@ public class LowerExpression extends TwoMembersComparisonExpression {
         		TwoPhasesPageTemplate.EXPRESSION_DELIMITER );
         
         if ( segments.countTokens() != 2 ) {
-        	throw new ExpressionSyntaxException("Wrong number of elements, lower expressions only support two.");
+        	throw new ExpressionSyntaxException(
+        			"Wrong number of elements, LOWER expressions only support two." );
         }
         
         // Get both segments
@@ -69,20 +68,18 @@ public class LowerExpression extends TwoMembersComparisonExpression {
         
         return new LowerExpression(
         		exp,
-        		ExpressionUtils.generate(segment1),
-        		ExpressionUtils.generate(segment2));
+        		ExpressionUtils.generate( segment1 ),
+        		ExpressionUtils.generate( segment2 ) );
 	}
 	
 	@Override
-	public Boolean evaluateToBoolean(Interpreter beanShell)
-			throws ExpressionEvaluationException {
-		
-        return this.getNumber1(beanShell).longValue() < this.getNumber2(beanShell).longValue();
+	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper ) throws EvaluationException {
+        return this.getNumber1( evaluationHelper ).longValue() < this.getNumber2( evaluationHelper ).longValue();
 	}
 	
-	static public boolean evaluate(String exp, Interpreter beanShell) 
-			throws ExpressionSyntaxException, ExpressionEvaluationException {
-		return generate(exp).evaluateToBoolean(beanShell); 
+	static public boolean evaluate( String exp, EvaluationHelper evaluationHelper ) 
+			throws ExpressionSyntaxException, EvaluationException {
+		return generate( exp ).evaluateToBoolean( evaluationHelper ); 
 	}
 
 }

@@ -1,17 +1,16 @@
 package org.javapagetemplates.twoPhasesImpl.model.expressions;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
+import org.javapagetemplates.common.scripting.Evaluator;
 import org.javapagetemplates.twoPhasesImpl.JPTContext;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 
-
-import bsh.EvalError;
-import bsh.Interpreter;
-
 /**
  * <p>
- *   Evaluates a java expression.
+ *   Evaluates an expression using the EvaluationHelper defined in JPTContext 
+ *   as the default ExpressionEvaluator.
  * </p>
  * 
  * 
@@ -34,55 +33,40 @@ import bsh.Interpreter;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class JavaExpression extends JPTExpressionImpl {
+public class JavaExpression extends AbstractScriptExpression {
 
 	private static final long serialVersionUID = -3138512000373794137L;
 	
-	private String javaExpression;
-	
-	
 	public JavaExpression(){}
-	public JavaExpression(String stringExpression, String javaExpression){
-		super(stringExpression);
-		
-		this.javaExpression = javaExpression;
-	}
-
-	
-	public String getJavaExpression() {
-		return this.javaExpression;
-	}
-
-	public void setJavaExpression(String javaExpression) {
-		this.javaExpression = javaExpression;
+	public JavaExpression( String stringExpression, String scriptExpression ){
+		super( stringExpression, scriptExpression );
 	}
 	
-	static public JavaExpression generate(String expression) 
-			throws ExpressionSyntaxException {
+	static public JavaExpression generate( String expression ) throws ExpressionSyntaxException {
 		
 		return new JavaExpression(
 				expression, 
-				expression.substring( TwoPhasesPageTemplate.EXPR_JAVA.length() ));
+				expression.substring( TwoPhasesPageTemplate.EXPR_JAVA.length() ) );
+	}
+	
+	static private Evaluator getEvaluator(){
+		return JPTContext.getInstance().getExpressionEvaluator();
 	}
 	
 	@Override
-	public Object evaluate(Interpreter beanShell) throws ExpressionEvaluationException {
-		return evaluate(this.javaExpression, beanShell);
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		
+		return evaluate( 
+				this.scriptExpression, 
+				evaluationHelper, 
+				getEvaluator() );
 	}
 	
-	static public Object evaluate(String javaExpression, Interpreter beanShell) 
-			throws ExpressionEvaluationException {
-    	
-		if (!JPTContext.getInstance().isJavaExpressionsOn()){
-    		throw new ExpressionEvaluationException("Java expressions not allowed.");
-    	}
-    	
-		try {
-			String filteredExpression = javaExpression.replace('*', '&');
-			return beanShell.eval( filteredExpression );
-			
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException(e);
-		}		
+	static public Object evaluate( String scriptExpression, EvaluationHelper evaluationHelper ) throws EvaluationException {
+		
+		return evaluate( 
+				scriptExpression, 
+				evaluationHelper, 
+				getEvaluator() );
 	}
 }

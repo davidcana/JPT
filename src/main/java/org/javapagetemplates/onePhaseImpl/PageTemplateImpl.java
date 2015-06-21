@@ -1,13 +1,9 @@
 package org.javapagetemplates.onePhaseImpl;
 
-import bsh.BshClassManager;
-import bsh.EvalError;
-import bsh.Interpreter;
-import bsh.NameSpace;
-
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -47,10 +44,13 @@ import org.xnap.commons.i18n.I18n;
 import org.javapagetemplates.common.ExpressionTokenizer;
 import org.javapagetemplates.common.Filter;
 import org.javapagetemplates.common.TemplateError;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.exceptions.NoSuchPathException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
 import org.javapagetemplates.common.helpers.DateHelper;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
+import org.javapagetemplates.twoPhasesImpl.ScriptFactory;
 
 /**
  * <p>
@@ -81,7 +81,6 @@ import org.javapagetemplates.common.helpers.DateHelper;
  */
 public class PageTemplateImpl implements OnePhasePageTemplate {
 	
-	private static final String GLOBAL = "global";
 	private static final String CDATA = "CDATA";
 	public static final String VOID_STRING = "";
 	private static final String ENCODING = "UTF-8";
@@ -95,12 +94,10 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
     private Resolver userResolver = null;
     private String id;
     private boolean recoveredFromCache = false;
-    //private Interpreter beanShell;
     
 	// Map of macros contained in this template
     Map<String, Macro> macros = null;
 
-    private static BshClassManager bshClassManager;
     
     private static SAXReader htmlReader = null;
     static final SAXReader getHTMLReader() throws Exception {
@@ -118,8 +115,8 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
             //parser.setProperty( "http://cyberneko.org/html/features/scanner/script/strip-comment-delims", "true"); 
             
             // Attach ZenonWriter to the parser as a filter
-            XMLDocumentFilter[] filters = {new Filter()};
-            parser.setProperty("http://cyberneko.org/html/properties/filters", filters);
+            XMLDocumentFilter[] filters = { new Filter() };
+            parser.setProperty( "http://cyberneko.org/html/properties/filters", filters );
             
             htmlReader.setXMLReader( parser );
         }
@@ -153,8 +150,8 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
             } catch( DocumentException e ) {
                 try {
                     reader = getHTMLReader();
-                    if (reader == null){
-                        throw (e);
+                    if ( reader == null ){
+                        throw ( e );
                     }
                     this.template = reader.read( input );
                 } catch( NoClassDefFoundError ee ) {
@@ -166,8 +163,8 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
                 }
             }
         }
-        catch( Exception e ) {
-            throw new PageTemplateException(e);
+        catch ( Exception e ) {
+            throw new PageTemplateException( e );
         }
     }
 
@@ -177,7 +174,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
             this.uri = new URI( url.toString() );
             
             this.recoveredFromCache = this.recoverFromCache(); 
-        	if (this.recoveredFromCache){
+        	if ( this.recoveredFromCache ){
         		return;
         	}
             
@@ -187,8 +184,8 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
             } catch( DocumentException e ) {
                 try {
                     reader = getHTMLReader();
-                    if (reader == null){
-                        throw (e);
+                    if ( reader == null ){
+                        throw ( e );
                     }
                     this.template = reader.read( url );
                 } catch( NoClassDefFoundError ee ) {
@@ -200,11 +197,11 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
                 }
             }
         }
-        catch( RuntimeException e ) {
+        catch ( RuntimeException e ) {
             throw e;
         }
-        catch( Exception e ) {
-            throw new PageTemplateException(e);
+        catch ( Exception e ) {
+            throw new PageTemplateException( e );
         }
     }
 
@@ -212,7 +209,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId( String id ) {
 		this.id = id;
 	}
 	
@@ -228,30 +225,30 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
     
     @Override
     public void process( OutputStream output, Object context )
-        throws PageTemplateException
-    {
+        throws PageTemplateException {
         process( output, context, null );
     }
     
     
-    static final SAXTransformerFactory factory = (SAXTransformerFactory)TransformerFactory.newInstance();
+    static final SAXTransformerFactory factory = ( SAXTransformerFactory ) TransformerFactory.newInstance();
     @Override
 	public void process( OutputStream output, Object context, Map<String, Object> dictionary )
-        throws PageTemplateException
-    {
+        throws PageTemplateException {
+    	
         try {
             TransformerHandler handler = factory.newTransformerHandler();
             Transformer transformer = handler.getTransformer();
             
-            transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING);
+            transformer.setOutputProperty( OutputKeys.ENCODING, ENCODING );
             //transformer.setOutputProperty(OutputKeys.METHOD, "html");
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty( OutputKeys.METHOD, "xml" );
+            transformer.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
+            transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
             
             //OutputStreamWriter writer = new OutputStreamWriter(output, ENCODING);
             //handler.setResult(new StreamResult(writer));
-            handler.setResult(new StreamResult(output));
+            handler.setResult( 
+            		new StreamResult( output ) );
             //handler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "");
 
             process( handler, handler, context, dictionary );
@@ -260,7 +257,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
             throw e;
             
         } catch( Exception e ) {
-            throw new PageTemplateException(e);
+            throw new PageTemplateException( e );
         }
     }
 
@@ -269,17 +266,16 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
                          LexicalHandler lexicalHandler, 
                          Object context, 
                          Map<String, Object> dictionary )
-        throws PageTemplateException 
-    {
+        throws PageTemplateException {
+    	
         try {
             // Initialize the bean shell and register in the context
-            Interpreter beanShell = this.getInterpreter(context, dictionary);
-            //JPTContext.getInstance().registerInterPreter(beanShell);
+        	EvaluationHelper evaluationHelper = this.getEvaluationHelper( context, dictionary );
             
             // Process
             Element root = this.template.getRootElement();
             contentHandler.startDocument();
-            processElement( root, contentHandler, lexicalHandler, beanShell, new Stack<Map<String, Slot>>() );
+            processElement( root, contentHandler, lexicalHandler, evaluationHelper, new Stack<Map<String, Slot>>() );
             contentHandler.endDocument();
             
             this.saveToCache();
@@ -287,128 +283,109 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         } catch( PageTemplateException e ) {
             throw e;
         } catch( Exception e ) {
-            throw new PageTemplateException(e);
+            throw new PageTemplateException( e );
         }
     }
+	
     
+    private EvaluationHelper getEvaluationHelper( Object context, Map<String, Object> dictionary )
+		    throws EvaluationException {
+		
+		EvaluationHelper result = ScriptFactory.getInstance().createEvaluationHelper();
+        
+        this.addVarsToEvaluationHelper( context, dictionary, result );
+        
+        return result;
+	}
+	
     
     private void saveToCache() throws IOException {
 
     	try {
-    		if (!JPTContext.getInstance().isCacheOn()
+    		if ( ! JPTContext.getInstance().isCacheOn()
     				|| this.id == null 
     				|| this.recoveredFromCache 
-    				|| JPTContext.getInstance().getTemplateCache() == null){
+    				|| JPTContext.getInstance().getTemplateCache() == null ){
     			return;
     		}
     		
-			JPTContext.getInstance().getTemplateCache().put(this.id, this.template);
+			JPTContext.getInstance().getTemplateCache().put( this.id, this.template );
 			
-		} catch (Exception e) {
-			throw new IOException(e);
+		} catch ( Exception e ) {
+			throw new IOException( e );
 		}
 	}
+    
     
     private boolean recoverFromCache() throws IOException {
     	
     	try {
-            if (!JPTContext.getInstance().isCacheOn() 
+            if ( ! JPTContext.getInstance().isCacheOn() 
             		|| this.id == null 
-            		|| JPTContext.getInstance().getTemplateCache() == null){
+            		|| JPTContext.getInstance().getTemplateCache() == null ){
             	return false;
             }
             
-			this.template = JPTContext.getInstance().getTemplateCache().get(this.id);
+			this.template = JPTContext.getInstance().getTemplateCache().get( this.id );
 			
-			return !(this.template == null);
+			return ! ( this.template == null );
 			
-		} catch (Exception e) {
-			throw new IOException(e);
+		} catch ( Exception e ) {
+			throw new IOException( e );
 		}
 	}
-    
-	private Interpreter getInterpreter(Object context, Map<String, Object> dictionary)
-    throws EvalError {
-        
-        Interpreter result = new Interpreter();
-        NameSpace globalNameSpace = new NameSpace( getBshClassManager(), GLOBAL );
-        result.setNameSpace(globalNameSpace);
-        
-        this.addVarsToBeanshell(context, dictionary, result);
-        
-        return result;
-    }
-    
-    private BshClassManager getBshClassManager() {
-    	
-    	if (bshClassManager == null){
-    		bshClassManager = BshClassManager.createClassManager(null);
-    	}
-    	
-		return bshClassManager;
-	}
 
-	private void addVarsToBeanshell(Object context, Map<String, Object> dictionary, Interpreter beanShell) 
-			throws EvalError {
+
+	private void addVarsToEvaluationHelper(Object context, Map<String, Object> dictionary, EvaluationHelper evaluationHelper) 
+			throws EvaluationException {
         
+		// Add vars from dictionary
         if ( dictionary != null ) {
-            for ( Iterator<Map.Entry<String, Object>> i = dictionary.entrySet().iterator(); i.hasNext(); ) {
-                Map.Entry<String, Object> entry = i.next();
-                beanShell.set( (String)entry.getKey(), entry.getValue() );
-            }
+			for ( Entry<String, Object> entry : dictionary.entrySet() ){
+				evaluationHelper.set ( 
+						entry.getKey(), entry.getValue() );
+			}
         }
         
-        beanShell.set( OnePhasePageTemplate.HERE_VAR_NAME, context );
-        beanShell.set( OnePhasePageTemplate.TEMPLATE_VAR_NAME, this );
-        beanShell.set( OnePhasePageTemplate.RESOLVER_VAR_NAME, new DefaultResolver() );
-        //beanShell.set( PageTemplate.BOOL_HELPER_VAR_NAME, new BoolHelper() );
-        beanShell.set( OnePhasePageTemplate.DATE_HELPER_VAR_NAME, new DateHelper() );
+        // Add more vars
+        evaluationHelper.set( HERE_VAR_NAME, context );
+        evaluationHelper.set( TEMPLATE_VAR_NAME, this );
+        evaluationHelper.set( RESOLVER_VAR_NAME, new DefaultResolver() );
+        evaluationHelper.set( DATE_HELPER_VAR_NAME, new DateHelper() );
+        evaluationHelper.set( SHELL_VAR_NAME, evaluationHelper );
     }
+
     
 	private Map<String, String> namespaces = new TreeMap<String, String>();
     private String getNamespaceURIFromPrefix( String prefix ) {
-        String uri = (String)this.namespaces.get( prefix );
+        String uri = ( String ) this.namespaces.get( prefix );
         return uri == null ? VOID_STRING : uri;
     }
 
-    public static void setVar(Interpreter beanshell, 
+	public static void setVar(EvaluationHelper evaluationHelper, 
     		List<String> varsToUnset, Map<String, Object> varsToSet, String name, Object value) 
-    		throws EvalError {
-        
-        Object currentValue = beanshell.get(name);
-        
-        if (currentValue != null){
-            varsToSet.put(name, currentValue);
-            
-        } else {
-            varsToUnset.add(name);
-        }
-        
-        beanshell.set(name, value);
-    }
-    /*
-	@Override
-	public Object evaluateVar(String varName) throws ExpressionEvaluationException {
+    		throws EvaluationException {
+
+		Object currentValue = evaluationHelper.get( name );
 		
-		try {
-			return this.beanShell.get( varName );
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException(e);
+		if ( currentValue != null ){
+		    varsToSet.put( name, currentValue );
+		    
+		} else {
+		    varsToUnset.add( name );
 		}
-	}
-	
-	@Override
-	public TemplateError getError() throws ExpressionEvaluationException {
-		return (TemplateError) this.evaluateVar(TEMPLATE_ERROR_VAR_NAME);
-	}*/
+		
+		evaluationHelper.set( name, value );
+    }
+
 	
     protected void processElement( Element element, 
                                  ContentHandler contentHandler, 
                                  LexicalHandler lexicalHandler, 
-                                 Interpreter beanShell, 
+                                 EvaluationHelper evaluationHelper, 
                                  Stack <Map<String, Slot>>slotStack )
-        throws SAXException, PageTemplateException, IOException, EvalError
-    {
+        throws SAXException, PageTemplateException, IOException, EvaluationException {
+    	
 		Expressions expressions = new Expressions();
 		AttributesImpl attributes = getAttributes( element, expressions );
 		
@@ -420,10 +397,11 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 			if (expressions.repeat != null){
 				
 				// Process repeat
-				Loop loop = new Loop( expressions.repeat, beanShell, varsToUnset, varsToSet );
-				while( loop.repeat( beanShell ) ) {
-			        if (!processElement(element, contentHandler,
-			    			lexicalHandler, beanShell, slotStack, expressions, attributes, varsToUnset, varsToSet)){
+				Loop loop = new Loop( expressions.repeat, evaluationHelper, varsToUnset, varsToSet );
+				while ( loop.repeat( evaluationHelper ) ) {
+			        if ( ! processElement(
+			        		element, contentHandler,
+			    			lexicalHandler, evaluationHelper, slotStack, expressions, attributes, varsToUnset, varsToSet ) ){
 			        	return;
 			        }
 				}
@@ -431,31 +409,33 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 			} else {
 				
 				 // Process non repeat
-			    if (!processElement(element, contentHandler,
-						lexicalHandler, beanShell, slotStack, expressions, attributes, varsToUnset, varsToSet)){
+			    if ( ! processElement( 
+			    		element, contentHandler,
+						lexicalHandler, evaluationHelper, slotStack, expressions, attributes, varsToUnset, varsToSet ) ){
 			    	return;
 			    }
 			}
 			
-			processVars(beanShell, varsToUnset, varsToSet);
+			processVars( evaluationHelper, varsToUnset, varsToSet );
 			
-		} catch (PageTemplateException e) {
+		} catch ( PageTemplateException e ) {
 			
-			if (!treatError(element, contentHandler,
-					lexicalHandler, beanShell, varsToUnset, varsToSet, e)){
-				throw (e);
+			if ( ! treatError(
+					element, contentHandler,
+					lexicalHandler, evaluationHelper, varsToUnset, varsToSet, e)){
+				throw ( e );
 			}
 		}
     }
 
 	private boolean treatError(Element element, ContentHandler contentHandler,
-			LexicalHandler lexicalHandler, Interpreter beanShell,
+			LexicalHandler lexicalHandler, EvaluationHelper evaluationHelper,
 			List<String> varsToUnset, Map<String, Object> varsToSet, Exception exception) 
-					throws EvalError, PageTemplateException, SAXException {
+					throws EvaluationException, PageTemplateException, SAXException {
 		
 		// Exit if there is no on-error expression defined
-		String onErrorExpression = (String) beanShell.get(ON_ERROR_VAR_NAME);
-		if (onErrorExpression == null){
+		String onErrorExpression = ( String ) evaluationHelper.get( ON_ERROR_VAR_NAME );
+		if ( onErrorExpression == null ){
 			return false;
 		}
 		
@@ -463,81 +443,86 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		String i18nContent = null;
 		String i18nParams = null;
 
-		if (onErrorExpression.startsWith(I18N_EXPRESSION_PREFIX)){
+		if ( onErrorExpression.startsWith( I18N_EXPRESSION_PREFIX ) ){
 			i18nContent = onErrorExpression.substring( I18N_EXPRESSION_PREFIX.length() );
 		} else {
 			content = onErrorExpression;
 		}
 		
 		// Set the error variable
-		TemplateError templateError = new TemplateError(exception);
-		setVar(beanShell, varsToUnset, varsToSet, TEMPLATE_ERROR_VAR_NAME, templateError);
+		TemplateError templateError = new TemplateError( exception );
+		setVar( evaluationHelper, varsToUnset, varsToSet, TEMPLATE_ERROR_VAR_NAME, templateError );
 		
 		try {
 			// Process content
 			jptContent(
 					contentHandler, 
 					lexicalHandler, 
-					processContent( content, beanShell, i18nContent, i18nParams ));
+					processContent( content, evaluationHelper, i18nContent, i18nParams ) );
 			
-		} catch (Exception e) {
-			processVars(beanShell, varsToUnset, varsToSet);
-			throw new PageTemplateException(e);
+		} catch ( Exception e ) {
+			processVars( evaluationHelper, varsToUnset, varsToSet );
+			throw new PageTemplateException( e );
 		}
 		
-		processVars(beanShell, varsToUnset, varsToSet);
+		processVars( evaluationHelper, varsToUnset, varsToSet );
 
 		return true;
 	}
 
 	private boolean processElement(Element element, ContentHandler contentHandler,
-			LexicalHandler lexicalHandler, Interpreter beanShell, 
+			LexicalHandler lexicalHandler, EvaluationHelper evaluationHelper, 
 			Stack <Map<String, Slot>>slotStack,
 			Expressions expressions, AttributesImpl attributes, List<String> varsToUnset,
-			Map<String, Object> varsToSet) throws PageTemplateException, SAXException, IOException, EvalError {
+			Map<String, Object> varsToSet) throws PageTemplateException, SAXException, IOException, EvaluationException {
+		
+		String configurableTag = null;
 		
 		/* Normal elements */
 		
 		// on-error
         if ( expressions.onError != null || expressions.i18nOnError != null) {
-            processOnErrors( expressions.onError, expressions.i18nOnError, beanShell, varsToUnset, varsToSet );
+            processOnErrors( expressions.onError, expressions.i18nOnError, evaluationHelper, varsToUnset, varsToSet );
         }
         
 		// define
         if ( expressions.define != null ) {
-            processDefine( expressions.define, beanShell, varsToUnset, varsToSet );
+            processDefine( expressions.define, evaluationHelper, varsToUnset, varsToSet );
         }
         
         // i18nDomain
         if ( expressions.i18nDomain != null ) {
-            processI18nDomain( expressions.i18nDomain, beanShell, varsToUnset, varsToSet );
+            processI18nDomain( expressions.i18nDomain, evaluationHelper, varsToUnset, varsToSet );
         }
         
         // i18n:define
         if ( expressions.i18nDefine != null ) {
-            processI18nDefine( expressions.i18nDefine, expressions.i18nParams, beanShell, varsToUnset, varsToSet );
+            processI18nDefine( expressions.i18nDefine, expressions.i18nParams, evaluationHelper, varsToUnset, varsToSet );
         }
         
         // condition
         if ( expressions.condition != null &&
-             ! Expression.evaluateBoolean( expressions.condition, beanShell ) ) {
+             ! Expression.evaluateBoolean( expressions.condition, evaluationHelper ) ) {
             // Skip this element (and children)
             return false;
         }
         
+        // tag
+        if ( expressions.tag != null ) {
+            configurableTag = (String) Expression.evaluate( expressions.tag, evaluationHelper );
+        }
     
         /* Macro related elements */
         
 		// use macro
         if ( expressions.useMacro != null ) {
-            processMacro( expressions.useMacro, element, contentHandler, lexicalHandler, beanShell, slotStack );
+            processMacro( expressions.useMacro, element, contentHandler, lexicalHandler, evaluationHelper, slotStack );
             return false;
         }
 
         // fill slot
         if ( expressions.defineSlot != null && 
-        	!processDefineSlot(contentHandler, lexicalHandler, beanShell,
-					slotStack, expressions)){
+        	! processDefineSlot( contentHandler, lexicalHandler, evaluationHelper, slotStack, expressions ) ){
             return false;
         }
         
@@ -547,52 +532,87 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		// content or replace
 		Object jptContent = null;
 		if ( expressions.content != null || expressions.i18nContent != null ) {
-		    jptContent = processContent( expressions.content, beanShell, expressions.i18nContent, expressions.i18nParams );
+		    jptContent = processContent( expressions.content, evaluationHelper, expressions.i18nContent, expressions.i18nParams );
 		}
 		
 		// attributes
 		if ( expressions.attributes != null || expressions.i18nAttributes != null) {
-		    processAttributes( attributes, expressions.attributes, expressions.i18nParams, beanShell,  expressions.i18nAttributes);
+		    processAttributes( attributes, expressions.attributes, expressions.i18nParams, evaluationHelper,  expressions.i18nAttributes);
 		}
 		
 		// omit-tag
-		boolean jptOmitTag = getJptOmitTag(beanShell, expressions, element);
+		boolean jptOmitTag = getJptOmitTag( evaluationHelper, expressions, element );
 		
 		// Declare element
-		//Namespace namespace = element.getNamespace();
 		if ( ! jptOmitTag ) {
-		    contentHandler.startElement( VOID_STRING, element.getName(), element.getQualifiedName(), attributes );
-		    //contentHandler.startElement( namespace.getURI(), element.getName(), element.getQualifiedName(), attributes );
+		    startElement( element, contentHandler, attributes, configurableTag );
 		}
 		
 		// Content
 		if ( jptContent != null ) {
-		    jptContent(contentHandler, lexicalHandler, jptContent);
+		    jptContent( contentHandler, lexicalHandler, jptContent );
 		}
 		else {
-		    defaultContent( element, contentHandler, lexicalHandler, beanShell, slotStack );
+		    defaultContent( element, contentHandler, lexicalHandler, evaluationHelper, slotStack );
 		}
    
 		// End element
 		if ( ! jptOmitTag ) {
-		    contentHandler.endElement( VOID_STRING, element.getName(), element.getQualifiedName() );
-		    //contentHandler.endElement( namespace.getURI(), element.getName(), element.getQualifiedName() );
+		    endElement( element, contentHandler, configurableTag );
 		}
 		
 		return true;
 	}
 
 
+	protected void startElement(Element element, ContentHandler contentHandler,
+			AttributesImpl attributes, String configurableTag) throws SAXException {
+		
+		if ( configurableTag != null ){
+			contentHandler.startElement( 
+					VOID_STRING, 
+					configurableTag, 
+					configurableTag, 
+					attributes );
+			return;
+		}
+		
+		contentHandler.startElement( 
+				VOID_STRING, 
+				element.getName(), 
+				element.getQualifiedName(), 
+				attributes );
+	}
+	
+	
+	protected void endElement(Element element, ContentHandler contentHandler, String configurableTag)
+			throws SAXException {
+		
+		if ( configurableTag != null ){
+			contentHandler.endElement( 
+					VOID_STRING, 
+					configurableTag, 
+					configurableTag );
+			return;
+		}
+		
+		contentHandler.endElement( 
+				VOID_STRING, 
+				element.getName(), 
+				element.getQualifiedName() );
+	}
+
+
 	private boolean  processDefineSlot(ContentHandler contentHandler,
-			LexicalHandler lexicalHandler, Interpreter beanShell,
+			LexicalHandler lexicalHandler, EvaluationHelper evaluationHelper,
 			Stack <Map<String, Slot>>slotStack, Expressions expressions) throws SAXException,
-			PageTemplateException, IOException, EvalError {
+			PageTemplateException, IOException, EvaluationException {
 		
 		if ( ! slotStack.isEmpty() ) {
 		    Map<String, Slot> slots = slotStack.pop();
 		    Slot slot = slots.get( expressions.defineSlot );
 		    if ( slot != null ) {
-		        slot.process( contentHandler, lexicalHandler, beanShell, slotStack );
+		        slot.process( contentHandler, lexicalHandler, evaluationHelper, slotStack );
 		        slotStack.push( slots );
 		        return false;
 		    }
@@ -602,7 +622,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		    return true;
 		}
 		else {
-		    throw new PageTemplateException( "slot definition not allowed outside of macro" );
+		    throw new PageTemplateException( "Slot definition not allowed outside of macro" );
 		}
 	}
 
@@ -611,11 +631,11 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 			throws PageTemplateException, SAXException {
 		
 		// Content for this element has been generated dynamically
-		if (jptContent instanceof HTMLFragment ) {
+		if ( jptContent instanceof HTMLFragment ) {
 			
-			HTMLFragment html = (HTMLFragment)jptContent;
+			HTMLFragment html = ( HTMLFragment ) jptContent;
 			
-			if (JPTContext.getInstance().isParseHTMLFragments()){ 
+			if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
 				html.toXhtml( contentHandler, lexicalHandler );
 			} else {
 				char[] text = html.getHtml().toCharArray();
@@ -625,29 +645,29 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		
 		// plain text
 		else {
-		    char[] text = ((String)jptContent).toCharArray();
+		    char[] text = ( ( String ) jptContent ).toCharArray();
 		    contentHandler.characters( text, 0, text.length );
 		}
 	}
 
 	private void processOnErrors(String onError, String i18nOnError,
-			Interpreter beanShell, List<String> varsToUnset,
-			Map<String, Object> varsToSet) throws EvalError, PageTemplateException {
+			EvaluationHelper evaluationHelper, List<String> varsToUnset,
+			Map<String, Object> varsToSet) throws EvaluationException, PageTemplateException {
 
-		if (onError != null && i18nOnError != null){
-			throw new PageTemplateException("tal:on-error and i18n:on-error can not be at the same tag, "
-					+ "please remove one of them.");
+		if ( onError != null && i18nOnError != null ){
+			throw new PageTemplateException( "tal:on-error and i18n:on-error can not be at the same tag, "
+					+ "please remove one of them." );
 		}
 		
-		if (onError != null){
-			setVar(beanShell, varsToUnset, varsToSet, ON_ERROR_VAR_NAME, onError);
+		if ( onError != null ){
+			setVar( evaluationHelper, varsToUnset, varsToSet, ON_ERROR_VAR_NAME, onError );
 			return;
 		}
 		
-		setVar(beanShell, varsToUnset, varsToSet, ON_ERROR_VAR_NAME, I18N_EXPRESSION_PREFIX + i18nOnError);
+		setVar( evaluationHelper, varsToUnset, varsToSet, ON_ERROR_VAR_NAME, I18N_EXPRESSION_PREFIX + i18nOnError );
 	}
 
-	static private boolean getJptOmitTag(Interpreter beanShell, Expressions expressions, Element element)
+	static private boolean getJptOmitTag(EvaluationHelper evaluationHelper, Expressions expressions, Element element)
 			throws PageTemplateException {
 		
 		boolean jptOmitTag = false;
@@ -663,28 +683,28 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		        jptOmitTag = true;
 		    }
 		    else {
-		        jptOmitTag = Expression.evaluateBoolean( expressions.omitTag, beanShell );
+		        jptOmitTag = Expression.evaluateBoolean( expressions.omitTag, evaluationHelper );
 		    }
 		}
 		return jptOmitTag;
 	}
     
-    static private void processVars(Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet) 
-    		throws EvalError {
+    static private void processVars(EvaluationHelper evaluationHelper, List<String> varsToUnset, Map<String, Object> varsToSet) 
+    		throws EvaluationException {
 
         Iterator<String> i = varsToUnset.iterator();
         
-        while (i.hasNext()){
+        while ( i.hasNext() ){
             String varName = i.next();
-            beanShell.unset(varName);
+            evaluationHelper.unset( varName );
         }
         
         i = varsToSet.keySet().iterator();
         
-        while (i.hasNext()){
+        while ( i.hasNext() ){
             String name = i.next();
-            Object value = varsToSet.get(name);
-            beanShell.set(name, value);
+            Object value = varsToSet.get( name );
+            evaluationHelper.set( name, value );
         }
     }
 
@@ -692,16 +712,16 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
     private void defaultContent( Element element, 
                                  ContentHandler contentHandler, 
                                  LexicalHandler lexicalHandler, 
-                                 Interpreter beanShell, 
+                                 EvaluationHelper evaluationHelper, 
                                  Stack <Map<String, Slot>> slotStack )
-        throws SAXException, PageTemplateException, IOException, EvalError
+        throws SAXException, PageTemplateException, IOException, EvaluationException
     {   
         // Use default template content
         for ( Iterator<Node> i = element.nodeIterator(); i.hasNext(); ) {
             Node node = i.next();
             switch( node.getNodeType() ) {
             case Node.ELEMENT_NODE:
-                processElement( (Element)node, contentHandler, lexicalHandler, beanShell, slotStack );
+                processElement( (Element)node, contentHandler, lexicalHandler, evaluationHelper, slotStack );
                 break;
                 
             case Node.TEXT_NODE:
@@ -722,7 +742,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
                 break;
                 
             case Node.NAMESPACE_NODE:
-                Namespace declared = (Namespace)node;
+                Namespace declared = ( Namespace ) node;
                 //System.err.println( "Declared namespace: " + declared.getPrefix() + ":" + declared.getURI() );
                 this.namespaces.put( declared.getPrefix(), declared.getURI() );
                 //if ( declared.getURI().equals( TAL_NAMESPACE_URI ) ) {
@@ -748,8 +768,8 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 
 	@SuppressWarnings("unchecked")
 	AttributesImpl getAttributes( Element element, Expressions expressions ) 
-        throws PageTemplateException
-    {
+        throws PageTemplateException {
+		
         AttributesImpl attributes = new AttributesImpl();
         for ( Iterator<Attribute> i = element.attributeIterator(); i.hasNext(); ) {
             Attribute attribute = i.next();
@@ -802,9 +822,14 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
                     expressions.onError = attribute.getValue();
                 }
                 
+                // tal:tag
+                else if ( name.equals( TAL_TAG ) ) {
+                    expressions.tag = attribute.getValue();
+                }
+                
                 // error
                 else {
-                    throw new PageTemplateException( "unknown tal attribute: " + name 
+                    throw new PageTemplateException( "Unknown tal attribute: " + name 
                             + " in '" + this.template.getName() + "' template");
                 }
             }
@@ -830,7 +855,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 
                 // error
                 else {
-                    throw new PageTemplateException( "unknown metal attribute: " + name 
+                    throw new PageTemplateException( "Unknown metal attribute: " + name 
                             + " in '" + this.template.getName() + "' template");
                 }
             }
@@ -877,7 +902,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
                 
                 // error
                 else {
-                    throw new PageTemplateException( "unknown i18n attribute: " + name 
+                    throw new PageTemplateException( "Unknown i18n attribute: " + name 
                             + " in '" + this.template.getName() + "' template");
                 }
 
@@ -894,73 +919,74 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 
 
     @SuppressWarnings("unchecked")
-	private List<I18n> getI18n(Interpreter beanShell) throws PageTemplateException {
+	private List<I18n> getI18n(EvaluationHelper evaluationHelper) throws PageTemplateException {
 
         try {
-        	Object result = beanShell.get(I18N_DOMAIN_VAR_NAME);
+        	Object result = evaluationHelper.get( I18N_DOMAIN_VAR_NAME );
             
-            if (result instanceof List<?>){
-                return (List<I18n>) result;
+            if ( result instanceof List<?> ){
+                return ( List<I18n> ) result;
             }
-        } catch (EvalError e) {
-            throw new PageTemplateException("The " + I18N_DOMAIN_VAR_NAME + " var is not an instance ofI18n class "
+        } catch ( EvaluationException e ) {
+            throw new PageTemplateException( "The " + I18N_DOMAIN_VAR_NAME + " var is not an instance ofI18n class "
                     + " in '" + this.template.getName() + "' template");
         }
         
-        throw new PageTemplateException(I18N_DOMAIN_VAR_NAME + " instance not found.");
+        throw new PageTemplateException( I18N_DOMAIN_VAR_NAME + " instance not found." );
     }
     
     
-    private Object processContent( String expression, Interpreter beanShell, String i18nTranslate, String i18nParams )
-    throws PageTemplateException
-    {
+    private Object processContent( String expression, EvaluationHelper evaluationHelper, String i18nTranslate, String i18nParams )
+    throws PageTemplateException {
+    	
         // Nothing to translate, process content as usual
-        if (i18nTranslate == null){
-            return processContent( expression, beanShell);
+        if ( i18nTranslate == null ){
+            return processContent( expression, evaluationHelper );
         }
         
-        return processI18nContent(beanShell, i18nTranslate, i18nParams);
+        return processI18nContent( evaluationHelper, i18nTranslate, i18nParams );
     }
 
 
-    private Object processI18nContent(Interpreter beanShell, String i18nContent, String i18nParams) 
+    private Object processI18nContent( EvaluationHelper evaluationHelper, String i18nContent, String i18nParams ) 
     		throws PageTemplateException {
         
         // Get the i18n instance
-        List<I18n> i18nList = getI18n(beanShell);
+        List<I18n> i18nList = getI18n( evaluationHelper );
         
         try {
 			// Translate with no params
-			if (i18nParams == null){
+			if ( i18nParams == null ){
 			    return JPTContext.getInstance().getTranslator().tr(
 			    		i18nList, 
-			    		i18nContent);
+			    		i18nContent );
 			}
 			
 			// Translate with params
 			return JPTContext.getInstance().getTranslator().tr(
 					i18nList, 
 					i18nContent, 
-			        this.getArrayFromI18nParams(i18nParams, beanShell));
+			        this.getArrayFromI18nParams( i18nParams, evaluationHelper ) );
 			
-		} catch (NullPointerException e) {
-			throw new PageTemplateException("I18n subsystem of JPT was not initialized.");
+		} catch ( NullPointerException e ) {
+			throw new PageTemplateException( "I18n subsystem of JPT was not initialized." );
 		}
     }
 
-    private Object[] getArrayFromI18nParams(String i18nParams, Interpreter beanShell) throws PageTemplateException {
+    private Object[] getArrayFromI18nParams( String i18nParams, EvaluationHelper evaluationHelper ) throws PageTemplateException {
         
-        Object[] result = new Object[MAXIMUM_NUMBER_OF_ATTRIBUTES];
+        Object[] result = new Object[ MAXIMUM_NUMBER_OF_ATTRIBUTES ];
         
         int i = 0;
         ExpressionTokenizer tokens = new ExpressionTokenizer( i18nParams, ' ' );
         while( tokens.hasMoreTokens() ) {
             String valueExpression = tokens.nextToken();
-            Object value = Expression.evaluate( valueExpression, beanShell );
+            Object value = Expression.evaluate( valueExpression, evaluationHelper );
             try {
-                result[i++] = value;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new PageTemplateException("Too many number of attributes, the maximum is " + MAXIMUM_NUMBER_OF_ATTRIBUTES
+                result[ i++ ] = value;
+            } catch ( ArrayIndexOutOfBoundsException e ) {
+                throw new PageTemplateException(
+                		"Too many number of attributes, the maximum is " + MAXIMUM_NUMBER_OF_ATTRIBUTES
                         + " in '" + this.template.getName() + "' template");
             }
         }
@@ -968,15 +994,15 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         return result;
     }
     
-    private Object processContent( String exp, Interpreter beanShell)
-        throws PageTemplateException
-    {
+    private Object processContent( String exp, EvaluationHelper evaluationHelper)
+        throws PageTemplateException {
+    	
         String expression = exp;
         
         // Structured text, preserve xml structure
         if ( expression.startsWith( STRING_EXPR_STRUCTURE ) ) {
             expression = expression.substring( STRING_EXPR_STRUCTURE.length() );
-            Object content = Expression.evaluate( expression, beanShell );
+            Object content = Expression.evaluate( expression, evaluationHelper );
             if ( ! ( content instanceof HTMLFragment ) ) {
                 content = new HTMLFragment( String.valueOf( content ) );
             }
@@ -985,95 +1011,99 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         else if ( expression.startsWith( STRING_EXPR_TEXT ) ) {
             expression = expression.substring( STRING_EXPR_TEXT.length() );
         }
-        return String.valueOf( Expression.evaluate( expression, beanShell ) );
+        return String.valueOf( Expression.evaluate( expression, evaluationHelper ) );
     }
     
-    private void processI18nDomain( String expression, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet )
-    throws PageTemplateException
-    {
-        try {
-            List<I18n> i18nList = new ArrayList<I18n>();
-            ExpressionTokenizer tokens = new ExpressionTokenizer( expression, ' ', true );
-            while( tokens.hasMoreTokens() ) {
-                String valueExpression = tokens.nextToken().trim();
-                I18n i18n = (I18n) Expression.evaluate( valueExpression, beanShell );
-                i18nList.add(i18n);
-            }
-            setVar(beanShell, varsToUnset, varsToSet, I18N_DOMAIN_VAR_NAME, i18nList);
-            
-        } catch( bsh.EvalError e ) {
-            throw new PageTemplateException(e);
+    private void processI18nDomain( String expression, EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet )
+    throws PageTemplateException {
+    	
+        List<I18n> i18nList = new ArrayList<I18n>();
+        ExpressionTokenizer tokens = new ExpressionTokenizer( expression, ' ', true );
+        while( tokens.hasMoreTokens() ) {
+            String valueExpression = tokens.nextToken().trim();
+            I18n i18n = (I18n) Expression.evaluate( valueExpression, evaluationHelper );
+            i18nList.add(i18n);
         }
+        
+        setVar( evaluationHelper, varsToUnset, varsToSet, I18N_DOMAIN_VAR_NAME, i18nList );
     }
     
-    private void processI18nDefine( String expression, String i18nParams, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet )
-    throws PageTemplateException
-    {
-        this.processDefineOrI18nDefine(expression, i18nParams, beanShell, varsToUnset, varsToSet, true);
+    private void processI18nDefine( String expression, String i18nParams, EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet )
+    throws PageTemplateException {
+        this.processDefineOrI18nDefine( expression, i18nParams, evaluationHelper, varsToUnset, varsToSet, true );
     }
     
-    private void processDefine( String expression, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet )
-    throws PageTemplateException
-    {
-        this.processDefineOrI18nDefine(expression, null, beanShell, varsToUnset, varsToSet, false);
+    private void processDefine( String expression, EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet )
+    throws PageTemplateException {
+        this.processDefineOrI18nDefine( expression, null, evaluationHelper, varsToUnset, varsToSet, false );
     }
     
-    private void processDefineOrI18nDefine( String expression, String i18nParams, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet, boolean translate )
-        throws PageTemplateException
-    {
-        try {
-            ExpressionTokenizer tokens = new ExpressionTokenizer( expression, DEFINE_DELIMITER, true );
-            while( tokens.hasMoreTokens() ) {
-                String variable = tokens.nextToken().trim();
-                int space = variable.indexOf( IN_DEFINE_DELIMITER );
-                if ( space == -1 ) {
-                    throw new ExpressionSyntaxException( "bad variable definition: " + variable 
-                            + " in '" + this.template.getName() + "' template");
-                }
-                String name = variable.substring( 0, space );
-                String valueExpression = variable.substring( space + 1 ).trim();
-                Object value = Expression.evaluate( valueExpression, beanShell );
-                
-                if (translate){
-                    setVar(beanShell, varsToUnset, varsToSet, name, processI18nContent(beanShell, valueExpression, i18nParams));
-                } else {
-                    setVar(beanShell, varsToUnset, varsToSet, name, value);
-                }
+    private void processDefineOrI18nDefine( String expression, String i18nParams, EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet, boolean translate )
+        throws PageTemplateException {
+
+        ExpressionTokenizer tokens = new ExpressionTokenizer( expression, DEFINE_DELIMITER, true );
+        while( tokens.hasMoreTokens() ) {
+            String variable = tokens.nextToken().trim();
+            int space = variable.indexOf( IN_DEFINE_DELIMITER );
+            if ( space == -1 ) {
+                throw new ExpressionSyntaxException( "Bad variable definition: " + variable 
+                        + " in '" + this.template.getName() + "' template");
             }
-        } catch( bsh.EvalError e ) {
-            throw new PageTemplateException(e);
+            String name = variable.substring( 0, space );
+            String valueExpression = variable.substring( space + 1 ).trim();
+            Object value = Expression.evaluate( valueExpression, evaluationHelper );
+            
+            if ( translate ){
+                setVar( 
+                		evaluationHelper, 
+                		varsToUnset, 
+                		varsToSet, 
+                		name, 
+                		processI18nContent( evaluationHelper, valueExpression, i18nParams ) );
+            } else {
+                setVar( 
+                		evaluationHelper, 
+                		varsToUnset, 
+                		varsToSet, 
+                		name, 
+                		value);
+            }
         }
     }
 
     private void processAttributes( AttributesImpl attributes, String expression, String i18nParams, 
-    		Interpreter beanShell, String i18nAttributes )
-    throws PageTemplateException
-    {
-        if (i18nAttributes != null){
-            processAttributes( attributes, i18nAttributes, i18nParams, beanShell, true );
+    		EvaluationHelper evaluationHelper, String i18nAttributes )
+    throws PageTemplateException {
+    	
+        if ( i18nAttributes != null ){
+            processAttributes( attributes, i18nAttributes, i18nParams, evaluationHelper, true );
         }
-        if (expression != null){
-            processAttributes( attributes, expression, null, beanShell, false );
+        if ( expression != null ){
+            processAttributes( attributes, expression, null, evaluationHelper, false );
         }
     }
     
     private void processAttributes( AttributesImpl attributes, String expression, String i18nParams, 
-    		Interpreter beanShell, boolean translate )
-        throws PageTemplateException
-    {
+    		EvaluationHelper evaluationHelper, boolean translate )
+        throws PageTemplateException {
+    	
         ExpressionTokenizer tokens = new ExpressionTokenizer( expression, ATTRIBUTE_DELIMITER, true );
         while( tokens.hasMoreTokens() ) {
             String attribute = tokens.nextToken().trim();
             int space = attribute.indexOf( IN_ATTRIBUTE_DELIMITER );
             if ( space == -1 ) {
-                throw new ExpressionSyntaxException( "bad attributes expression: " + attribute 
+                throw new ExpressionSyntaxException( "Bad attributes expression: " + attribute 
                         + " in '" + this.template.getName() + "' template");
             }
             String qualifiedName = attribute.substring( 0, space );
             String valueExpression = attribute.substring( space + 1 ).trim();
             Object value = translate? 
-                           processI18nContent(beanShell, valueExpression, i18nParams):
-                           Expression.evaluate( valueExpression, beanShell );
+                           processI18nContent( evaluationHelper, valueExpression, i18nParams ):
+                           Expression.evaluate( valueExpression, evaluationHelper );
             //System.err.println( "attribute:\n" + qualifiedName + "\n" + valueExpression + "\n" + value );
             removeAttribute( attributes, qualifiedName );
             if ( value != null ) {
@@ -1102,14 +1132,14 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
                                Element element, 
                                ContentHandler contentHandler,
                                LexicalHandler lexicalHandler,
-                               Interpreter beanShell,
+                               EvaluationHelper evaluationHelper,
                                Stack <Map<String, Slot>> slotStack )
-        throws SAXException, PageTemplateException, IOException, EvalError
-    {
-        Object object = Expression.evaluate( expression, beanShell );
+        throws SAXException, PageTemplateException, IOException, EvaluationException {
+    	
+        Object object = Expression.evaluate( expression, evaluationHelper );
         if ( object == null ) {
-            throw new NoSuchPathException( "could not find macro: " + expression 
-                    + " in '" + this.template.getName() + "' template");
+            throw new NoSuchPathException( "Could not find macro: '" + expression 
+                    + "' in '" + this.template.getName() + "' template");
         }
 
         if ( object instanceof Macro ) {
@@ -1129,20 +1159,17 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
             
             // Call macro
             Macro macro = (Macro)object;
-            macro.process( contentHandler, lexicalHandler, beanShell, slotStack );
+            macro.process( contentHandler, lexicalHandler, evaluationHelper, slotStack );
         }
         else {
-            throw new PageTemplateException( "expression '" + expression + "' does not evaluate to macro: " + 
-                                             object.getClass().getName() 
-                                             + " in '" + this.template.getName() + "' template");
+            throw new PageTemplateException( 
+            		"Expression '" + expression + "' does not evaluate to macro: " 
+                    + object.getClass().getName() 
+                    + " in '" + this.template.getName() + "' template");
         }
     }
 
-    /**
-     * With all of our namespace woes, getting an XPath expression
-     * to work has proven futile, so we'll recurse through the tree
-     * ourselves to find what we need.
-     */
+
     @SuppressWarnings({ "rawtypes" })
     private void findSlots( Element element, Map<String, Slot> slots ) {
         
@@ -1156,15 +1183,11 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 
         // Recurse into child elements
         for ( Iterator i = element.elementIterator(); i.hasNext(); ) {
-            findSlots( (Element)i.next(), slots );
+            findSlots( ( Element ) i.next(), slots );
         }
     }
     
-    /**
-     * With all of our namespace woes, getting an XPath expression
-     * to work has proven futile, so we'll recurse through the tree
-     * ourselves to find what we need.
-     */
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	private void findMacros( Element element, Map<String, Macro> macros )
     {
@@ -1182,7 +1205,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 
         // Recurse into child elements
         for ( Iterator i = element.elementIterator(); i.hasNext(); ) {
-            findMacros( (Element)i.next(), macros );
+            findMacros( ( Element ) i.next(), macros );
         }
     }
     
@@ -1208,6 +1231,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
     
     @Override
 	public Map<String, Macro> getMacros() {
+    	
         if ( this.macros == null ) {
             this.macros = new HashMap<String, Macro>();
             findMacros( this.template.getRootElement(), this.macros );
@@ -1219,15 +1243,14 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         URIResolver uriResolver;
 
         DefaultResolver() {
-            if (PageTemplateImpl.this.uri != null ) {
+            if ( PageTemplateImpl.this.uri != null ) {
                 this.uriResolver = new URIResolver( PageTemplateImpl.this.uri );
             }
         }
         
         @Override
-        public URL getResource( String path ) 
-            throws java.net.MalformedURLException
-        {
+        public URL getResource( String path ) throws MalformedURLException {
+        	
             URL resource = null;
             
             // If user has supplied resolver, use it
@@ -1246,8 +1269,8 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         
         @Override
         public OnePhasePageTemplate getPageTemplate( String path )
-            throws PageTemplateException, java.net.MalformedURLException
-        {
+            throws PageTemplateException, MalformedURLException {
+        	
             OnePhasePageTemplate template = null;
             
             // If user has supplied resolver, use it
@@ -1278,11 +1301,11 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         @Override
 		public void process( ContentHandler contentHandler, 
                              LexicalHandler lexicalHandler, 
-                             Interpreter beanShell,
+                             EvaluationHelper evaluationHelper,
                              Stack <Map<String, Slot>>slotStack )
-            throws SAXException, PageTemplateException, IOException, EvalError
-        {
-            processElement( this.element, contentHandler, lexicalHandler, beanShell, slotStack );
+            throws SAXException, PageTemplateException, IOException, EvaluationException {
+        	
+            processElement( this.element, contentHandler, lexicalHandler, evaluationHelper, slotStack );
             saveToCache();
         }
     }
@@ -1297,11 +1320,11 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         @Override
 		public void process( ContentHandler contentHandler, 
                              LexicalHandler lexicalHandler, 
-                             Interpreter beanShell,
+                             EvaluationHelper evaluationHelper,
                              Stack <Map<String, Slot>>slotStack )
-            throws SAXException, PageTemplateException, IOException, EvalError
-        {
-            processElement( this.element, contentHandler, lexicalHandler, beanShell, slotStack );
+            throws SAXException, PageTemplateException, IOException, EvaluationException {
+        	
+            processElement( this.element, contentHandler, lexicalHandler, evaluationHelper, slotStack );
             saveToCache();
         }
     }

@@ -1,13 +1,15 @@
 package org.javapagetemplates.onePhaseImpl;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.io.InputStreamReader;
+import java.io.IOException;
 
-import org.javapagetemplates.common.BeanShellScript;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.Script;
 
 /**
  * <p>
@@ -41,14 +43,13 @@ public abstract class Resolver {
 
 	// Map of resources called by this template
     Map<String, OnePhasePageTemplate> templates = new HashMap<String, OnePhasePageTemplate>();
-	Map<String, BeanShellScript> scripts = new HashMap<String, BeanShellScript>();
+	Map<String, Script> scripts = new HashMap<String, Script>();
     
-    public abstract URL getResource( String path ) 
-        throws java.net.MalformedURLException;
+    public abstract URL getResource( String path ) throws MalformedURLException;
     
 	public OnePhasePageTemplate getPageTemplate( String path ) 
-        throws PageTemplateException, java.net.MalformedURLException
-    {
+        throws PageTemplateException, MalformedURLException {
+		
 		OnePhasePageTemplate template = this.templates.get( path );
         if ( template == null ) {
             URL resource = getResource( path );
@@ -57,20 +58,22 @@ public abstract class Resolver {
                 this.templates.put( path, template );
             }
         }
+        
         return template;
     }
     
-	public BeanShellScript getBeanShellScript( String path ) 
-        throws java.net.MalformedURLException, java.io.IOException
-    {
-        BeanShellScript script = this.scripts.get( path );
+	public Script getScript( String path ) 
+        throws MalformedURLException, IOException, EvaluationException {
+		
+        Script script = this.scripts.get( path );
         if ( script == null ) {
-            URL resource = getResource( path );
+            URL resource = this.getResource( path );
             if ( resource != null ) {
-                script = new BeanShellScript( new InputStreamReader( resource.openStream() ) );
+            	script = ScriptFactory.getInstance().createScript( path, resource );
                 this.scripts.put( path, script );
             }
         }
+        
         return script;
     }
 }

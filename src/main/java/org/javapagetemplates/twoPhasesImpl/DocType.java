@@ -7,7 +7,7 @@ import org.dom4j.DocumentType;
 
 /**
  * <p>
- *   Encapsulates data about a HTML/HTML document type.
+ *   Encapsulates data about a HTML/XHTML document type.
  * </p>
  * 
  * 
@@ -60,22 +60,24 @@ public class DocType implements Serializable {
 	
 	
 	public DocType(){}
-	public DocType(String name, String publicId, String systemId){
+	
+	public DocType( String name, String publicId, String systemId ){
 		this.name = name;
 		this.publicId = publicId;
 		this.systemId = systemId;
-		this.xml = getDefaultXml(this);
+		this.xml = getDefaultXml( this );
 	}
-	public DocType(String name, String publicId, String systemId, boolean xml){
+	
+	public DocType( String name, String publicId, String systemId, boolean xml ){
 		this.name = name;
 		this.publicId = publicId;
 		this.systemId = systemId;
 		this.xml = xml;
 	}
 	
-	static private boolean getDefaultXml(DocType docType){
+	static private boolean getDefaultXml( DocType docType ){
 		
-		if (! docType.name.toUpperCase().equals(HTML)){
+		if ( ! docType.name.toUpperCase().equals( HTML ) ){
 			return true;
 		}
 		
@@ -91,7 +93,7 @@ public class DocType implements Serializable {
 		return name;
 	}
 	
-	public void setName(String name) {
+	public void setName( String name ) {
 		this.name = name;
 	}
 	
@@ -99,7 +101,7 @@ public class DocType implements Serializable {
 		return publicId;
 	}
 	
-	public void setPublicId(String publicId) {
+	public void setPublicId( String publicId ) {
 		this.publicId = publicId;
 	}
 	
@@ -107,7 +109,7 @@ public class DocType implements Serializable {
 		return systemId;
 	}
 	
-	public void setSystemId(String systemId) {
+	public void setSystemId( String systemId ) {
 		this.systemId = systemId;
 	}
 	
@@ -115,22 +117,22 @@ public class DocType implements Serializable {
 		return this.xml;
 	}
 	
-	public void setXml(boolean xml) {
+	public void setXml( boolean xml ) {
 		this.xml = xml;
 	}
 	
-	static public DocType generateDocTypeFromDom4jDocument(Document document){
+	static public DocType generateDocTypeFromDom4jDocument( Document document ){
 		
 		DocumentType documentType = document.getDocType();
 		
-		if (documentType == null){
+		if ( documentType == null ){
 			return null;
 		}
 		
 		return new DocType(
 				documentType.getName(),
 				documentType.getPublicID(),
-				documentType.getSystemID());
+				documentType.getSystemID() );
 	}
 	
 }

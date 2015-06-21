@@ -54,11 +54,11 @@ public class HTMLFragment implements Serializable {
     private String html;
     private transient Element dom = null;
     
-    public HTMLFragment( String html) throws PageTemplateException {
+    public HTMLFragment( String html ) throws PageTemplateException {
         
     	this.html = html;
         
-        if (JPTContext.getInstance().isParseHTMLFragments()){ 
+        if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
         	parseFragment();
         }
     }
@@ -72,27 +72,29 @@ public class HTMLFragment implements Serializable {
     }
     
     public String getXhtml() throws PageTemplateException {
+    	
         try {
             StringWriter buffer = new StringWriter();
             toXhtml( buffer );
             buffer.close();
             return buffer.toString();
+            
         } catch( IOException e ) {
-            throw new RuntimeException(e);
+            throw new RuntimeException( e );
         }
     }
     
     
 	@SuppressWarnings("unchecked")
 	public void toXhtml( ContentHandler contentHandler, LexicalHandler lexicalHandler ) 
-        throws PageTemplateException, SAXException
-    {
+        throws PageTemplateException, SAXException {
+		
         if ( this.dom == null ) {
             parseFragment();
         }
        
         //SAXWriter writer = new SAXWriter( contentHandler, lexicalHandler);
-        SAXWriter writer = new JPTSAXWriter( contentHandler, lexicalHandler);
+        SAXWriter writer = new JPTSAXWriter( contentHandler, lexicalHandler );
         for ( Iterator<Node> i = this.dom.nodeIterator(); i.hasNext(); ) {
             Node node = i.next();
             writer.write( node );
@@ -102,18 +104,19 @@ public class HTMLFragment implements Serializable {
 	
     @SuppressWarnings({ "unchecked" })
 	public void toXhtml( Writer writer )
-        throws PageTemplateException, IOException
-    {
+        throws PageTemplateException, IOException {
+    	
         if ( this.dom == null ) {
             parseFragment();
         }
         for ( Iterator<Node> i = this.dom.nodeIterator(); i.hasNext(); ) {
-            Node node = (Node)i.next();
+            Node node = ( Node ) i.next();
             node.write( writer );
         }
     }
     
     private void parseFragment() throws PageTemplateException {
+    	
         try {
             StringBuffer fragment = new StringBuffer( this.html.length() + 26 );
             fragment.append( "<html><body>" );
@@ -143,7 +146,7 @@ public class HTMLFragment implements Serializable {
             }
         }
         catch( Exception e ) {
-            throw new PageTemplateException(e);
+            throw new PageTemplateException( e );
         }
     }
     
@@ -155,7 +158,7 @@ public class HTMLFragment implements Serializable {
     
     public Element getDom() throws PageTemplateException{
     	
-    	if (this.dom == null){
+    	if ( this.dom == null ){
     		this.parseFragment();
     	}
     	

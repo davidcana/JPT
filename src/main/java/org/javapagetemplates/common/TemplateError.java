@@ -33,7 +33,7 @@ public class TemplateError {
 	private Exception value;
 	private StackTraceElement[] traceback;
 	
-	public TemplateError(Exception exception){
+	public TemplateError( Exception exception ){
 		
 		this.type = exception.getClass().getName();
 		this.value = exception;

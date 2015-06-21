@@ -36,7 +36,7 @@ public class KeyValuePair<T> implements Serializable {
 	private T value;
 	
 	public KeyValuePair(){}
-	public KeyValuePair(String key, T value){
+	public KeyValuePair( String key, T value ){
 		this.key = key;
 		this.value = value;
 	}
@@ -45,7 +45,7 @@ public class KeyValuePair<T> implements Serializable {
 		return this.key;
 	}
 
-	public void setKey(String key) {
+	public void setKey( String key ) {
 		this.key = key;
 	}
 
@@ -53,11 +53,11 @@ public class KeyValuePair<T> implements Serializable {
 		return this.value;
 	}
 
-	public void setValue(T value) {
+	public void setValue( T value ) {
 		this.value = value;
 	}
 	
-	public String toString(String delimiter){
+	public String toString( String delimiter ){
 		return this.key + delimiter + this.value.toString();
 	}
 }

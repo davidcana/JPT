@@ -35,18 +35,8 @@ import org.cyberneko.html.filters.DefaultFilter;
 public class Filter extends DefaultFilter {
 
     @Override
-    public void comment(XMLString arg0, Augmentations arg1) throws XNIException {
+    public void comment( XMLString arg0, Augmentations arg1 ) throws XNIException {
         // Nothing to do
     }
-    /*
-    @Override
-    public void endGeneralEntity(String arg0, Augmentations arg1) throws XNIException {
-        super.endGeneralEntity(arg0, arg1);
-    }
-
-    @Override
-    public void startGeneralEntity(String arg0, XMLResourceIdentifier arg1, String arg2, Augmentations arg3) throws XNIException {
-        super.startGeneralEntity(arg0, arg1, arg2, arg3);
-    }*/
     
 }

@@ -3,8 +3,9 @@ package org.javapagetemplates.twoPhasesImpl.model.attributes.I18N;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.I18nUtils;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.javapagetemplates.twoPhasesImpl.model.JPTDocument;
@@ -13,8 +14,6 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
 import org.xml.sax.helpers.AttributesImpl;
-
-import bsh.Interpreter;
 
 /**
  * <p>
@@ -50,10 +49,9 @@ public class I18NAttributes extends JPTAttributeImpl implements DynamicAttribute
 	
 	
 	public I18NAttributes(){}
-	public I18NAttributes(String namespaceUri, String expression) 
-			throws PageTemplateException {
-		super(namespaceUri);
-		this.attributes = AttributesUtils.getDefinitionsFromString(expression);
+	public I18NAttributes( String namespaceUri, String expression ) throws PageTemplateException {
+		super( namespaceUri );
+		this.attributes = AttributesUtils.getDefinitionsFromString( expression );
 	}
 
 	
@@ -61,12 +59,12 @@ public class I18NAttributes extends JPTAttributeImpl implements DynamicAttribute
 		return attributes;
 	}
 
-	public void setAttributes(List<KeyValuePair<String>> attributes) {
+	public void setAttributes( List<KeyValuePair<String>> attributes ) {
 		this.attributes = attributes;
 	}
 
-	public void addAttribute(KeyValuePair<String> attribute){
-		this.attributes.add(attribute);
+	public void addAttribute( KeyValuePair<String> attribute ){
+		this.attributes.add( attribute );
 	}
 	
 	@Override
@@ -76,39 +74,39 @@ public class I18NAttributes extends JPTAttributeImpl implements DynamicAttribute
 
 	@Override
 	public String getValue() {
-		return AttributesUtils.getStringFromDefinitions(this.attributes);
+		return AttributesUtils.getStringFromDefinitions( this.attributes );
 	}
 	
 	public void evaluate(
-			Interpreter beanShell, I18NParams i18nParams, AttributesImpl attributesImpl, JPTDocument jptDocument)
-			throws ExpressionEvaluationException {
+			EvaluationHelper evaluationHelper, I18NParams i18nParams, AttributesImpl attributesImpl, JPTDocument jptDocument)
+			throws EvaluationException {
 		
 		try {
-			for (KeyValuePair<String> attribute: this.attributes){
+			for ( KeyValuePair<String> attribute: this.attributes ){
 			    String qualifiedName = attribute.getKey();
 			    Object value = I18nUtils.evaluateContent(
-			    		beanShell, 
+			    		evaluationHelper, 
 			    		attribute.getValue(), 
-			    		i18nParams);
+			    		i18nParams );
 			            
 			    AttributesUtils.addAttribute(
 			    		qualifiedName, 
 			    		value, 
 			    		attributesImpl, 
-			    		jptDocument);
+			    		jptDocument );
 			}
 			
-		} catch (ExpressionEvaluationException e) {
+		} catch ( EvaluationException e ) {
 			e.setInfo(
 					null,
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e;
 			
-		} catch (Exception e) {
-			ExpressionEvaluationException e2 = new ExpressionEvaluationException(e);
+		} catch ( Exception e ) {
+			EvaluationException e2 = new EvaluationException( e );
 			e2.setInfo(
 					null,
-					this.getQualifiedName());
+					this.getQualifiedName() );
 			throw e2;
 		}
 	}

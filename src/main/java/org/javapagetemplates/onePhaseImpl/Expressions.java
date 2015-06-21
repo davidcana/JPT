@@ -37,6 +37,7 @@ public class Expressions {
     String attributes = null;
     String omitTag = null;
     String onError = null;
+    String tag = null;
     
     // metal namespace
     String useMacro = null;
@@ -50,25 +51,25 @@ public class Expressions {
     String i18nAttributes = null;
     String i18nOnError = null;
     
-    public void addToDefine(String expression){
+    public void addToDefine( String expression ){
     	
         this.define = getNewValue(
         		this.define, 
         		expression, 
-        		OnePhasePageTemplate.DEFINE_DELIMITER);
+        		OnePhasePageTemplate.DEFINE_DELIMITER );
     }
     
-    public void addToAttributes(String expression){
+    public void addToAttributes( String expression ){
     	
         this.attributes = getNewValue(
         		this.attributes, 
         		expression, 
-        		OnePhasePageTemplate.ATTRIBUTE_DELIMITER);
+        		OnePhasePageTemplate.ATTRIBUTE_DELIMITER );
     }
     
-    static private String getNewValue(String oldValue, String expression, char delimiter){
+    static private String getNewValue( String oldValue, String expression, char delimiter ){
         
-        if (oldValue == null){
+        if ( oldValue == null ){
             return expression;
         }
         return oldValue + delimiter + expression;

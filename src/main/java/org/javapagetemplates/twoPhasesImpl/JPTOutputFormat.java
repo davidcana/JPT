@@ -41,7 +41,7 @@ public class JPTOutputFormat {
 	private boolean xmlMode = true;
 	
 	
-	public JPTOutputFormat(JPTDocument jptDocument){
+	public JPTOutputFormat( JPTDocument jptDocument ){
 		
 		this.xmlMode = getXmlModeFromDocType( 
 				jptDocument == null?
@@ -51,7 +51,7 @@ public class JPTOutputFormat {
 	
 	
 	public String getEncoding() {
-		return encoding;
+		return this.encoding;
 	}
 
 	public void setEncoding(String encoding) {
@@ -59,47 +59,43 @@ public class JPTOutputFormat {
 	}
 
 	public boolean isSuppressDeclaration() {
-		return suppressDeclaration;
+		return this.suppressDeclaration;
 	}
 
-	public void setSuppressDeclaration(boolean suppressDeclaration) {
+	public void setSuppressDeclaration( boolean suppressDeclaration ) {
 		this.suppressDeclaration = suppressDeclaration;
 	}
 
 	public DocType getDocType() {
-		return docType;
+		return this.docType;
 	}
 
-	public void setDocType(DocType docType) {
+	public void setDocType( DocType docType ) {
 		this.docType = docType;
 		this.xmlMode = getXmlModeFromDocType(docType);
 	}
 
-	static private boolean getXmlModeFromDocType(DocType docType) {
+	static private boolean getXmlModeFromDocType( DocType docType ) {
 		return docType == null?
 			  true:
 			  docType.isXml();
 	}
 	
-	public void setXmlMode(boolean xmlMode) {
+	public void setXmlMode( boolean xmlMode ) {
 		this.xmlMode = xmlMode;
 	}
 
 	public boolean isXmlMode() {
 		return this.xmlMode;
-		/*
-		return this.docType == null?
-		  	   true:
-			   this.docType.isXml();*/
 	}
 
 	public OutputFormat getOutputFormat(){
 		
 		OutputFormat result = new OutputFormat();
 		
-		result.setEncoding(this.encoding);
+		result.setEncoding( this.encoding );
 		//result.setOmitEncoding(true);
-		result.setSuppressDeclaration(this.suppressDeclaration);
+		result.setSuppressDeclaration( this.suppressDeclaration );
 		//result.setExpandEmptyElements(expandEmptyElements)
 		
 		return result;

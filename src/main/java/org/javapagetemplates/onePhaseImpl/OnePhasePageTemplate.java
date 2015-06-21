@@ -10,7 +10,7 @@ import org.javapagetemplates.common.exceptions.PageTemplateException;
 
 /**
  * <p>
- *   Extends SimplePageTemplate interface with related to one phase
+ *   Extends PageTemplate interface with related to one phase
  *   implementation methods.
  * </p>
  * 

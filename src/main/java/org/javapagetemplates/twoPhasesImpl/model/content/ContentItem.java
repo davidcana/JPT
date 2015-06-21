@@ -34,6 +34,6 @@ import org.xml.sax.SAXException;
  */
 public interface ContentItem extends Serializable {
 	
-	public void writeToXmlWriter(JPTXMLWriter xmlWriter) throws IOException, SAXException;
+	public void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException, SAXException;
 	
 }

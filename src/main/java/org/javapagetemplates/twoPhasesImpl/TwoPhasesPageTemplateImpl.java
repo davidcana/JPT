@@ -1,31 +1,24 @@
 package org.javapagetemplates.twoPhasesImpl;
 
-import bsh.BshClassManager;
-import bsh.EvalError;
-import bsh.Interpreter;
-import bsh.NameSpace;
-
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Map.Entry;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.javapagetemplates.common.TemplateError;
-import org.javapagetemplates.common.exceptions.ExpressionEvaluationException;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.NoSuchPathException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
 import org.javapagetemplates.common.helpers.DateHelper;
+import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.twoPhasesImpl.HTMLFragment;
 import org.javapagetemplates.twoPhasesImpl.JPTContext;
 import org.javapagetemplates.twoPhasesImpl.model.JPTDocument;
@@ -49,6 +42,7 @@ import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALDefine;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALOmitTag;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALOnError;
 import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALRepeat;
+import org.javapagetemplates.twoPhasesImpl.model.attributes.TAL.TALTag;
 import org.javapagetemplates.twoPhasesImpl.model.content.ContentItem;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
 
@@ -83,7 +77,6 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 	
 	private static final String STRING_TEMPLATE_URL_HOST = "";
 	private static final String STRING_TEMPLATE_URL_PROTOCOL = "file";
-	private static final String GLOBAL = "global";
 	public static final String CDATA = "CDATA";
 	public static final String VOID_STRING = "";
 	public static final int MAXIMUM_NUMBER_OF_ATTRIBUTES = 20;
@@ -93,59 +86,59 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     private JPTDocument jptDocument;
     private URI uri;
     private Resolver userResolver = null;
-    //private Interpreter beanShell;
     
 	// Map of macros contained in this template
     private Map<String, Macro> macros = null;
     
-    private static BshClassManager bshClassManager;
     
-    
-    public TwoPhasesPageTemplateImpl( URL url ) throws PageTemplateException {
-        this( url, null );
+    public TwoPhasesPageTemplateImpl( URI uri ) throws PageTemplateException {
+        this( uri, null );
     }
     
-    public TwoPhasesPageTemplateImpl( URL url, Resolver resolver ) throws PageTemplateException {
+    public TwoPhasesPageTemplateImpl( URI uri, Resolver resolver ) throws PageTemplateException {
     	
     	try {
-			this.uri = new URI( url.toString() );
-			this.jptDocument = JPTDocumentFactory.getInstance().getJPTDocument( url );
+			//this.uri = new URI( url.toString() );
+			this.uri = uri;
+			this.jptDocument = JPTDocumentFactory.getInstance().getJPTDocument( this.uri );
 			this.userResolver = resolver == null? new DefaultResolver( this.uri ): resolver;
 			
-    	} catch (PageTemplateException e) {
-    		throw (e);
+    	} catch ( PageTemplateException e ) {
+    		throw ( e );
     		
-		} catch (URISyntaxException e) {
-			throw new PageTemplateException(e);
+		} catch ( Exception e ) {
+			throw new PageTemplateException( e );
 		}
     }
     
-    public TwoPhasesPageTemplateImpl( String string ) 
-    		throws PageTemplateException {
+    public TwoPhasesPageTemplateImpl( String string ) throws PageTemplateException {
         this( string, "", null );
     }
     
-    public TwoPhasesPageTemplateImpl( String string, String templatePath ) 
-    		throws PageTemplateException {
+    public TwoPhasesPageTemplateImpl( String string, String templatePath ) throws PageTemplateException {
         this( string, templatePath, null );
     }
     
-    public TwoPhasesPageTemplateImpl( String string, String templatePath, Resolver resolver ) 
-    		throws PageTemplateException {
+    public TwoPhasesPageTemplateImpl( String string, String templatePath, Resolver resolver ) throws PageTemplateException {
     	
     	try {
+    		/*
 			URL url = new URL( 
 					STRING_TEMPLATE_URL_PROTOCOL, 
 					STRING_TEMPLATE_URL_HOST,
-					templatePath + "(" + Integer.toString( string.hashCode() )+ ")" );
-			this.jptDocument = JPTDocumentFactory.getInstance().getJPTDocument( url, string );
+					templatePath + "(" + Integer.toString( string.hashCode() )+ ")" );*/
+			this.uri = new URI( 
+					STRING_TEMPLATE_URL_PROTOCOL + ":/"  
+					+ STRING_TEMPLATE_URL_HOST + ""
+					+ templatePath + "(" + Integer.toString( string.hashCode() )+ ")" );
+			this.jptDocument = JPTDocumentFactory.getInstance().getJPTDocument( this.uri, string );
 			this.userResolver = resolver == null? new DefaultResolver( null ): resolver;
 			
-    	} catch (PageTemplateException e) {
-    		throw (e);
+    	} catch ( PageTemplateException e ) {
+    		throw ( e );
     		
-		} catch (MalformedURLException e) {
-			throw new PageTemplateException(e);
+		} catch (Exception e) {
+			throw new PageTemplateException( e );
 		}
     }
 
@@ -160,131 +153,101 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     }
     
     @Override
-    public void process( OutputStream output, Object context )
-        throws PageTemplateException {
+    public void process( OutputStream output, Object context ) throws PageTemplateException {
         process( output, context, null );
     }
     
     @Override
-	public void process( OutputStream output, Object context, Map<String, Object> dictionary)
-        throws PageTemplateException {
+	public void process( OutputStream output, Object context, Map<String, Object> dictionary ) throws PageTemplateException {
 		process( output, context, dictionary, null );
 	}
 	
 	@Override
 	public void process( OutputStream output, Object context, Map<String, Object> dictionary,
-			JPTOutputFormat jptOutputFormat)
-        throws PageTemplateException {
+			JPTOutputFormat jptOutputFormat ) throws PageTemplateException {
 		
         try {
-        	if (jptOutputFormat == null){
-        		//jptOutputFormat = JPTOutputFormat.getDefault();
+        	if ( jptOutputFormat == null ){
         		jptOutputFormat = new JPTOutputFormat( this.jptDocument );
         	}
         	
-            // Initialize the bean shell and register in the context
-        	Interpreter beanShell = this.getInterpreter(context, dictionary);
-            //JPTContext.getInstance().registerInterPreter(beanShell);
-            
+            // Initialize the evaluationHelper and register in the context
+        	EvaluationHelper evaluationHelper = this.getEvaluationHelper( context, dictionary );
+        			
             // Process
-            JPTXMLWriter xmlWriter = new JPTXMLWriter(output, jptOutputFormat);
+            JPTXMLWriter xmlWriter = new JPTXMLWriter( output, jptOutputFormat );
             xmlWriter.setEscapeText(
-            		JPTContext.getInstance().isParseHTMLFragments());
+            		JPTContext.getInstance().isParseHTMLFragments() );
     		xmlWriter.startDocument();
-    		xmlWriter.writeDocType(this.jptDocument);
+    		xmlWriter.writeDocType( this.jptDocument );
     		processJPTElement(
     				xmlWriter, 
     				this.jptDocument.getRoot(), 
-    				beanShell, 
-    				new Stack<Map<String, Slot>>());
+    				evaluationHelper, 
+    				new Stack<Map<String, Slot>>() );
     		xmlWriter.endDocument();
             
-        } catch( PageTemplateException e ) {
+        } catch ( PageTemplateException e ) {
             throw e;
             
-        } catch( Exception e ) {
-            throw new PageTemplateException(e);
+        } catch ( Exception e ) {
+            throw new PageTemplateException( e );
         }
     }
     
-	private Interpreter getInterpreter(Object context, Map<String, Object> dictionary)
-    throws EvalError {
+	
+	private EvaluationHelper getEvaluationHelper( Object context, Map<String, Object> dictionary )
+		    throws EvaluationException {
+		
+		EvaluationHelper result = ScriptFactory.getInstance().createEvaluationHelper();
         
-        Interpreter result = new Interpreter();
-        NameSpace globalNameSpace = new NameSpace( getBshClassManager(), GLOBAL );
-        result.setNameSpace(globalNameSpace);
-        
-        this.addVarsToBeanshell(context, dictionary, result);
+        this.addVarsToEvaluationHelper( context, dictionary, result );
         
         return result;
-    }
-	
-    private BshClassManager getBshClassManager() {
-    	
-    	if (bshClassManager == null){
-    		bshClassManager = BshClassManager.createClassManager(null);
-    	}
-    	
-		return bshClassManager;
 	}
     
-	private void addVarsToBeanshell(Object context, Map<String, Object> dictionary, Interpreter beanShell) 
-			throws EvalError {
+	
+	private void addVarsToEvaluationHelper( Object context, Map<String, Object> dictionary, EvaluationHelper evaluationHelper ) 
+			throws EvaluationException {
         
+		// Add vars from dictionary
         if ( dictionary != null ) {
-            for ( Iterator<Map.Entry<String, Object>> i = dictionary.entrySet().iterator(); i.hasNext(); ) {
-                Map.Entry<String, Object> entry = i.next();
-                beanShell.set( (String)entry.getKey(), entry.getValue() );
-            }
+			for ( Entry<String, Object> entry : dictionary.entrySet() ){
+				evaluationHelper.set ( 
+						entry.getKey(), entry.getValue() );
+			}
         }
         
-        beanShell.set( HERE_VAR_NAME, context );
-        beanShell.set( TEMPLATE_VAR_NAME, this );
-        beanShell.set( RESOLVER_VAR_NAME, this.userResolver );
-        //beanShell.set( BOOL_HELPER_VAR_NAME, new BoolHelper() );
-        beanShell.set( DATE_HELPER_VAR_NAME, new DateHelper() );
+        // Add more vars
+        evaluationHelper.set( HERE_VAR_NAME, context );
+        evaluationHelper.set( TEMPLATE_VAR_NAME, this );
+        evaluationHelper.set( RESOLVER_VAR_NAME, this.userResolver );
+        evaluationHelper.set( DATE_HELPER_VAR_NAME, new DateHelper() );
+        evaluationHelper.set( SHELL_VAR_NAME, evaluationHelper );
     }
     
-    public static void setVar(Interpreter beanshell, 
-    		List<String> varsToUnset, Map<String, Object> varsToSet, String name, Object value) 
-    		throws ExpressionEvaluationException {
-        
-        try {
-			Object currentValue = beanshell.get(name);
-			
-			if (currentValue != null){
-			    varsToSet.put(name, currentValue);
-			    
-			} else {
-			    varsToUnset.add(name);
-			}
-			
-			beanshell.set(name, value);
-			
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException(e);
-		}
-    }
-    /*
-	@Override
-	public Object evaluateVar(String varName) throws ExpressionEvaluationException {
-		
-		try {
-			return this.beanShell.get( varName );
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException(e);
-		}
-	}
 	
-	@Override
-	public TemplateError getError() throws ExpressionEvaluationException {
-		return (TemplateError) this.evaluateVar(TEMPLATE_ERROR_VAR_NAME);
-	}*/
+	public static void setVar( EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet, String name, Object value ) 
+    		throws EvaluationException {
+
+		Object currentValue = evaluationHelper.get( name );
+		
+		if ( currentValue != null ){
+		    varsToSet.put( name, currentValue );
+		    
+		} else {
+		    varsToUnset.add( name );
+		}
+		
+		evaluationHelper.set( name, value );
+    }
+
 	
     protected void processJPTElement( 
     		JPTXMLWriter xmlWriter,
     		JPTElement jptElement, 
-            Interpreter beanShell, 
+    		EvaluationHelper evaluationHelper, 
             Stack <Map<String, Slot>>slotStack )
         throws PageTemplateException, IOException, SAXException {
     	
@@ -293,15 +256,15 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		
         try {
 			// Process instructions
-        	TALRepeat talRepeat = jptElement.getTALRepeat(this.jptDocument);
-			if (talRepeat != null){
+        	TALRepeat talRepeat = jptElement.getTALRepeat( this.jptDocument );
+			if ( talRepeat != null ){
 				
 				// Process repeat
-				Loop loop = new Loop( talRepeat, beanShell, varsToUnset, varsToSet );
-				while( loop.repeat( beanShell ) ) {
-				    if (!processJPTElement(
-				    		xmlWriter, jptElement, beanShell, 
-				    		slotStack, varsToUnset, varsToSet, true)){
+				Loop loop = new Loop( talRepeat, evaluationHelper, varsToUnset, varsToSet );
+				while ( loop.repeat( evaluationHelper ) ) {
+				    if ( ! processJPTElement(
+				    		xmlWriter, jptElement, evaluationHelper, 
+				    		slotStack, varsToUnset, varsToSet, true ) ){
 			        	return;
 			        }
 				}
@@ -309,38 +272,32 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 			} else {
 				
 				 // Process non repeat
-			    if (!processJPTElement(
-			    		xmlWriter, jptElement, beanShell, 
-			    		slotStack, varsToUnset, varsToSet, false)){
+			    if ( ! processJPTElement(
+			    		xmlWriter, jptElement, evaluationHelper, 
+			    		slotStack, varsToUnset, varsToSet, false ) ){
 			    	return;
 			    }
 			}
 			
-			processVars(beanShell, varsToUnset, varsToSet);
+			processVars( evaluationHelper, varsToUnset, varsToSet );
 			
-		} catch (PageTemplateException e) {
+		} catch ( PageTemplateException e ) {
 			
-			if (!treatError(xmlWriter, jptElement, beanShell, varsToUnset, varsToSet, e)){
-				throw (e);
+			if ( ! treatError(
+					xmlWriter, jptElement, evaluationHelper, 
+					varsToUnset, varsToSet, e ) ){
+				throw ( e );
 			}
 		}
     }
 
-	private boolean treatError(
-    		JPTXMLWriter xmlWriter,
-    		JPTElement jptElement, 
-    		Interpreter beanShell,
-			List<String> varsToUnset, Map<String, Object> varsToSet, Exception exception) 
-					throws PageTemplateException {
+    
+	private boolean treatError( JPTXMLWriter xmlWriter, JPTElement jptElement, EvaluationHelper evaluationHelper,
+			List<String> varsToUnset, Map<String, Object> varsToSet, Exception exception ) throws PageTemplateException {
 		
 		// Exit if there is no on-error expression defined
-		Object object = null;
-		try {
-			object = beanShell.get(ON_ERROR_VAR_NAME);
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException(e);
-		}
-		if (object == null){
+		Object object = evaluationHelper.get( ON_ERROR_VAR_NAME );
+		if ( object == null ){
 			return false;
 		}
 		
@@ -349,51 +306,53 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		I18NParams i18nParams = null;
 		TALOnError talOnError = null;
 		
-		if (object instanceof TALOnError){
-			talOnError = (TALOnError)object;
+		if ( object instanceof TALOnError ){
+			talOnError = ( TALOnError ) object;
 			
-		} else if (object instanceof I18NOnError){
-			i18nOnError = (I18NOnError)object;
+		} else if ( object instanceof I18NOnError ){
+			i18nOnError = ( I18NOnError ) object;
 			
 		} else {
-			throw new PageTemplateException("Invalid object of type '" + object.getClass().getCanonicalName() 
-					+ "' found in '" + ON_ERROR_VAR_NAME + "' variable.");
+			throw new PageTemplateException( 
+					"Invalid object of type '" + object.getClass().getCanonicalName() 
+					+ "' found in '" + ON_ERROR_VAR_NAME + "' variable." );
 		}
 
 		// Set the error variable
-		TemplateError templateError = new TemplateError(exception);
-		setVar(beanShell, varsToUnset, varsToSet, TEMPLATE_ERROR_VAR_NAME, templateError);
+		TemplateError templateError = new TemplateError( exception );
+		setVar( evaluationHelper, varsToUnset, varsToSet, TEMPLATE_ERROR_VAR_NAME, templateError );
 		
 		// Evaluate content
 		Object jptContent = null;
     	try {
-			if (i18nOnError != null){
+			if ( i18nOnError != null ){
 				// i18n
-				jptContent = i18nOnError.evaluate(beanShell, i18nParams);
+				jptContent = i18nOnError.evaluate( evaluationHelper, i18nParams );
 				
 			} else {
 				// Non i18n
-				jptContent = talOnError.evaluate(beanShell);
+				jptContent = talOnError.evaluate( evaluationHelper );
 			}
 			
-		} catch (Exception e) {
-			processVars(beanShell, varsToUnset, varsToSet);
-			throw new PageTemplateException(e);
+		} catch ( Exception e ) {
+			processVars( evaluationHelper, varsToUnset, varsToSet );
+			throw new PageTemplateException( e );
 		}
     	
     	// Write content using xmlWriter
 		writeJptContent( jptContent, xmlWriter );
 		
 		// Process vars
-		processVars(beanShell, varsToUnset, varsToSet);
+		processVars( evaluationHelper, varsToUnset, varsToSet );
 
 		return true;
 	}
 
+	
 	private boolean processJPTElement(
     		JPTXMLWriter xmlWriter,
     		JPTElement jptElement, 
-			Interpreter beanShell, 
+    		EvaluationHelper evaluationHelper, 
 			Stack <Map<String, Slot>>slotStack,
 			List<String> varsToUnset,
 			Map<String, Object> varsToSet,
@@ -403,19 +362,19 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		/* High priority elements */
 		
 		// tal:on-error or i18n:on-error
-		processOnErrors(jptElement, beanShell, varsToUnset, varsToSet);
+		processOnErrors( jptElement, evaluationHelper, varsToUnset, varsToSet );
         
 		// tal:define
-		processDefine(jptElement, beanShell, varsToUnset, varsToSet);
+		processDefine( jptElement, evaluationHelper, varsToUnset, varsToSet );
         
         // i18n:domain
-		processI18nDomain(jptElement, beanShell, varsToUnset, varsToSet);
+		processI18nDomain( jptElement, evaluationHelper, varsToUnset, varsToSet );
         
         // i18n:define
-        processI18nDefine(jptElement, beanShell, varsToUnset, varsToSet);
+        processI18nDefine( jptElement, evaluationHelper, varsToUnset, varsToSet );
         
         // tal:condition
-        if (! evaluateTalCondition(jptElement, beanShell)){
+        if ( ! evaluateTalCondition( jptElement, evaluationHelper ) ){
             // Skip this element (and children)
             return false;
         }
@@ -424,12 +383,12 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         /* Macro related elements */
         
 		// metal:use-macro
-        if (processMacro( jptElement, beanShell, slotStack, xmlWriter )){
+        if ( processMacro( jptElement, evaluationHelper, slotStack, xmlWriter ) ){
         	return false;
         }
 
         // metal:fill-slot
-        if (processDefineSlot( jptElement, beanShell, slotStack, xmlWriter )){
+        if ( processDefineSlot( jptElement, evaluationHelper, slotStack, xmlWriter ) ){
             return false;
         }
         
@@ -437,29 +396,27 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         /* Content elements and attributes */
 		
 		// tal:content (including tal:replace) or i18n:content
-		Object jptContent = evaluateContent( jptElement, beanShell );
+		Object jptContent = evaluateContent( jptElement, evaluationHelper );
 		
 		// tal:attributes, i18n:attributes and static attributes
-		AttributesImpl attributes = processAttributes( jptElement, beanShell );
+		AttributesImpl attributes = processAttributes( jptElement, evaluationHelper );
 
 		// tal:omit-tag
-		boolean omitTag = evaluateOmitTag( jptElement, beanShell );
+		boolean omitTag = evaluateOmitTag( jptElement, evaluationHelper );
 		
+		// tal:tag
+		String configurableTag = omitTag? null: evaluateConfigurableTag( jptElement, evaluationHelper );
 		
 		/* Write to xmlWriter */
 		
 		// Void tag with no end element
-		if (processEmptyElement( jptElement, jptContent, attributes, xmlWriter ) ){
+		if ( processEmptyElement( jptElement, jptContent, attributes, xmlWriter ) ){
 			return true;
 		}
 		
 		// Start element
 		if ( ! omitTag ) {
-			xmlWriter.startElement( 
-					jptElement.getNamespace(), 
-					jptElement.getName(), 
-					jptElement.getQualifiedName(), 
-					attributes );
+			startElement( xmlWriter, jptElement, attributes, configurableTag );
 		}
 		
 		// Content
@@ -467,15 +424,12 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		    writeJptContent( jptContent, xmlWriter );
 		}
 		else {
-		    writeJptElementChildren( jptElement, xmlWriter, beanShell, varsToUnset, varsToSet, slotStack );
+		    writeJptElementChildren( jptElement, xmlWriter, evaluationHelper, varsToUnset, varsToSet, slotStack );
 		}
    
 		// End element
 		if ( ! omitTag ) {
-			xmlWriter.endElement( 
-					jptElement.getNamespace(), 
-					jptElement.getName(), 
-					jptElement.getQualifiedName() );
+			endElement( xmlWriter, jptElement, configurableTag );
 		}
 		
 		// Write a new line char to separate elements in loop lists
@@ -486,13 +440,54 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		return true;
 	}
 	
+
+	static protected void startElement( JPTXMLWriter xmlWriter, JPTElement jptElement,
+			AttributesImpl attributes, String configurableTag ) throws SAXException {
+		
+		if ( configurableTag != null ){
+			
+			xmlWriter.startElement( 
+					"", 
+					configurableTag, 
+					configurableTag, 
+					attributes );
+			return;
+		}
+		
+		xmlWriter.startElement( 
+				jptElement.getNamespace(), 
+				jptElement.getName(), 
+				jptElement.getQualifiedName(), 
+				attributes );
+	}
+	
+	
+	static protected void endElement( JPTXMLWriter xmlWriter, JPTElement jptElement, String configurableTag )
+			throws SAXException {
+		
+		if ( configurableTag != null ){
+			
+			xmlWriter.endElement( 
+					"", 
+					configurableTag, 
+					configurableTag );
+			return;
+		}
+		
+		xmlWriter.endElement( 
+				jptElement.getNamespace(), 
+				jptElement.getName(), 
+				jptElement.getQualifiedName() );
+	}
+
+	
 	static private boolean processEmptyElement( JPTElement jptElement, Object jptContent, AttributesImpl attributes, 
 			JPTXMLWriter xmlWriter ) throws IOException, SAXException {
 		
-		if (jptContent == null 
+		if ( jptContent == null 
 				&& jptElement.isEmpty() 
 				&& JPTContext.getInstance().isOmitElementCloseSet( jptElement.getName() )){
-			xmlWriter.writeEmptyElement(jptElement, attributes);
+			xmlWriter.writeEmptyElement( jptElement, attributes );
 			return true;
 		}
 		
@@ -501,14 +496,14 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 
 	private boolean processDefineSlot(
 			JPTElement jptElement, 
-			Interpreter beanShell,
+			EvaluationHelper evaluationHelper,
             Stack <Map<String, Slot>> slotStack,
             JPTXMLWriter xmlWriter ) 
             		throws PageTemplateException, IOException, SAXException {
 		
-		METALDefineSlot metalDefineSlot = jptElement.getMETALDefineSlot(this.jptDocument);
+		METALDefineSlot metalDefineSlot = jptElement.getMETALDefineSlot( this.jptDocument );
 		
-		if (metalDefineSlot == null){
+		if ( metalDefineSlot == null ){
 			return false;
 		}
 		
@@ -516,7 +511,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		    Map<String, Slot> slots = slotStack.pop();
 		    Slot slot = slots.get( metalDefineSlot.getValue() );
 		    if ( slot != null ) {
-		        slot.process( xmlWriter, jptElement, beanShell, slotStack );
+		        slot.process( xmlWriter, jptElement, evaluationHelper, slotStack );
 		        slotStack.push( slots );
 		        return true;
 		    }
@@ -526,19 +521,19 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		    return true;
 		}
 
-		throw new PageTemplateException( "slot definition not allowed outside of macro" );
+		throw new PageTemplateException( "Slot definition not allowed outside of macro." );
 	}
 
-	private void writeJptContent( Object jptContent, JPTXMLWriter xmlWriter )
+	static private void writeJptContent( Object jptContent, JPTXMLWriter xmlWriter )
 			throws PageTemplateException {
 		
 		try {
 			// Content for this element has been generated dynamically
-			if (jptContent instanceof HTMLFragment ) {
+			if ( jptContent instanceof HTMLFragment ) {
 				
-				HTMLFragment html = (HTMLFragment)jptContent;
+				HTMLFragment html = ( HTMLFragment ) jptContent;
 				
-				if (JPTContext.getInstance().isParseHTMLFragments()){ 
+				if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
 					xmlWriter.writeHTML( html.getDom() );
 					
 				} else {
@@ -551,35 +546,50 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 				xmlWriter.writeText( jptContent.toString() );
 			}
 			
-		} catch (PageTemplateException e) {
+		} catch ( PageTemplateException e ) {
 			throw e;
 			
-		} catch (Exception e) {
-			throw new PageTemplateException(e);
+		} catch ( Exception e ) {
+			throw new PageTemplateException( e );
 		}
 	}
+	
+	
+	private String evaluateConfigurableTag(
+			JPTElement jptElement,
+			EvaluationHelper evaluationHelper) throws PageTemplateException {
 
+		TALTag talTag = jptElement.getTALTag( this.jptDocument );
+		
+		if ( talTag == null ){
+			return null;
+		}
+		
+		return talTag.evaluate( evaluationHelper );
+	}
+	
+	
 	private boolean evaluateTalCondition(
 			JPTElement jptElement,
-			Interpreter beanShell) throws PageTemplateException {
+			EvaluationHelper evaluationHelper) throws PageTemplateException {
 
-		TALCondition talCondition = jptElement.getTALCondition(this.jptDocument);
+		TALCondition talCondition = jptElement.getTALCondition( this.jptDocument );
 		
-		if (talCondition == null){
+		if ( talCondition == null ){
 			return true;
 		}
 		
-		return talCondition.evaluate(beanShell);
+		return talCondition.evaluate( evaluationHelper );
 	}
 	
 	private void processOnErrors(JPTElement jptElement,
-			Interpreter beanShell, List<String> varsToUnset,
+			EvaluationHelper evaluationHelper, List<String> varsToUnset,
 			Map<String, Object> varsToSet) throws PageTemplateException {
 
-		TALOnError talOnError = jptElement.getTALOnError(this.jptDocument);
-		I18NOnError i18nOnError = jptElement.getI18NOnError(this.jptDocument);
+		TALOnError talOnError = jptElement.getTALOnError( this.jptDocument );
+		I18NOnError i18nOnError = jptElement.getI18NOnError( this.jptDocument );
 		
-		if (talOnError == null && i18nOnError == null){
+		if ( talOnError == null && i18nOnError == null ){
 			return;
 		}
 		//if (talOnError != null && i18nOnError != null){
@@ -596,14 +606,14 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		setVar(beanShell, varsToUnset, varsToSet, ON_ERROR_VAR_NAME, I18N_EXPRESSION_PREFIX + i18nOnError.getI18nKey());
 		*/
 		setVar(
-				beanShell, 
+				evaluationHelper, 
 				varsToUnset, 
 				varsToSet, 
 				ON_ERROR_VAR_NAME,
-				i18nOnError == null? talOnError: i18nOnError);
+				i18nOnError == null? talOnError: i18nOnError );
 	}
 
-	private boolean evaluateOmitTag( JPTElement jptElement, Interpreter beanShell )
+	private boolean evaluateOmitTag( JPTElement jptElement, EvaluationHelper evaluationHelper )
 			throws PageTemplateException {
 		
 		// Omit tag when it is from TAL name space
@@ -613,43 +623,33 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		}
 		
 		// Not omit tag when there is no omitTag
-		TALOmitTag talOmitTag = jptElement.getTALOmitTag(this.jptDocument);
+		TALOmitTag talOmitTag = jptElement.getTALOmitTag( this.jptDocument );
 		
 		if ( talOmitTag == null ){
 			return false;
 		}
 		
 		// Omit tag depending on the value of omitTag attribute
-		return talOmitTag.evaluate(beanShell);
+		return talOmitTag.evaluate( evaluationHelper );
 	}
     
-    static private void processVars(Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet) 
-    		throws ExpressionEvaluationException {
+    static private void processVars( EvaluationHelper evaluationHelper, List<String> varsToUnset, Map<String, Object> varsToSet ) 
+    		throws EvaluationException {
 
-        try {
-			Iterator<String> i = varsToUnset.iterator();
-			
-			while (i.hasNext()){
-			    String varName = i.next();
-			    beanShell.unset(varName);
-			}
-			
-			i = varsToSet.keySet().iterator();
-			
-			while (i.hasNext()){
-			    String name = i.next();
-			    Object value = varsToSet.get(name);
-			    beanShell.set(name, value);
-			}
-		} catch (EvalError e) {
-			throw new ExpressionEvaluationException();
+		for ( String name : varsToUnset ){
+			evaluationHelper.unset( name );
+		}
+		
+		for ( String name : varsToSet.keySet() ){
+		    Object value = varsToSet.get( name );
+		    evaluationHelper.set( name, value );
 		}
     }
 
     private void writeJptElementChildren( 
     				JPTElement jptElement, 
     				JPTXMLWriter xmlWriter, 
-                    Interpreter beanShell, 
+    				EvaluationHelper evaluationHelper, 
                     List<String> varsToUnset,
                     Map<String, Object> varsToSet,
                     Stack <Map<String, Slot>> slotStack )
@@ -661,9 +661,9 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     			
     			processJPTElement( 
     					xmlWriter,
-    					(JPTElement) contentItem,
-    					beanShell, 
-    					slotStack);
+    					( JPTElement ) contentItem,
+    					evaluationHelper, 
+    					slotStack );
     			
     		} else {
     			contentItem.writeToXmlWriter( xmlWriter );
@@ -671,103 +671,102 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         }
     }
     
-    private Object evaluateContent( JPTElement jptElement, Interpreter beanShell )
+    private Object evaluateContent( JPTElement jptElement, EvaluationHelper evaluationHelper )
     throws PageTemplateException {
     	
-		I18NContent i18nContent = jptElement.getI18NContent(this.jptDocument);
-		TALContent talContent = jptElement.getTALContent(this.jptDocument);
+		I18NContent i18nContent = jptElement.getI18NContent( this.jptDocument );
+		TALContent talContent = jptElement.getTALContent( this.jptDocument );
 		
 		if ( talContent == null && i18nContent == null ){
 			return null;
 		}
 		
 		// i18nContent
-		if (i18nContent != null){
+		if ( i18nContent != null ){
 			return i18nContent.evaluate(
-					beanShell, 
-					jptElement.getI18NParams(this.jptDocument));
+					evaluationHelper, 
+					jptElement.getI18NParams( this.jptDocument ) );
 		}
 		
 		// talContent
-		return talContent.evaluate(beanShell);
+		return talContent.evaluate( evaluationHelper );
     }
 
-    private void processI18nDomain( JPTElement jptElement, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet )
-    throws PageTemplateException {
+    private void processI18nDomain( JPTElement jptElement, EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet ) throws PageTemplateException {
     	
-    	I18NDomain i18nDomain = jptElement.getI18NDomain(this.jptDocument);
+    	I18NDomain i18nDomain = jptElement.getI18NDomain( this.jptDocument );
     	
-    	if (i18nDomain == null){
+    	if ( i18nDomain == null ){
     		return;
     	}
     	
-    	i18nDomain.process(beanShell, varsToUnset, varsToSet);
+    	i18nDomain.process( evaluationHelper, varsToUnset, varsToSet );
     }
     
-    private void processDefine( JPTElement jptElement, Interpreter beanShell, 
-    		List<String> varsToUnset, Map<String, Object> varsToSet )
-    throws PageTemplateException {
+    private void processDefine( JPTElement jptElement, EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet ) throws PageTemplateException {
 
-		TALDefine talDefine = jptElement.getTALDefine(this.jptDocument);
+		TALDefine talDefine = jptElement.getTALDefine( this.jptDocument );
 		
-		if (talDefine == null){
+		if ( talDefine == null ){
 			return;
 		}
 
-		talDefine.process(beanShell, varsToUnset, varsToSet);
+		talDefine.process( evaluationHelper, varsToUnset, varsToSet );
     }
     
-    private void processI18nDefine( JPTElement jptElement, Interpreter beanShell, List<String> varsToUnset, Map<String, Object> varsToSet )
-    throws PageTemplateException {
+    private void processI18nDefine( JPTElement jptElement, EvaluationHelper evaluationHelper, 
+    		List<String> varsToUnset, Map<String, Object> varsToSet ) throws PageTemplateException {
     	
-		I18NDefine i18nDefine = jptElement.getI18NDefine(this.jptDocument);
+		I18NDefine i18nDefine = jptElement.getI18NDefine( this.jptDocument );
 		
-		if (i18nDefine == null){
+		if ( i18nDefine == null ){
 			return;
 		}
 		
 		i18nDefine.evaluate(
-				beanShell, 
-				jptElement.getI18NParams(this.jptDocument), 
+				evaluationHelper, 
+				jptElement.getI18NParams( this.jptDocument ), 
 				varsToUnset, 
 				varsToSet);
     }
     
-    private AttributesImpl processAttributes( JPTElement jptElement, Interpreter beanShell )
+    private AttributesImpl processAttributes( JPTElement jptElement, EvaluationHelper evaluationHelper )
     throws PageTemplateException {
     	
     	AttributesImpl result = new AttributesImpl();
     	
-    	I18NAttributes i18NAttributes = jptElement.getI18NAttributes(this.jptDocument);
-    	TALAttributes talAttributes = jptElement.getTALAttributes(this.jptDocument);
+    	I18NAttributes i18NAttributes = jptElement.getI18NAttributes( this.jptDocument );
+    	TALAttributes talAttributes = jptElement.getTALAttributes( this.jptDocument );
     	List<StaticAttribute> staticAttributes = jptElement.getStaticAttributes();
     	
     	// Return if there is no attribute to add to attributes list
-    	if (i18NAttributes == null && talAttributes == null && staticAttributes.isEmpty()){
+    	if ( i18NAttributes == null && talAttributes == null && staticAttributes.isEmpty() ){
     		return result;
     	}
 
-    	if (!staticAttributes.isEmpty()){
+    	if ( ! staticAttributes.isEmpty() ){
     		AttributesUtils.processStaticAttributes(
     				staticAttributes, 
-    				beanShell, 
+    				evaluationHelper, 
     				result, 
-    				this.jptDocument);
+    				this.jptDocument );
     	}
 
-    	if (talAttributes != null){
+    	if ( talAttributes != null ){
     		talAttributes.evaluate(
-    				beanShell, 
+    				evaluationHelper, 
     				result, 
-    				this.jptDocument);
+    				this.jptDocument );
     	}
     	
-    	if (i18NAttributes != null){
+    	if ( i18NAttributes != null ){
     		i18NAttributes.evaluate(
-    				beanShell, 
-    				jptElement.getI18NParams(this.jptDocument), 
+    				evaluationHelper, 
+    				jptElement.getI18NParams( this.jptDocument ), 
     				result, 
-    				this.jptDocument);
+    				this.jptDocument );
     	}
     	
     	return result;
@@ -775,24 +774,25 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private boolean processMacro( JPTElement jptElement, 
-    							Interpreter beanShell, 
+    							EvaluationHelper evaluationHelper, 
                                 Stack <Map<String, Slot>> slotStack,
                                 JPTXMLWriter xmlWriter )
         throws PageTemplateException, IOException, SAXException {
     	
     	METALUseMacro metalUseMacro = jptElement.getMETALUseMacro( this.jptDocument );
     	
-    	if (metalUseMacro == null){
+    	if ( metalUseMacro == null ){
     		return false;
     	}
     	
         JPTExpression expression = metalUseMacro.getExpression();
-		Object object = expression.evaluate(beanShell);
+		Object object = expression.evaluate( evaluationHelper );
 		
         if ( object == null ) {
-            throw new NoSuchPathException( "could not find macro: " 
+            throw new NoSuchPathException(
+            		"Could not find macro: " 
             		+ expression.getStringExpression() 
-                    + " in '" + this.jptDocument.getTemplateName() + "' template");
+                    + " in '" + this.jptDocument.getTemplateName() + "' template.") ;
         }
 
         if ( object instanceof Macro ) {
@@ -811,32 +811,26 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
             //System.err.println( "found slots: " + slots.keySet() );
             
             // Call macro
-            Macro macro = (Macro)object;
-            macro.process( xmlWriter, jptElement, beanShell, slotStack );
+            Macro macro = ( Macro ) object;
+            macro.process( xmlWriter, jptElement, evaluationHelper, slotStack );
             
             return true;
         }
 
         throw new PageTemplateException(
-            		"expression '" + expression.getStringExpression()  + "' does not evaluate to macro: " 
+            		"Expression '" + expression.getStringExpression()  + "' does not evaluate to macro: " 
                     + object.getClass().getName() 
-                    + " in '" + this.jptDocument.getTemplateName() + "' template");
-
+                    + " in '" + this.jptDocument.getTemplateName() + "' template.");
     }
     
-    /**
-     * With all of our namespace woes, getting an XPath expression
-     * to work has proven futile, so we'll recurse through the tree
-     * ourselves to find what we need.
-     * @throws PageTemplateException 
-     */
+
     private void findSlots( JPTElement jptElement, Map<String, Slot> slots ) 
     		throws PageTemplateException {
         
         // Look for our attribute
-    	METALFillSlot metalFillSlot = jptElement.getMETALFillSlot(this.jptDocument);
+    	METALFillSlot metalFillSlot = jptElement.getMETALFillSlot( this.jptDocument );
     	
-    	if (metalFillSlot != null){
+    	if ( metalFillSlot != null ){
     		String name = metalFillSlot.getName();
             if ( name != null ) {
                 slots.put( name, new SlotImpl( jptElement ) );
@@ -844,7 +838,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     	}
 
         // Recurse into child elements
-    	for (JPTElement child: jptElement.getElementsContent()){
+    	for ( JPTElement child : jptElement.getElementsContent() ){
     		findSlots( child, slots );
     	}
     }
@@ -880,12 +874,8 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         return this.macros;
     }
 	
-    /**
-     * With all of our namespace woes, getting an XPath expression
-     * to work has proven futile, so we'll recurse through the tree
-     * ourselves to find what we need.
-     */
-	private void findMacros( JPTElement jptElement, Map<String, Macro> macros ) throws PageTemplateException{
+
+	private void findMacros( JPTElement jptElement, Map<String, Macro> macros ) throws PageTemplateException {
     	
         // Look for our attribute
 		METALDefineMacro metalDefineMacro = jptElement.getMETALDefineMacro( this.jptDocument );
@@ -896,10 +886,11 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         }
 
         // Recurse into child elements
-        for (JPTElement child: jptElement.getElementsContent()){
-        	findMacros( child, macros);
+        for ( JPTElement child: jptElement.getElementsContent() ){
+        	findMacros( child, macros );
         }
     }
+	
 
     class MacroImpl implements Macro {
         JPTElement jptElement;
@@ -909,10 +900,10 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         }
 
 		@Override
-		public void process(JPTXMLWriter xmlWriter, JPTElement jptElement,
-				Interpreter beanShell, Stack<Map<String, Slot>> slotStack)
+		public void process( JPTXMLWriter xmlWriter, JPTElement jptElement,
+				EvaluationHelper evaluationHelper, Stack<Map<String, Slot>> slotStack )
 				throws PageTemplateException, IOException, SAXException {
-			processJPTElement( xmlWriter, this.jptElement, beanShell, slotStack );
+			processJPTElement( xmlWriter, this.jptElement, evaluationHelper, slotStack );
 		}
     }
 
@@ -924,10 +915,10 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         }
 
 		@Override
-		public void process(JPTXMLWriter xmlWriter, JPTElement jptElement,
-				Interpreter beanShell, Stack<Map<String, Slot>> slotStack)
+		public void process( JPTXMLWriter xmlWriter, JPTElement jptElement,
+				EvaluationHelper evaluationHelper, Stack<Map<String, Slot>> slotStack )
 				throws PageTemplateException, IOException, SAXException {
-			processJPTElement( xmlWriter, this.jptElement, beanShell, slotStack );
+			processJPTElement( xmlWriter, this.jptElement, evaluationHelper, slotStack );
 		}
     }
 }

@@ -39,13 +39,13 @@ public class JPTContext extends AbstractJPTContext {
 
     
 	public JPTDocumentCache getJptDocumentCache() {
-		return jptDocumentCache;
+		return this.jptDocumentCache;
 	}
 
-	public void setJptDocumentCache(JPTDocumentCache jptDocumentCache) {
+	public void setJptDocumentCache( JPTDocumentCache jptDocumentCache ) {
 		
-		if (jptDocumentCache == null){
-			throw new IllegalArgumentException("Unable to set jptDocumentCache to null");
+		if ( jptDocumentCache == null ){
+			throw new IllegalArgumentException( "Unable to set jptDocumentCache to null" );
 		}
 		
 		this.jptDocumentCache = jptDocumentCache;

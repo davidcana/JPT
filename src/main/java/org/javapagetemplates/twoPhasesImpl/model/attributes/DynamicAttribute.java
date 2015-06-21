@@ -2,7 +2,9 @@ package org.javapagetemplates.twoPhasesImpl.model.attributes;
 
 /**
  * <p>
- *   Simple interface that represents a dynamic attribute.
+ *   Simple interface that represents a dynamic attribute. A dynamic 
+ *   attribute is an attribute with a dynamic content, not a static 
+ *   content.
  * </p>
  * 
  * 
@@ -25,6 +27,7 @@ package org.javapagetemplates.twoPhasesImpl.model.attributes;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
+
 public interface DynamicAttribute extends JPTAttribute {
 
 }

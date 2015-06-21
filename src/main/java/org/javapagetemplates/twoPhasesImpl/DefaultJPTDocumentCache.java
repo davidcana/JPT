@@ -1,6 +1,6 @@
 package org.javapagetemplates.twoPhasesImpl;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -39,15 +39,14 @@ public class DefaultJPTDocumentCache implements JPTDocumentCache {
 	
 	DefaultJPTDocumentCache(){}
 	
-	
 	@Override
-	public void put(URL url, JPTDocument jptDocument) {
-		this.documents.put(url.toString(), jptDocument);
+	public void put( URI uri, JPTDocument jptDocument ) {
+		this.documents.put( uri.toString(), jptDocument );
 	}
 	
 	@Override
-	public JPTDocument get(URL url) {
-		return this.documents.get(url.toString());
+	public JPTDocument get( URI uri ) {
+		return this.documents.get( uri.toString() );
 	}
 
 }

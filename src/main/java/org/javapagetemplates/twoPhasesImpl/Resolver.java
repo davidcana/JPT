@@ -1,13 +1,15 @@
 package org.javapagetemplates.twoPhasesImpl;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.io.InputStreamReader;
+import java.io.IOException;
 
-import org.javapagetemplates.common.BeanShellScript;
+import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.PageTemplateException;
+import org.javapagetemplates.common.scripting.Script;
 
 /**
  * <p>
@@ -40,39 +42,44 @@ import org.javapagetemplates.common.exceptions.PageTemplateException;
 public abstract class Resolver {
 
 	// Map of resources called by this template
-    private Map<String, TwoPhasesPageTemplate> templates = new HashMap<String, TwoPhasesPageTemplate>();
-    private Map<String, BeanShellScript> scripts = new HashMap<String, BeanShellScript>();
+    protected Map<String, TwoPhasesPageTemplate> templates = new HashMap<String, TwoPhasesPageTemplate>();
+    protected Map<String, Script> scripts = new HashMap<String, Script>();
     
-    public abstract URL getResource( String path ) 
-    		throws java.net.MalformedURLException;
+    public abstract URL getResource( String path ) throws MalformedURLException;
     
 
-	public TwoPhasesPageTemplate getPageTemplate( String path ) 
-			throws PageTemplateException, java.net.MalformedURLException {
+	public TwoPhasesPageTemplate getPageTemplate( String path ) throws PageTemplateException {
 		
-		TwoPhasesPageTemplate template = this.templates.get( path );
-		
-        if ( template == null ) {
-            URL resource = getResource( path );
-            if ( resource != null ) {
-                template = new TwoPhasesPageTemplateImpl( resource );
-                this.templates.put( path, template );
-            }
-        }
-        
-        return template;
+		try {
+			TwoPhasesPageTemplate template = this.templates.get( path );
+			if ( template == null ) {
+			    URL resource = getResource( path );
+			    if ( resource != null ) {
+			        template = new TwoPhasesPageTemplateImpl( resource.toURI() );
+			        this.templates.put( path, template );
+			    }
+			}
+			
+			return template;
+			
+		} catch ( PageTemplateException e ) {
+			throw ( e );
+			
+		} catch ( Exception e ) {
+			throw new PageTemplateException( e );
+		}
     }
-    
 
-	public BeanShellScript getBeanShellScript( String path ) 
-			throws java.net.MalformedURLException, java.io.IOException {
+    
+	public Script getScript( String path ) 
+			throws MalformedURLException, IOException, EvaluationException {
 		
-        BeanShellScript script = this.scripts.get( path );
+		Script script = this.scripts.get( path );
         
         if ( script == null ) {
             URL resource = getResource( path );
             if ( resource != null ) {
-                script = new BeanShellScript( new InputStreamReader( resource.openStream() ) );
+            	script = ScriptFactory.getInstance().createScript( path, resource );
                 this.scripts.put( path, script );
             }
         }
