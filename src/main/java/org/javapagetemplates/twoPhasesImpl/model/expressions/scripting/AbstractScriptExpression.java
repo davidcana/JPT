@@ -1,9 +1,10 @@
-package org.javapagetemplates.twoPhasesImpl.model.expressions;
+package org.javapagetemplates.twoPhasesImpl.model.expressions.scripting;
 
 import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.common.scripting.Evaluator;
 import org.javapagetemplates.twoPhasesImpl.JPTContext;
+import org.javapagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
 
 /**
  * <p>

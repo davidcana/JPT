@@ -1,16 +1,15 @@
-package org.javapagetemplates.twoPhasesImpl.model.expressions;
+package org.javapagetemplates.twoPhasesImpl.model.expressions.scripting;
 
 import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.common.scripting.Evaluator;
-import org.javapagetemplates.twoPhasesImpl.JPTContext;
+import org.javapagetemplates.common.scripting.beanShell.BeanShellEvaluator;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 
 /**
  * <p>
- *   Evaluates an expression using the EvaluationHelper defined in JPTContext 
- *   as the default ExpressionEvaluator.
+ *   Evaluates an expression using Bean shell as the Evaluator.
  * </p>
  * 
  * 
@@ -33,24 +32,26 @@ import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class JavaExpression extends AbstractScriptExpression {
+public class BeanShellExpression extends AbstractScriptExpression {
 
 	private static final long serialVersionUID = -3138512000373794137L;
 	
-	public JavaExpression(){}
-	public JavaExpression( String stringExpression, String scriptExpression ){
+	
+	public BeanShellExpression(){}
+	public BeanShellExpression( String stringExpression, String scriptExpression ){
 		super( stringExpression, scriptExpression );
 	}
 	
-	static public JavaExpression generate( String expression ) throws ExpressionSyntaxException {
+	static public BeanShellExpression generate( String expression ) 
+			throws ExpressionSyntaxException {
 		
-		return new JavaExpression(
+		return new BeanShellExpression(
 				expression, 
-				expression.substring( TwoPhasesPageTemplate.EXPR_JAVA.length() ) );
+				expression.substring( TwoPhasesPageTemplate.EXPR_BSH.length() ) );
 	}
 	
 	static private Evaluator getEvaluator(){
-		return JPTContext.getInstance().getExpressionEvaluator();
+		return BeanShellEvaluator.getInstance();
 	}
 	
 	@Override
@@ -62,11 +63,13 @@ public class JavaExpression extends AbstractScriptExpression {
 				getEvaluator() );
 	}
 	
-	static public Object evaluate( String scriptExpression, EvaluationHelper evaluationHelper ) throws EvaluationException {
+	static public Object evaluate( String scriptExpression, EvaluationHelper evaluationHelper ) 
+			throws EvaluationException {
 		
 		return evaluate( 
 				scriptExpression, 
 				evaluationHelper, 
 				getEvaluator() );
 	}
+
 }

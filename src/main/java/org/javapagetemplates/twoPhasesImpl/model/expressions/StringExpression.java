@@ -17,6 +17,9 @@ import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.EqualsEx
 import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.GreaterExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.comparison.LowerExpression;
 import org.javapagetemplates.twoPhasesImpl.model.expressions.path.PathExpression;
+import org.javapagetemplates.twoPhasesImpl.model.expressions.scripting.BeanShellExpression;
+import org.javapagetemplates.twoPhasesImpl.model.expressions.scripting.GroovyExpression;
+import org.javapagetemplates.twoPhasesImpl.model.expressions.scripting.JavaExpression;
 
 /**
  * <p>

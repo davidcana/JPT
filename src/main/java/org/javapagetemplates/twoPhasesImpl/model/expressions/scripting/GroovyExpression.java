@@ -1,15 +1,15 @@
-package org.javapagetemplates.twoPhasesImpl.model.expressions;
+package org.javapagetemplates.twoPhasesImpl.model.expressions.scripting;
 
 import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.javapagetemplates.common.scripting.EvaluationHelper;
 import org.javapagetemplates.common.scripting.Evaluator;
-import org.javapagetemplates.common.scripting.beanShell.BeanShellEvaluator;
+import org.javapagetemplates.common.scripting.groovy.GroovyEvaluator;
 import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 
 /**
  * <p>
- *   Evaluates an expression using Bean shell as the Evaluator.
+ *   Evaluates an expression using Groovy as the Evaluator.
  * </p>
  * 
  * 
@@ -32,26 +32,25 @@ import org.javapagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class BeanShellExpression extends AbstractScriptExpression {
+public class GroovyExpression extends AbstractScriptExpression {
 
-	private static final long serialVersionUID = -3138512000373794137L;
-	
-	
-	public BeanShellExpression(){}
-	public BeanShellExpression( String stringExpression, String scriptExpression ){
+	private static final long serialVersionUID = 7480401736670300350L;
+
+	public GroovyExpression(){}
+	public GroovyExpression( String stringExpression, String scriptExpression ){
 		super( stringExpression, scriptExpression );
 	}
 	
-	static public BeanShellExpression generate( String expression ) 
+	static public GroovyExpression generate( String expression ) 
 			throws ExpressionSyntaxException {
 		
-		return new BeanShellExpression(
+		return new GroovyExpression(
 				expression, 
-				expression.substring( TwoPhasesPageTemplate.EXPR_BSH.length() ) );
+				expression.substring( TwoPhasesPageTemplate.EXPR_GROOVY.length() ) );
 	}
 	
 	static private Evaluator getEvaluator(){
-		return BeanShellEvaluator.getInstance();
+		return GroovyEvaluator.getInstance();
 	}
 	
 	@Override
