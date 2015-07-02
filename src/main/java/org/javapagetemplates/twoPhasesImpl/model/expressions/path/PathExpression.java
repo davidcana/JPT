@@ -246,7 +246,7 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         // Test for indirection
         result = Indirection.generate( token );
 
-        if (result == null){
+        if ( result == null ){
 	        // A method call?
 	        result = MethodCallExpression.generate( token );
 	        
@@ -314,9 +314,9 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         }
         
         // It could be a script
-        ScriptExpression beanShellScriptExpression = ScriptExpression.generate( result );
-        if ( beanShellScriptExpression != null ){
-        	return beanShellScriptExpression.evaluate( parent, evaluationHelper );
+        ScriptExpression scriptExpression = ScriptExpression.generate( result );
+        if ( scriptExpression != null ){
+        	return scriptExpression.evaluate( parent, evaluationHelper );
         }
         
         return result;

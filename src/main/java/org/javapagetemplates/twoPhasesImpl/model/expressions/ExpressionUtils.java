@@ -194,6 +194,9 @@ public class ExpressionUtils {
         else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_COND ) ) {
         	return CondExpression.generate( effectiveExpression );
         }
+        else if ( effectiveExpression.startsWith( TwoPhasesPageTemplate.EXPR_NOCALL ) ) {
+        	return NocallExpression.generate( effectiveExpression );
+        }
 
         return PathExpression.generate( effectiveExpression );
     }

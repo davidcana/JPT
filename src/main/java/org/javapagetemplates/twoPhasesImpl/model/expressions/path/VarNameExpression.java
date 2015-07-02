@@ -2,6 +2,7 @@ package org.javapagetemplates.twoPhasesImpl.model.expressions.path;
 
 import org.javapagetemplates.common.exceptions.EvaluationException;
 import org.javapagetemplates.common.scripting.EvaluationHelper;
+import org.javapagetemplates.twoPhasesImpl.model.expressions.Nocallable;
 
 /**
  * <p>
@@ -38,7 +39,7 @@ public class VarNameExpression implements FirstPathToken {
 	
 	public VarNameExpression(){}
 
-	public VarNameExpression(String varName){
+	public VarNameExpression( String varName ){
 		this.varName = varName;
 	}
 
@@ -47,7 +48,7 @@ public class VarNameExpression implements FirstPathToken {
 		return this.varName;
 	}
 
-	public void setVarName(String varName) {
+	public void setVarName( String varName ) {
 		this.varName = varName;
 	}
 
@@ -57,10 +58,18 @@ public class VarNameExpression implements FirstPathToken {
 	}
 	
 	static public Object evaluate( String varName, EvaluationHelper evaluationHelper ) throws EvaluationException {
-		return evaluationHelper.get( varName );
+		
+		Object result = evaluationHelper.get( varName );
+		
+		if ( result instanceof Nocallable ){
+			Nocallable nocallable = ( Nocallable ) result;
+			return nocallable.evaluateNocallable( evaluationHelper );
+		}
+		
+		return result;
 	}
 	
-	static public VarNameExpression generate(String varName){
+	static public VarNameExpression generate( String varName ){
 		return new VarNameExpression( varName );
 	}
 	

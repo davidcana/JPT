@@ -147,6 +147,9 @@ public class StringExpression extends JPTExpressionImpl {
             else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_COND ) ) {
             	result = CondExpression.evaluate( string, evaluationHelper );
             }
+            else if ( string.startsWith( TwoPhasesPageTemplate.EXPR_NOCALL ) ) {
+            	result = NocallExpression.evaluate( string, evaluationHelper );
+            }
             else {
             	result = PathExpression.evaluate( string, evaluationHelper );
             }

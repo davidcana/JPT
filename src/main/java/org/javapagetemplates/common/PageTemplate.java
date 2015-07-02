@@ -70,6 +70,7 @@ public interface PageTemplate {
     static final String EXPRESSION_SUFFIX = ":";
     static final String EXPR_STRING = "string" + EXPRESSION_SUFFIX;
     static final String EXPR_EXISTS = "exists" + EXPRESSION_SUFFIX;
+    static final String EXPR_NOCALL = "nocall" + EXPRESSION_SUFFIX;
     static final String EXPR_NOT = "not" + EXPRESSION_SUFFIX;
     static final String EXPR_JAVA = "java" + EXPRESSION_SUFFIX;
     static final String EXPR_BSH = "bsh" + EXPRESSION_SUFFIX;

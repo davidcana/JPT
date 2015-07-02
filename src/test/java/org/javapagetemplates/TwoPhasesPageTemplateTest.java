@@ -135,6 +135,10 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
         testPageTemplate(test, dictionary, jptOutputFormat, resource, template);
 	}
 	
+	@Test
+	public void testNocall() throws Exception {
+		super.testNocall();
+	}
 	
 	private void testPageTemplate(String test, Map<String, Object> dictionary,
 			JPTOutputFormat jptOutputFormat, URL resource,

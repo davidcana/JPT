@@ -237,7 +237,16 @@ abstract public class AbstractPageTemplateTest {
     public void testConfigurableTags() throws Exception {
         testPageTemplate( "configurableTags", null, null );
     }
-	
+    
+	public void testNocall() throws Exception {
+        Map<String, Object> dictionary = new HashMap<String, Object>();
+        dictionary.put( "testCounter1", new Counter( ) );
+        dictionary.put( "testCounter2", new Counter( ) );
+        //dictionary.put( "testCounter3", new Counter( ) );
+        
+        testPageTemplate( "nocall", dictionary, null );
+    }
+    
 	@Test
     public void testString() throws Exception {
     	
