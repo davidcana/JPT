@@ -45,7 +45,7 @@ public interface TemplateCache {
 	 * Get a dom4j document from the cache
 	 * 
 	 * @param id
-	 * @return
+	 * @return a dom4j document from the cache
 	 * @throws PageTemplateException
 	 */
 	public Document get( String id ) throws PageTemplateException;

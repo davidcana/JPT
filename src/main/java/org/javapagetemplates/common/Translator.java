@@ -51,7 +51,8 @@ public interface Translator {
      * @param i18nList the <code>I18n</code> list
      * @param i18nTranslate the key
      * @param i18nParams the translation params
-     * @return
+     * @return the translation using the given key and params iterating through the list of
+     * <code>I18n</code> instances until it is found
      */
 	public String tr( List<I18n> i18nList, String i18nTranslate, Object[] i18nParams );
 }

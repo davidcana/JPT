@@ -42,7 +42,7 @@ public interface Script {
 	 * Evaluate the script using the given evaluation helper
 	 * 
 	 * @param helper
-	 * @return
+	 * @return the evaluation
 	 * @throws EvaluationException
 	 */
 	public Object evaluate( EvaluationHelper helper ) throws EvaluationException;

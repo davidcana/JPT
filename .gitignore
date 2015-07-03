@@ -1,0 +1,10 @@
+# Linux
+.*
+!.gitignore
+!.htaccess
+*~
+
+# Misc
+target/
+pom.xml.releaseBackup
+release.properties

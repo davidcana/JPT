@@ -1,5 +1,5 @@
 New in 0.12.0
- - Added support of nocall expressions.
+ - Added support of nocall expressions (only available using 2 phases implementation).
  - Added support of tal:tag. Replaces the tag in the template by the evaluated expression unless it evaluates to null.
  - Added generic support of expression evaluation. Added support of Groovy expressions.
  - Added generic support of scripts depending of their extensions. Added support of Groovy scripts.

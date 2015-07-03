@@ -47,7 +47,7 @@ public interface JPTDocumentCache {
 	 * Get a JPTDocument from the cache
 	 * 
 	 * @param uri
-	 * @return
+	 * @return a JPTDocument from the cache
 	 * @throws PageTemplateException
 	 */
 	public JPTDocument get( URI uri ) throws PageTemplateException;
