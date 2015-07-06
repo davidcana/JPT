@@ -4,7 +4,7 @@
     <groupId>com.github.davidcana</groupId>
     <artifactId>jpt</artifactId>
     <packaging>jar</packaging>
-    <version>0.12.3</version>
+    <version>0.12.4-SNAPSHOT</version>
     
     <name>Java page templates</name>
     <description>JPT is a Java implementation of Zope Page Templates (ZPT).</description>
@@ -24,7 +24,7 @@
 		<url>https://github.com/davidcana/JPT</url>
 		<connection>scm:git:git://github.com/davidcana/JPT.git</connection>
 		<developerConnection>scm:git:git@github.com:davidcana/JPT.git</developerConnection>
-		<tag>jpt-0.12.3</tag>
+		<tag>jpt-0.12.0</tag>
 	</scm>
 	
 	<distributionManagement>
