@@ -18,4 +18,4 @@ A Page Template is like a model of the pages that it will generate. In particula
 ------------------------------------------------------------------------------------------------------------------------------------
 (from Zope2 book, http://docs.zope.org/zope2/zope2book/ZPT.html)
 
-Please, take a look to src/main/doc for more information about JPT.
+Please, take a look to https://github.com/davidcana/JPT/wiki for more information about JPT.
