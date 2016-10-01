@@ -1,0 +1,12 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+    <head>
+        <title>Macro expressions</title>
+    </head>
+    <body>
+        The next macro must omit tag
+        <div metal:use-macro="resolver/getPageTemplate( 'macrosForOmitTag.jpt' )/macros/get( 'macro1' )">
+            Macro with omit tag
+        </div>
+    </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <head>
+    <title>This is a test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <!-- This is a test -->
+    <p class="paragraph">
+      This is a paragraph.
+    </p>
+    
+    <p>
+      Before new line
+      <br />
+      After new line
+      <br />
+
+      An image
+      <img alt="alternative text" title="the title" src="/path/to/image" />
+    </p>
+    
+    <table>
+      <caption>a table</caption>
+      <tr>
+        <th>
+            table header 1
+        </th>
+        <th>
+            table header 2
+        </th>
+      </tr>
+      <tr>
+        <td>
+            cell 1
+        </td>
+        <td>
+            cell 2
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
