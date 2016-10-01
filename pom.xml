@@ -2,13 +2,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.davidcana</groupId>
-    <artifactId>jpt</artifactId>
+    <artifactId>zpt</artifactId>
     <packaging>jar</packaging>
     <version>0.12.4</version>
     
-    <name>Java page templates</name>
-    <description>JPT is a Java implementation of Zope Page Templates (ZPT).</description>
-    <url>https://github.com/davidcana/JPT/wiki</url>
+    <name>Zenon page templates</name>
+    <description>Zenon page templates - Java (ZPT-Java) is a Java implementation of Zope Page Templates (ZPT).</description>
+    <url>https://github.com/davidcana/ZPT-Java/wiki</url>
 
     <!-- Required: license information: -->
     <licenses>
@@ -21,10 +21,10 @@
     
 	<!-- Required: source control information: -->
 	<scm>
-		<url>https://github.com/davidcana/JPT</url>
-		<connection>scm:git:git://github.com/davidcana/JPT.git</connection>
-		<developerConnection>scm:git:git@github.com:davidcana/JPT.git</developerConnection>
-		<tag>jpt-0.12.0</tag>
+		<url>https://github.com/davidcana/ZPT-Java</url>
+		<connection>scm:git:git://github.com/davidcana/ZPT-Java.git</connection>
+		<developerConnection>scm:git:git@github.com:davidcana/ZPT-java.git</developerConnection>
+		<tag>zpt-0.12.0</tag>
 	</scm>
 	
 	<distributionManagement>
@@ -117,7 +117,7 @@
   
     <build>
     
-        <finalName>jpt</finalName>
+        <finalName>zpt</finalName>
         
 		<!-- Include the README and LICENSE files: -->
 		<resources>
