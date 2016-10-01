@@ -1,12 +1,19 @@
-package org.zenonpagetemplates.twoPhasesImpl.model.expressions;
+package org.zenonpagetemplates.twoPhasesImpl;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
 
 /**
  * <p>
- *   Abstract class that implements some methods of JPTExpression interface.
+ *   Default implementation of ZPTDocumentCache interface not for production 
+ *   use (only for testing purposes).
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,31 +29,24 @@ package org.zenonpagetemplates.twoPhasesImpl.model.expressions;
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
+ *
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-abstract public class JPTExpressionImpl implements JPTExpression {
-
-	private static final long serialVersionUID = -3360133060255100296L;
+public class DefaultZPTDocumentCache implements ZPTDocumentCache {
 	
-	protected String stringExpression;
+	private Map<String, ZPTDocument> documents = new TreeMap<String, ZPTDocument>();
 	
-	public JPTExpressionImpl(){}
-	public JPTExpressionImpl( String stringExpression ){
-		this.stringExpression = stringExpression;
-	}
+	DefaultZPTDocumentCache(){}
 	
-	public void setStringExpression( String stringExpression ) {
-		this.stringExpression = stringExpression;
-	}
-
 	@Override
-	public String getStringExpression() {
-		return this.stringExpression;
+	public void put( URI uri, ZPTDocument zptDocument ) {
+		this.documents.put( uri.toString(), zptDocument );
+	}
+	
+	@Override
+	public ZPTDocument get( URI uri ) {
+		return this.documents.get( uri.toString() );
 	}
 
-	@Override
-	public String toString(){
-		return this.stringExpression;
-	}
 }

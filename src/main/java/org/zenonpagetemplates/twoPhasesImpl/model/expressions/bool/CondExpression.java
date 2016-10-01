@@ -6,11 +6,11 @@ import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 
 /**
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,19 +29,19 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class CondExpression extends JPTExpressionImpl {
+public class CondExpression extends ZPTExpressionImpl {
 
 	private static final long serialVersionUID = -8747540098927157322L;
 	
-	private JPTExpression condition;
-	private JPTExpression trueExpression;
-	private JPTExpression falseExpression;
+	private ZPTExpression condition;
+	private ZPTExpression trueExpression;
+	private ZPTExpression falseExpression;
 	
 	public CondExpression(){}
 	public CondExpression( String stringExpression ){
 		super( stringExpression );
 	}
-	public CondExpression( String stringExpression, JPTExpression condition, JPTExpression trueExpression, JPTExpression falseExpression ){
+	public CondExpression( String stringExpression, ZPTExpression condition, ZPTExpression trueExpression, ZPTExpression falseExpression ){
 		super( stringExpression );
 		
 		this.condition = condition;
@@ -80,27 +80,27 @@ public class CondExpression extends JPTExpressionImpl {
 	}
 	
 	
-	public JPTExpression getCondition() {
+	public ZPTExpression getCondition() {
 		return this.condition;
 	}
 
-	public void setCondition( JPTExpression condition ) {
+	public void setCondition( ZPTExpression condition ) {
 		this.condition = condition;
 	}
 
-	public JPTExpression getTrueExpression() {
+	public ZPTExpression getTrueExpression() {
 		return this.trueExpression;
 	}
 
-	public void setTrueExpression( JPTExpression trueExpression ) {
+	public void setTrueExpression( ZPTExpression trueExpression ) {
 		this.trueExpression = trueExpression;
 	}
 
-	public JPTExpression getFalseExpression() {
+	public ZPTExpression getFalseExpression() {
 		return this.falseExpression;
 	}
 
-	public void setFalseExpression( JPTExpression falseExpression ) {
+	public void setFalseExpression( ZPTExpression falseExpression ) {
 		this.falseExpression = falseExpression;
 	}
 	

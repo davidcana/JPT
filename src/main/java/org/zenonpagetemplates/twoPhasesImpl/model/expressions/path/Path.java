@@ -8,7 +8,7 @@ import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.exceptions.NoSuchPathException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.common.scripting.Script;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -20,7 +20,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class Path implements JPTExpression {
+public class Path implements ZPTExpression {
 	
 	private static final long serialVersionUID = -4568653205721733649L;
 	

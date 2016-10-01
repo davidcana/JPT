@@ -8,12 +8,12 @@ import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,29 +41,29 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.1 $
  */
-public class TALAttributes extends JPTAttributeImpl implements DynamicAttribute {
+public class TALAttributes extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = -8025473144201537666L;
 	
-	private List<KeyValuePair<JPTExpression>> attributes = new ArrayList<KeyValuePair<JPTExpression>>();
+	private List<KeyValuePair<ZPTExpression>> attributes = new ArrayList<KeyValuePair<ZPTExpression>>();
 	
 	
 	public TALAttributes(){}
-	public TALAttributes( String namespaceUri, String expression ) throws PageTemplateException {
-		super( namespaceUri );
+	public TALAttributes( String namespaceURI, String expression ) throws PageTemplateException {
+		super( namespaceURI );
 		this.attributes = AttributesUtils.getDefinitions( expression );
 	}
 
 	
-	public List<KeyValuePair<JPTExpression>> getAttributes() {
+	public List<KeyValuePair<ZPTExpression>> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes( List<KeyValuePair<JPTExpression>> attributes ) {
+	public void setAttributes( List<KeyValuePair<ZPTExpression>> attributes ) {
 		this.attributes = attributes;
 	}
 
-	public void addAttribute( KeyValuePair<JPTExpression> attribute ){
+	public void addAttribute( KeyValuePair<ZPTExpression> attribute ){
 		this.attributes.add( attribute );
 	}
 	
@@ -77,29 +77,29 @@ public class TALAttributes extends JPTAttributeImpl implements DynamicAttribute 
 		return AttributesUtils.getStringFromDefinitions( this.attributes );
 	}
 	
-	public void evaluate( EvaluationHelper evaluationHelper, AttributesImpl attributesImpl, JPTDocument jptDocument ) 
+	public void evaluate( EvaluationHelper evaluationHelper, AttributesImpl attributesImpl, ZPTDocument zptDocument ) 
 			throws EvaluationException {
 		
-		for ( KeyValuePair<JPTExpression> attribute : this.attributes ){
+		for ( KeyValuePair<ZPTExpression> attribute : this.attributes ){
 			
-			JPTExpression jptExpression = null;
+			ZPTExpression zptExpression = null;
 			try {
 			    String qualifiedName = attribute.getKey();
-			    jptExpression = attribute.getValue();
-				Object value = jptExpression.evaluate( evaluationHelper );
+			    zptExpression = attribute.getValue();
+				Object value = zptExpression.evaluate( evaluationHelper );
 			    
-				AttributesUtils.addAttribute( qualifiedName, value, attributesImpl, jptDocument );
+				AttributesUtils.addAttribute( qualifiedName, value, attributesImpl, zptDocument );
 			
 			} catch ( EvaluationException e ) {
 				e.setInfo(
-						jptExpression.getStringExpression(),
+						zptExpression.getStringExpression(),
 						this.getQualifiedName() );
 				throw e;
 				
 			} catch ( Exception e ) {
 				EvaluationException e2 = new EvaluationException( e );
 				e2.setInfo(
-						jptExpression.getStringExpression(),
+						zptExpression.getStringExpression(),
 						this.getQualifiedName() );
 				throw e2;
 			}

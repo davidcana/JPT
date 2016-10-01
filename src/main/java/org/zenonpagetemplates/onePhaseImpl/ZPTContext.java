@@ -1,15 +1,15 @@
 package org.zenonpagetemplates.onePhaseImpl;
 
-import org.zenonpagetemplates.common.AbstractJPTContext;
+import org.zenonpagetemplates.common.AbstractZPTContext;
 
 /**
  * <p>
- *   Extends AbstractJPTContext class with methods to get and set 
+ *   Extends AbstractZPTContext class with methods to get and set 
  *   the TemplateCache instance.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,13 +29,13 @@ import org.zenonpagetemplates.common.AbstractJPTContext;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.1 $
  */
-public class JPTContext extends AbstractJPTContext {
+public class ZPTContext extends AbstractZPTContext {
 	
 	private TemplateCache templateCache = new DefaultTemplateCache();
     
-    private static JPTContext instance;
+    private static ZPTContext instance;
 
-    private JPTContext(){ }
+    private ZPTContext(){ }
 
     
 	public TemplateCache getTemplateCache() {
@@ -51,10 +51,10 @@ public class JPTContext extends AbstractJPTContext {
 		this.templateCache = templateCache;
 	}
 
-    public static JPTContext getInstance(){
+    public static ZPTContext getInstance(){
 
         if (instance == null){
-            instance = new JPTContext();
+            instance = new ZPTContext();
         }
 
         return instance;

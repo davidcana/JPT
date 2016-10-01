@@ -240,7 +240,7 @@
                     <descriptors>
                         <descriptor>src/main/assembly/src.xml</descriptor>
                     </descriptors>
-                    <finalName>${project.artifactId}_${maven.build.timestamp}</finalName>
+                    <finalName>${project.artifactId}-java_${maven.build.timestamp}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>

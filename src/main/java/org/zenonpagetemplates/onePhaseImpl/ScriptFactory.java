@@ -1,15 +1,15 @@
 package org.zenonpagetemplates.onePhaseImpl;
 
-import org.zenonpagetemplates.common.AbstractJPTContext;
+import org.zenonpagetemplates.common.AbstractZPTContext;
 import org.zenonpagetemplates.common.scripting.AbstractScriptFactory;
-import org.zenonpagetemplates.onePhaseImpl.JPTContext;
+import org.zenonpagetemplates.onePhaseImpl.ZPTContext;
 
 /**
  * <p>
  *   Extends AbstractScriptFactory to implement getContext method.
  * </p>
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,8 +39,8 @@ public class ScriptFactory extends AbstractScriptFactory {
 	}
 
 	@Override
-	protected AbstractJPTContext getContext() {
-		return JPTContext.getInstance();
+	protected AbstractZPTContext getContext() {
+		return ZPTContext.getInstance();
 	}
 	
     public static ScriptFactory getInstance(){

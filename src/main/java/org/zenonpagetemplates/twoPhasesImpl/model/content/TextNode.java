@@ -3,15 +3,15 @@ package org.zenonpagetemplates.twoPhasesImpl.model.content;
 import java.io.IOException;
 
 import org.xml.sax.SAXException;
-import org.zenonpagetemplates.twoPhasesImpl.JPTXMLWriter;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTXMLWriter;
 
 /**
  * <p>
- *   Represents a TextNode from the contents of a JPTElement.
+ *   Represents a TextNode from the contents of a ZPTElement.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,7 @@ public class TextNode implements ContentItem {
 	}
 	
 	@Override
-	public void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException,
+	public void writeToXMLWriter( ZPTXMLWriter xmlWriter ) throws IOException,
 			SAXException {
 		xmlWriter.writeTextNode( this );
 	}

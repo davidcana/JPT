@@ -6,7 +6,7 @@ import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ public class LowerExpression extends TwoMembersComparisonExpression {
 	private static final long serialVersionUID = -1973025855031855661L;
 
 	public LowerExpression(){}
-	public LowerExpression( String stringExpression, JPTExpression expression1, JPTExpression expression2 ){
+	public LowerExpression( String stringExpression, ZPTExpression expression1, ZPTExpression expression2 ){
 		super( stringExpression, expression1, expression2 );
 	}
 

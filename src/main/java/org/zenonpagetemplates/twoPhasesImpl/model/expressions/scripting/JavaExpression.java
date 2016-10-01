@@ -4,17 +4,17 @@ import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.common.scripting.Evaluator;
-import org.zenonpagetemplates.twoPhasesImpl.JPTContext;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTContext;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 
 /**
  * <p>
- *   Evaluates an expression using the EvaluationHelper defined in JPTContext 
+ *   Evaluates an expression using the EvaluationHelper defined in ZPTContext 
  *   as the default ExpressionEvaluator.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,7 @@ public class JavaExpression extends AbstractScriptExpression {
 	}
 	
 	static private Evaluator getEvaluator(){
-		return JPTContext.getInstance().getExpressionEvaluator();
+		return ZPTContext.getInstance().getExpressionEvaluator();
 	}
 	
 	@Override

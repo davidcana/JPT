@@ -1,6 +1,6 @@
 package org.zenonpagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -9,7 +9,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public interface FirstPathToken extends JPTExpression {
+public interface FirstPathToken extends ZPTExpression {
 	
 	@Override
 	public String getStringExpression();

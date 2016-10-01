@@ -11,9 +11,9 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -42,9 +42,9 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  */
 public class AttributesUtils {
 	
-	static public List<JPTExpression> getExpressions( String string ) throws PageTemplateException {
+	static public List<ZPTExpression> getExpressions( String string ) throws PageTemplateException {
 		
-		List<JPTExpression> result = new ArrayList<JPTExpression>();
+		List<ZPTExpression> result = new ArrayList<ZPTExpression>();
 		
 		String element = string.trim();
 		
@@ -61,15 +61,15 @@ public class AttributesUtils {
 		return result;
 	}
 	
-	static public String getStringFromExpressions( List<JPTExpression> expressions ) {
+	static public String getStringFromExpressions( List<ZPTExpression> expressions ) {
 		
 		StringBuilder result = new StringBuilder();
 		
-		Iterator<JPTExpression> i = expressions.iterator();
+		Iterator<ZPTExpression> i = expressions.iterator();
 		
 		while ( i.hasNext() ){
-			JPTExpression jptExpression = i.next();
-			result.append( jptExpression.toString() );
+			ZPTExpression zptExpression = i.next();
+			result.append( zptExpression.toString() );
 			if ( i.hasNext() ){
 				result.append( '\n' );
 			}
@@ -78,7 +78,7 @@ public class AttributesUtils {
 		return result.toString();
 	}
 	
-	static public KeyValuePair<JPTExpression> getDefinition( String string ) throws PageTemplateException {
+	static public KeyValuePair<ZPTExpression> getDefinition( String string ) throws PageTemplateException {
 		
         String variable = string.trim();
         int space = variable.indexOf( TwoPhasesPageTemplate.IN_DEFINE_DELIMITER );
@@ -89,14 +89,14 @@ public class AttributesUtils {
         String name = variable.substring( 0, space );
         String expression = variable.substring( space + 1 );
         
-        return new KeyValuePair<JPTExpression>(
+        return new KeyValuePair<ZPTExpression>(
         		name,
         		ExpressionUtils.generate( expression ) );
 	}
 	
-	static public List<KeyValuePair<JPTExpression>> getDefinitions( String string ) throws PageTemplateException {
+	static public List<KeyValuePair<ZPTExpression>> getDefinitions( String string ) throws PageTemplateException {
 		
-		List<KeyValuePair<JPTExpression>> result = new ArrayList<KeyValuePair<JPTExpression>>();
+		List<KeyValuePair<ZPTExpression>> result = new ArrayList<KeyValuePair<ZPTExpression>>();
 		
         ExpressionTokenizer tokens = new ExpressionTokenizer( 
         		string, 
@@ -113,7 +113,7 @@ public class AttributesUtils {
             String name = variable.substring( 0, space );
             String expression = variable.substring( space + 1 ).trim();
             
-            KeyValuePair<JPTExpression> keyValuePair = new KeyValuePair<JPTExpression>(
+            KeyValuePair<ZPTExpression> keyValuePair = new KeyValuePair<ZPTExpression>(
             		name,
             		ExpressionUtils.generate( expression ) );
             result.add( keyValuePair );
@@ -172,19 +172,19 @@ public class AttributesUtils {
 	}
 
 	static public void processStaticAttributes( List<StaticAttribute> staticAttributes,
-			EvaluationHelper evaluationHelper, AttributesImpl attributesImpl , JPTDocument jptDocument )
+			EvaluationHelper evaluationHelper, AttributesImpl attributesImpl , ZPTDocument zptDocument )
 			throws PageTemplateException {
 		
 		for ( StaticAttribute attribute: staticAttributes ){
             String qualifiedName = attribute.getQualifiedName();
             Object value = attribute.getValue();
             
-            addAttribute( qualifiedName, value, attributesImpl, jptDocument );
+            addAttribute( qualifiedName, value, attributesImpl, zptDocument );
     	}
 	}
 	
 	static public void addAttribute( String qualifiedName, Object value,
-			AttributesImpl attributesImpl, JPTDocument jptDocument ) {
+			AttributesImpl attributesImpl, ZPTDocument zptDocument ) {
 		
 		removeAttribute( attributesImpl, qualifiedName );
 		
@@ -195,7 +195,7 @@ public class AttributesUtils {
             if ( colon != -1 ) {
                 String prefix = qualifiedName.substring( 0, colon );
                 name = qualifiedName.substring( colon + 1 );
-                uri = jptDocument.getNamespace( prefix );
+                uri = zptDocument.getNamespace( prefix );
             }
 		    attributesImpl.addAttribute( 
 		    		uri, 

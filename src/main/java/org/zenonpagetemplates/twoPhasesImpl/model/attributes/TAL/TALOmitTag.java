@@ -5,9 +5,9 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.literals.BooleanLiteralExpression;
 
 /**
@@ -18,7 +18,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.literals.Bool
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,16 +37,16 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.literals.Bool
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class TALOmitTag extends JPTAttributeImpl implements DynamicAttribute {
+public class TALOmitTag extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = -7076944821961746650L;
 	
-	private JPTExpression condition;
+	private ZPTExpression condition;
 	
 	
 	public TALOmitTag(){}
-	public TALOmitTag(String namespaceUri, String expression) throws PageTemplateException {
-		super( namespaceUri );
+	public TALOmitTag(String namespaceURI, String expression) throws PageTemplateException {
+		super( namespaceURI );
 	
 		this.condition = expression.isEmpty()?
 				new BooleanLiteralExpression( true ):
@@ -54,11 +54,11 @@ public class TALOmitTag extends JPTAttributeImpl implements DynamicAttribute {
 	}
 	
 
-	public JPTExpression getCondition() {
+	public ZPTExpression getCondition() {
 		return this.condition;
 	}
 
-	public void setCondition(JPTExpression condition) {
+	public void setCondition(ZPTExpression condition) {
 		this.condition = condition;
 	}
 	

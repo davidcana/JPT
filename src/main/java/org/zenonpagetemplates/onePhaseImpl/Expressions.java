@@ -2,11 +2,11 @@ package org.zenonpagetemplates.onePhaseImpl;
 
 /**
  * <p>
- *   Simple class to get and set data from JPT attributes.
+ *   Simple class to get and set data from ZPT attributes.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public

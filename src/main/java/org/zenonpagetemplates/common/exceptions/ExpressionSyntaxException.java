@@ -2,10 +2,10 @@ package org.zenonpagetemplates.common.exceptions;
 
 /**
  * <p>
- *   Exception thrown after any syntax error of JPT expressions.
+ *   Exception thrown after any syntax error of ZPT expressions.
  * </p>
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public

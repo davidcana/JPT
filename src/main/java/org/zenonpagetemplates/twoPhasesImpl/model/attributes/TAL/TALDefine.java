@@ -11,9 +11,9 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,29 +41,29 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class TALDefine extends JPTAttributeImpl implements DynamicAttribute {
+public class TALDefine extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 1099824857590914745L;
 	
-	private List<KeyValuePair<JPTExpression>> definitions = new ArrayList<KeyValuePair<JPTExpression>>();
+	private List<KeyValuePair<ZPTExpression>> definitions = new ArrayList<KeyValuePair<ZPTExpression>>();
 	
 	
 	public TALDefine(){}
-	public TALDefine(String namespaceUri, String expression) throws PageTemplateException {
-		super( namespaceUri );
+	public TALDefine(String namespaceURI, String expression) throws PageTemplateException {
+		super( namespaceURI );
 		this.definitions = AttributesUtils.getDefinitions( expression );
 	}
 	
 	
-	public List<KeyValuePair<JPTExpression>> getDefinitions() {
+	public List<KeyValuePair<ZPTExpression>> getDefinitions() {
 		return this.definitions;
 	}
 
-	public void setDefinitions(List<KeyValuePair<JPTExpression>> definitions) {
+	public void setDefinitions(List<KeyValuePair<ZPTExpression>> definitions) {
 		this.definitions = definitions;
 	}
 	
-	public void addDefinition(KeyValuePair<JPTExpression> definition){
+	public void addDefinition(KeyValuePair<ZPTExpression> definition){
 		this.definitions.add( definition );
 	}
 	
@@ -80,10 +80,10 @@ public class TALDefine extends JPTAttributeImpl implements DynamicAttribute {
 	public void process( EvaluationHelper evaluationHelper, 
 			List<String> varsToUnset, Map<String, Object> varsToSet ) throws EvaluationException {
 		
-		JPTExpression expression = null;
+		ZPTExpression expression = null;
 		try {
 			
-			for ( KeyValuePair<JPTExpression> definition: this.definitions ){
+			for ( KeyValuePair<ZPTExpression> definition: this.definitions ){
 				expression = definition.getValue();
 				TwoPhasesPageTemplateImpl.setVar(
 						evaluationHelper, 

@@ -2,14 +2,14 @@ package org.zenonpagetemplates.twoPhasesImpl.model.attributes.METAL;
 
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 
 /**
  * <p>
  *   Allows to set a macro definition.
  * </p>
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class METALDefineMacro extends JPTAttributeImpl implements DynamicAttribute {
+public class METALDefineMacro extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = -5999876512010524950L;
 	
@@ -36,8 +36,8 @@ public class METALDefineMacro extends JPTAttributeImpl implements DynamicAttribu
 	
 	
 	public METALDefineMacro(){}
-	public METALDefineMacro( String namespaceUri, String name ){
-		super( namespaceUri );
+	public METALDefineMacro( String namespaceURI, String name ){
+		super( namespaceURI );
 		this.name = name;
 	}
 

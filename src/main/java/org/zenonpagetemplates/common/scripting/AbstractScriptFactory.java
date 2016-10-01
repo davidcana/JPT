@@ -3,7 +3,7 @@ package org.zenonpagetemplates.common.scripting;
 import java.io.IOException;
 import java.net.URL;
 
-import org.zenonpagetemplates.common.AbstractJPTContext;
+import org.zenonpagetemplates.common.AbstractZPTContext;
 import org.zenonpagetemplates.common.exceptions.EvaluationException;
 
 /**
@@ -13,7 +13,7 @@ import org.zenonpagetemplates.common.exceptions.EvaluationException;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@ abstract public class AbstractScriptFactory {
 	
 	/**
 	 * Create an EvaluationHelper instance. The specific class depends on the expression evaluator
-	 * defined in JPT context.
+	 * defined in ZPT context.
 	 * 
 	 * @return the new EvaluationHelper instance
 	 * @throws EvaluationException
@@ -73,10 +73,10 @@ abstract public class AbstractScriptFactory {
 	
 	
 	/**
-	 * Returns the JPTContext
+	 * Returns the ZPTContext
 	 * 
-	 * @return the JPTContext
+	 * @return the ZPTContext
 	 */
-	abstract protected AbstractJPTContext getContext();
+	abstract protected AbstractZPTContext getContext();
 	
 }

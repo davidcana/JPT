@@ -1,6 +1,6 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="resolver/getPageTemplate( 'page.jpt' )/macros/page">
+      metal:use-macro="resolver/getPageTemplate( 'page.zpt' )/macros/page">
   <head>
     <title metal:fill-slot="title">Lovingly Handcrafted Content</title>
   </head>

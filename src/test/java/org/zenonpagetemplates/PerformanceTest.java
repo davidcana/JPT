@@ -8,12 +8,12 @@ import java.util.Map;
 import org.junit.Test;
 import org.zenonpagetemplates.onePhaseImpl.OnePhasePageTemplate;
 import org.zenonpagetemplates.onePhaseImpl.PageTemplateImpl;
-import org.zenonpagetemplates.twoPhasesImpl.JPTOutputFormat;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTOutputFormat;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 
 /**
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -65,15 +65,15 @@ public class PerformanceTest {
 	
 	private void testPerformance(String test, 
 			Map<String, Object> dictionary1P, Map<String, Object> dictionary2P, 
-			JPTOutputFormat jptOutputFormat) 
+			ZPTOutputFormat zptOutputFormat) 
 					throws Exception {
 		
-		testPerformance(test, dictionary1P, dictionary2P, jptOutputFormat, DEFAULT_NUMBER_OF_EXECUTIONS);
+		testPerformance(test, dictionary1P, dictionary2P, zptOutputFormat, DEFAULT_NUMBER_OF_EXECUTIONS);
 	}
 	
 	private void testPerformance(String test, 
 			Map<String, Object> dictionary1P, Map<String, Object> dictionary2P, 
-			JPTOutputFormat jptOutputFormat, int numberOfExecutions) 
+			ZPTOutputFormat zptOutputFormat, int numberOfExecutions) 
 					throws Exception {
 		
 		System.err.println("-------- Begin test of template: " + test + " --------------");
@@ -81,14 +81,14 @@ public class PerformanceTest {
 		// Execute one phase
 		long onePhaseStart = System.currentTimeMillis();
 		
-		execute1P(test, dictionary1P, jptOutputFormat, numberOfExecutions);
+		execute1P(test, dictionary1P, zptOutputFormat, numberOfExecutions);
 		
 		long onePhaseElapsed = System.currentTimeMillis() - onePhaseStart;
 		
 		// Execute two phases
 		long twoPhasesStart = System.currentTimeMillis();
 		
-		execute2P(test, dictionary2P, jptOutputFormat, numberOfExecutions);
+		execute2P(test, dictionary2P, zptOutputFormat, numberOfExecutions);
 		
 		long twoPhasesElapsed = System.currentTimeMillis() - twoPhasesStart;
 		
@@ -124,28 +124,28 @@ public class PerformanceTest {
 	}
 
 	protected void execute2P(String test, Map<String, Object> dictionary2P,
-			JPTOutputFormat jptOutputFormat, int numberOfExecutions)
+			ZPTOutputFormat zptOutputFormat, int numberOfExecutions)
 			throws Exception {
 		
-		String jpt = null;
+		String zpt = null;
 		URL resource = null;
 		
 		for (int c = 0; c < numberOfExecutions; ++c){
 			
 			long start = System.currentTimeMillis();
 			
-			if (jpt == null){
-				jpt = test + AbstractPageTemplateTest.ZPT_FILE_EXTENSION;
+			if (zpt == null){
+				zpt = test + AbstractPageTemplateTest.ZPT_FILE_EXTENSION;
 			}
 			if (resource == null){
-				resource = getClass().getResource( "/" + jpt );
+				resource = getClass().getResource( "/" + zpt );
 			}
 			TwoPhasesPageTemplate template = new TwoPhasesPageTemplateImpl( resource.toURI() );
 			
 			TestObject testObject = new TestObject(true);
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 			
-			template.process( buffer, testObject, dictionary2P, jptOutputFormat );
+			template.process( buffer, testObject, dictionary2P, zptOutputFormat );
 			
 			System.err.println( test + ": processed two phases template in " 
 					+ (System.currentTimeMillis() - start) 
@@ -154,20 +154,20 @@ public class PerformanceTest {
 	}
 	
 	protected void execute1P(String test, Map<String, Object> dictionary1P,
-			JPTOutputFormat jptOutputFormat, int numberOfExecutions)
+			ZPTOutputFormat zptOutputFormat, int numberOfExecutions)
 			throws Exception {
 		
-		String jpt = null;
+		String zpt = null;
 		URL resource = null;
 		
 		for (int c = 0; c < numberOfExecutions; ++c){
 			long start = System.currentTimeMillis();
 			
-			if (jpt == null){
-				jpt = test + AbstractPageTemplateTest.ZPT_FILE_EXTENSION;
+			if (zpt == null){
+				zpt = test + AbstractPageTemplateTest.ZPT_FILE_EXTENSION;
 			}
 			if (resource == null){
-				resource = getClass().getResource( "/" + jpt );
+				resource = getClass().getResource( "/" + zpt );
 			}
 			OnePhasePageTemplate template = new PageTemplateImpl( resource );
 			TestObject testObject = new TestObject(false);

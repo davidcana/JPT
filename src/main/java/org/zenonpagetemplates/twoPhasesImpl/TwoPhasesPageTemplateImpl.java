@@ -19,9 +19,9 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.helpers.DateHelper;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.HTMLFragment;
-import org.zenonpagetemplates.twoPhasesImpl.JPTContext;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTElement;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTContext;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTElement;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.StaticAttribute;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.I18N.I18NAttributes;
@@ -43,15 +43,15 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.TAL.TALOnError;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.TAL.TALRepeat;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.TAL.TALTag;
 import org.zenonpagetemplates.twoPhasesImpl.model.content.ContentItem;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
- *   Main class to implement JPT in two phases.
+ *   Main class to implement ZPT in two phases.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -82,7 +82,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     public static final String I18N_DOMAIN_VAR_NAME = "i18nDomain";
     private static final String ON_ERROR_VAR_NAME = "on-error";
 	
-    private JPTDocument jptDocument;
+    private ZPTDocument zptDocument;
     private URI uri;
     private Resolver userResolver = null;
     
@@ -99,7 +99,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     	try {
 			//this.uri = new URI( url.toString() );
 			this.uri = uri;
-			this.jptDocument = JPTDocumentFactory.getInstance().getJPTDocument( this.uri );
+			this.zptDocument = ZPTDocumentFactory.getInstance().getZPTDocument( this.uri );
 			this.userResolver = resolver == null? new DefaultResolver( this.uri ): resolver;
 			
     	} catch ( PageTemplateException e ) {
@@ -130,7 +130,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 					STRING_TEMPLATE_URL_PROTOCOL + ":/"  
 					+ STRING_TEMPLATE_URL_HOST + ""
 					+ templatePath + "(" + Integer.toString( string.hashCode() )+ ")" );
-			this.jptDocument = JPTDocumentFactory.getInstance().getJPTDocument( this.uri, string );
+			this.zptDocument = ZPTDocumentFactory.getInstance().getZPTDocument( this.uri, string );
 			this.userResolver = resolver == null? new DefaultResolver( null ): resolver;
 			
     	} catch ( PageTemplateException e ) {
@@ -163,25 +163,25 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 	
 	@Override
 	public void process( OutputStream output, Object context, Map<String, Object> dictionary,
-			JPTOutputFormat jptOutputFormat ) throws PageTemplateException {
+			ZPTOutputFormat zptOutputFormat ) throws PageTemplateException {
 		
         try {
-        	if ( jptOutputFormat == null ){
-        		jptOutputFormat = new JPTOutputFormat( this.jptDocument );
+        	if ( zptOutputFormat == null ){
+        		zptOutputFormat = new ZPTOutputFormat( this.zptDocument );
         	}
         	
             // Initialize the evaluationHelper and register in the context
         	EvaluationHelper evaluationHelper = this.getEvaluationHelper( context, dictionary );
         			
             // Process
-            JPTXMLWriter xmlWriter = new JPTXMLWriter( output, jptOutputFormat );
+            ZPTXMLWriter xmlWriter = new ZPTXMLWriter( output, zptOutputFormat );
             xmlWriter.setEscapeText(
-            		JPTContext.getInstance().isParseHTMLFragments() );
+            		ZPTContext.getInstance().isParseHTMLFragments() );
     		xmlWriter.startDocument();
-    		xmlWriter.writeDocType( this.jptDocument );
-    		processJPTElement(
+    		xmlWriter.writeDocType( this.zptDocument );
+    		processZPTElement(
     				xmlWriter, 
-    				this.jptDocument.getRoot(), 
+    				this.zptDocument.getRoot(), 
     				evaluationHelper, 
     				new Stack<Map<String, Slot>>() );
     		xmlWriter.endDocument();
@@ -243,9 +243,9 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     }
 
 	
-    protected void processJPTElement( 
-    		JPTXMLWriter xmlWriter,
-    		JPTElement jptElement, 
+    protected void processZPTElement( 
+    		ZPTXMLWriter xmlWriter,
+    		ZPTElement zptElement, 
     		EvaluationHelper evaluationHelper, 
             Stack <Map<String, Slot>>slotStack )
         throws PageTemplateException, IOException, SAXException {
@@ -255,14 +255,14 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		
         try {
 			// Process instructions
-        	TALRepeat talRepeat = jptElement.getTALRepeat( this.jptDocument );
+        	TALRepeat talRepeat = zptElement.getTALRepeat( this.zptDocument );
 			if ( talRepeat != null ){
 				
 				// Process repeat
 				Loop loop = new Loop( talRepeat, evaluationHelper, varsToUnset, varsToSet );
 				while ( loop.repeat( evaluationHelper ) ) {
-				    if ( ! processJPTElement(
-				    		xmlWriter, jptElement, evaluationHelper, 
+				    if ( ! processZPTElement(
+				    		xmlWriter, zptElement, evaluationHelper, 
 				    		slotStack, varsToUnset, varsToSet, true ) ){
 			        	return;
 			        }
@@ -271,8 +271,8 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 			} else {
 				
 				 // Process non repeat
-			    if ( ! processJPTElement(
-			    		xmlWriter, jptElement, evaluationHelper, 
+			    if ( ! processZPTElement(
+			    		xmlWriter, zptElement, evaluationHelper, 
 			    		slotStack, varsToUnset, varsToSet, false ) ){
 			    	return;
 			    }
@@ -283,7 +283,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		} catch ( PageTemplateException e ) {
 			
 			if ( ! treatError(
-					xmlWriter, jptElement, evaluationHelper, 
+					xmlWriter, zptElement, evaluationHelper, 
 					varsToUnset, varsToSet, e ) ){
 				throw ( e );
 			}
@@ -291,7 +291,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     }
 
     
-	private boolean treatError( JPTXMLWriter xmlWriter, JPTElement jptElement, EvaluationHelper evaluationHelper,
+	private boolean treatError( ZPTXMLWriter xmlWriter, ZPTElement zptElement, EvaluationHelper evaluationHelper,
 			List<String> varsToUnset, Map<String, Object> varsToSet, Exception exception ) throws PageTemplateException {
 		
 		// Exit if there is no on-error expression defined
@@ -322,15 +322,15 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		setVar( evaluationHelper, varsToUnset, varsToSet, TEMPLATE_ERROR_VAR_NAME, templateError );
 		
 		// Evaluate content
-		Object jptContent = null;
+		Object zptContent = null;
     	try {
 			if ( i18nOnError != null ){
 				// i18n
-				jptContent = i18nOnError.evaluate( evaluationHelper, i18nParams );
+				zptContent = i18nOnError.evaluate( evaluationHelper, i18nParams );
 				
 			} else {
 				// Non i18n
-				jptContent = talOnError.evaluate( evaluationHelper );
+				zptContent = talOnError.evaluate( evaluationHelper );
 			}
 			
 		} catch ( Exception e ) {
@@ -339,7 +339,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		}
     	
     	// Write content using xmlWriter
-		writeJptContent( jptContent, xmlWriter );
+		writeZPTContent( zptContent, xmlWriter );
 		
 		// Process vars
 		processVars( evaluationHelper, varsToUnset, varsToSet );
@@ -348,9 +348,9 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 	}
 
 	
-	private boolean processJPTElement(
-    		JPTXMLWriter xmlWriter,
-    		JPTElement jptElement, 
+	private boolean processZPTElement(
+    		ZPTXMLWriter xmlWriter,
+    		ZPTElement zptElement, 
     		EvaluationHelper evaluationHelper, 
 			Stack <Map<String, Slot>>slotStack,
 			List<String> varsToUnset,
@@ -361,19 +361,19 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		/* High priority elements */
 		
 		// tal:on-error or i18n:on-error
-		processOnErrors( jptElement, evaluationHelper, varsToUnset, varsToSet );
+		processOnErrors( zptElement, evaluationHelper, varsToUnset, varsToSet );
         
 		// tal:define
-		processDefine( jptElement, evaluationHelper, varsToUnset, varsToSet );
+		processDefine( zptElement, evaluationHelper, varsToUnset, varsToSet );
         
         // i18n:domain
-		processI18nDomain( jptElement, evaluationHelper, varsToUnset, varsToSet );
+		processI18nDomain( zptElement, evaluationHelper, varsToUnset, varsToSet );
         
         // i18n:define
-        processI18nDefine( jptElement, evaluationHelper, varsToUnset, varsToSet );
+        processI18nDefine( zptElement, evaluationHelper, varsToUnset, varsToSet );
         
         // tal:condition
-        if ( ! evaluateTalCondition( jptElement, evaluationHelper ) ){
+        if ( ! evaluateTalCondition( zptElement, evaluationHelper ) ){
             // Skip this element (and children)
             return false;
         }
@@ -382,12 +382,12 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         /* Macro related elements */
         
 		// metal:use-macro
-        if ( processMacro( jptElement, evaluationHelper, slotStack, xmlWriter ) ){
+        if ( processMacro( zptElement, evaluationHelper, slotStack, xmlWriter ) ){
         	return false;
         }
 
         // metal:fill-slot
-        if ( processDefineSlot( jptElement, evaluationHelper, slotStack, xmlWriter ) ){
+        if ( processDefineSlot( zptElement, evaluationHelper, slotStack, xmlWriter ) ){
             return false;
         }
         
@@ -395,40 +395,40 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         /* Content elements and attributes */
 		
 		// tal:content (including tal:replace) or i18n:content
-		Object jptContent = evaluateContent( jptElement, evaluationHelper );
+		Object zptContent = evaluateContent( zptElement, evaluationHelper );
 		
 		// tal:attributes, i18n:attributes and static attributes
-		AttributesImpl attributes = processAttributes( jptElement, evaluationHelper );
+		AttributesImpl attributes = processAttributes( zptElement, evaluationHelper );
 
 		// tal:omit-tag
-		boolean omitTag = evaluateOmitTag( jptElement, evaluationHelper );
+		boolean omitTag = evaluateOmitTag( zptElement, evaluationHelper );
 		
 		// tal:tag
-		String configurableTag = omitTag? null: evaluateConfigurableTag( jptElement, evaluationHelper );
+		String configurableTag = omitTag? null: evaluateConfigurableTag( zptElement, evaluationHelper );
 		
 		/* Write to xmlWriter */
 		
 		// Void tag with no end element
-		if ( processEmptyElement( jptElement, jptContent, attributes, xmlWriter ) ){
+		if ( processEmptyElement( zptElement, zptContent, attributes, xmlWriter ) ){
 			return true;
 		}
 		
 		// Start element
 		if ( ! omitTag ) {
-			startElement( xmlWriter, jptElement, attributes, configurableTag );
+			startElement( xmlWriter, zptElement, attributes, configurableTag );
 		}
 		
 		// Content
-		if ( jptContent != null ) {
-		    writeJptContent( jptContent, xmlWriter );
+		if ( zptContent != null ) {
+		    writeZPTContent( zptContent, xmlWriter );
 		}
 		else {
-		    writeJptElementChildren( jptElement, xmlWriter, evaluationHelper, varsToUnset, varsToSet, slotStack );
+		    writeZPTElementChildren( zptElement, xmlWriter, evaluationHelper, varsToUnset, varsToSet, slotStack );
 		}
    
 		// End element
 		if ( ! omitTag ) {
-			endElement( xmlWriter, jptElement, configurableTag );
+			endElement( xmlWriter, zptElement, configurableTag );
 		}
 		
 		// Write a new line char to separate elements in loop lists
@@ -440,7 +440,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 	}
 	
 
-	static protected void startElement( JPTXMLWriter xmlWriter, JPTElement jptElement,
+	static protected void startElement( ZPTXMLWriter xmlWriter, ZPTElement zptElement,
 			AttributesImpl attributes, String configurableTag ) throws SAXException {
 		
 		if ( configurableTag != null ){
@@ -454,14 +454,14 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		}
 		
 		xmlWriter.startElement( 
-				jptElement.getNamespace(), 
-				jptElement.getName(), 
-				jptElement.getQualifiedName(), 
+				zptElement.getNamespace(), 
+				zptElement.getName(), 
+				zptElement.getQualifiedName(), 
 				attributes );
 	}
 	
 	
-	static protected void endElement( JPTXMLWriter xmlWriter, JPTElement jptElement, String configurableTag )
+	static protected void endElement( ZPTXMLWriter xmlWriter, ZPTElement zptElement, String configurableTag )
 			throws SAXException {
 		
 		if ( configurableTag != null ){
@@ -474,19 +474,19 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		}
 		
 		xmlWriter.endElement( 
-				jptElement.getNamespace(), 
-				jptElement.getName(), 
-				jptElement.getQualifiedName() );
+				zptElement.getNamespace(), 
+				zptElement.getName(), 
+				zptElement.getQualifiedName() );
 	}
 
 	
-	static private boolean processEmptyElement( JPTElement jptElement, Object jptContent, AttributesImpl attributes, 
-			JPTXMLWriter xmlWriter ) throws IOException, SAXException {
+	static private boolean processEmptyElement( ZPTElement zptElement, Object zptContent, AttributesImpl attributes, 
+			ZPTXMLWriter xmlWriter ) throws IOException, SAXException {
 		
-		if ( jptContent == null 
-				&& jptElement.isEmpty() 
-				&& JPTContext.getInstance().isOmitElementCloseSet( jptElement.getName() )){
-			xmlWriter.writeEmptyElement( jptElement, attributes );
+		if ( zptContent == null 
+				&& zptElement.isEmpty() 
+				&& ZPTContext.getInstance().isOmitElementCloseSet( zptElement.getName() )){
+			xmlWriter.writeEmptyElement( zptElement, attributes );
 			return true;
 		}
 		
@@ -494,13 +494,13 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 	}
 
 	private boolean processDefineSlot(
-			JPTElement jptElement, 
+			ZPTElement zptElement, 
 			EvaluationHelper evaluationHelper,
             Stack <Map<String, Slot>> slotStack,
-            JPTXMLWriter xmlWriter ) 
+            ZPTXMLWriter xmlWriter ) 
             		throws PageTemplateException, IOException, SAXException {
 		
-		METALDefineSlot metalDefineSlot = jptElement.getMETALDefineSlot( this.jptDocument );
+		METALDefineSlot metalDefineSlot = zptElement.getMETALDefineSlot( this.zptDocument );
 		
 		if ( metalDefineSlot == null ){
 			return false;
@@ -510,7 +510,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		    Map<String, Slot> slots = slotStack.pop();
 		    Slot slot = slots.get( metalDefineSlot.getValue() );
 		    if ( slot != null ) {
-		        slot.process( xmlWriter, jptElement, evaluationHelper, slotStack );
+		        slot.process( xmlWriter, zptElement, evaluationHelper, slotStack );
 		        slotStack.push( slots );
 		        return true;
 		    }
@@ -523,26 +523,26 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		throw new PageTemplateException( "Slot definition not allowed outside of macro." );
 	}
 
-	static private void writeJptContent( Object jptContent, JPTXMLWriter xmlWriter )
+	static private void writeZPTContent( Object zptContent, ZPTXMLWriter xmlWriter )
 			throws PageTemplateException {
 		
 		try {
 			// Content for this element has been generated dynamically
-			if ( jptContent instanceof HTMLFragment ) {
+			if ( zptContent instanceof HTMLFragment ) {
 				
-				HTMLFragment html = ( HTMLFragment ) jptContent;
+				HTMLFragment html = ( HTMLFragment ) zptContent;
 				
-				if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
-					xmlWriter.writeHTML( html.getDom() );
+				if ( ZPTContext.getInstance().isParseHTMLFragments() ){ 
+					xmlWriter.writeHTML( html.getDOM() );
 					
 				} else {
-					xmlWriter.writeText( html.getHtml() );
+					xmlWriter.writeText( html.getHTML() );
 				}
 			} 
 			
 			// plain text
 			else {
-				xmlWriter.writeText( jptContent.toString() );
+				xmlWriter.writeText( zptContent.toString() );
 			}
 			
 		} catch ( PageTemplateException e ) {
@@ -555,10 +555,10 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 	
 	
 	private String evaluateConfigurableTag(
-			JPTElement jptElement,
+			ZPTElement zptElement,
 			EvaluationHelper evaluationHelper) throws PageTemplateException {
 
-		TALTag talTag = jptElement.getTALTag( this.jptDocument );
+		TALTag talTag = zptElement.getTALTag( this.zptDocument );
 		
 		if ( talTag == null ){
 			return null;
@@ -569,10 +569,10 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 	
 	
 	private boolean evaluateTalCondition(
-			JPTElement jptElement,
+			ZPTElement zptElement,
 			EvaluationHelper evaluationHelper) throws PageTemplateException {
 
-		TALCondition talCondition = jptElement.getTALCondition( this.jptDocument );
+		TALCondition talCondition = zptElement.getTALCondition( this.zptDocument );
 		
 		if ( talCondition == null ){
 			return true;
@@ -581,12 +581,12 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		return talCondition.evaluate( evaluationHelper );
 	}
 	
-	private void processOnErrors(JPTElement jptElement,
+	private void processOnErrors(ZPTElement zptElement,
 			EvaluationHelper evaluationHelper, List<String> varsToUnset,
 			Map<String, Object> varsToSet) throws PageTemplateException {
 
-		TALOnError talOnError = jptElement.getTALOnError( this.jptDocument );
-		I18NOnError i18nOnError = jptElement.getI18NOnError( this.jptDocument );
+		TALOnError talOnError = zptElement.getTALOnError( this.zptDocument );
+		I18NOnError i18nOnError = zptElement.getI18NOnError( this.zptDocument );
 		
 		if ( talOnError == null && i18nOnError == null ){
 			return;
@@ -612,17 +612,17 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 				i18nOnError == null? talOnError: i18nOnError );
 	}
 
-	private boolean evaluateOmitTag( JPTElement jptElement, EvaluationHelper evaluationHelper )
+	private boolean evaluateOmitTag( ZPTElement zptElement, EvaluationHelper evaluationHelper )
 			throws PageTemplateException {
 		
 		// Omit tag when it is from TAL name space
-		if ( jptElement.getNamespace().equals( 
-				this.jptDocument.getTalPrefix() ) ){
+		if ( zptElement.getNamespace().equals( 
+				this.zptDocument.getTALPrefix() ) ){
 			return true;
 		}
 		
 		// Not omit tag when there is no omitTag
-		TALOmitTag talOmitTag = jptElement.getTALOmitTag( this.jptDocument );
+		TALOmitTag talOmitTag = zptElement.getTALOmitTag( this.zptDocument );
 		
 		if ( talOmitTag == null ){
 			return false;
@@ -645,36 +645,36 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		}
     }
 
-    private void writeJptElementChildren( 
-    				JPTElement jptElement, 
-    				JPTXMLWriter xmlWriter, 
+    private void writeZPTElementChildren( 
+    				ZPTElement zptElement, 
+    				ZPTXMLWriter xmlWriter, 
     				EvaluationHelper evaluationHelper, 
                     List<String> varsToUnset,
                     Map<String, Object> varsToSet,
                     Stack <Map<String, Slot>> slotStack )
         throws SAXException, PageTemplateException, IOException {
     	
-    	for ( ContentItem contentItem: jptElement.getContents() ){
+    	for ( ContentItem contentItem: zptElement.getContents() ){
     		
-    		if ( contentItem instanceof JPTElement ){
+    		if ( contentItem instanceof ZPTElement ){
     			
-    			processJPTElement( 
+    			processZPTElement( 
     					xmlWriter,
-    					( JPTElement ) contentItem,
+    					( ZPTElement ) contentItem,
     					evaluationHelper, 
     					slotStack );
     			
     		} else {
-    			contentItem.writeToXmlWriter( xmlWriter );
+    			contentItem.writeToXMLWriter( xmlWriter );
     		}
         }
     }
     
-    private Object evaluateContent( JPTElement jptElement, EvaluationHelper evaluationHelper )
+    private Object evaluateContent( ZPTElement zptElement, EvaluationHelper evaluationHelper )
     throws PageTemplateException {
     	
-		I18NContent i18nContent = jptElement.getI18NContent( this.jptDocument );
-		TALContent talContent = jptElement.getTALContent( this.jptDocument );
+		I18NContent i18nContent = zptElement.getI18NContent( this.zptDocument );
+		TALContent talContent = zptElement.getTALContent( this.zptDocument );
 		
 		if ( talContent == null && i18nContent == null ){
 			return null;
@@ -684,17 +684,17 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		if ( i18nContent != null ){
 			return i18nContent.evaluate(
 					evaluationHelper, 
-					jptElement.getI18NParams( this.jptDocument ) );
+					zptElement.getI18NParams( this.zptDocument ) );
 		}
 		
 		// talContent
 		return talContent.evaluate( evaluationHelper );
     }
 
-    private void processI18nDomain( JPTElement jptElement, EvaluationHelper evaluationHelper, 
+    private void processI18nDomain( ZPTElement zptElement, EvaluationHelper evaluationHelper, 
     		List<String> varsToUnset, Map<String, Object> varsToSet ) throws PageTemplateException {
     	
-    	I18NDomain i18nDomain = jptElement.getI18NDomain( this.jptDocument );
+    	I18NDomain i18nDomain = zptElement.getI18NDomain( this.zptDocument );
     	
     	if ( i18nDomain == null ){
     		return;
@@ -703,10 +703,10 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     	i18nDomain.process( evaluationHelper, varsToUnset, varsToSet );
     }
     
-    private void processDefine( JPTElement jptElement, EvaluationHelper evaluationHelper, 
+    private void processDefine( ZPTElement zptElement, EvaluationHelper evaluationHelper, 
     		List<String> varsToUnset, Map<String, Object> varsToSet ) throws PageTemplateException {
 
-		TALDefine talDefine = jptElement.getTALDefine( this.jptDocument );
+		TALDefine talDefine = zptElement.getTALDefine( this.zptDocument );
 		
 		if ( talDefine == null ){
 			return;
@@ -715,10 +715,10 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		talDefine.process( evaluationHelper, varsToUnset, varsToSet );
     }
     
-    private void processI18nDefine( JPTElement jptElement, EvaluationHelper evaluationHelper, 
+    private void processI18nDefine( ZPTElement zptElement, EvaluationHelper evaluationHelper, 
     		List<String> varsToUnset, Map<String, Object> varsToSet ) throws PageTemplateException {
     	
-		I18NDefine i18nDefine = jptElement.getI18NDefine( this.jptDocument );
+		I18NDefine i18nDefine = zptElement.getI18NDefine( this.zptDocument );
 		
 		if ( i18nDefine == null ){
 			return;
@@ -726,19 +726,19 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		
 		i18nDefine.evaluate(
 				evaluationHelper, 
-				jptElement.getI18NParams( this.jptDocument ), 
+				zptElement.getI18NParams( this.zptDocument ), 
 				varsToUnset, 
 				varsToSet);
     }
     
-    private AttributesImpl processAttributes( JPTElement jptElement, EvaluationHelper evaluationHelper )
+    private AttributesImpl processAttributes( ZPTElement zptElement, EvaluationHelper evaluationHelper )
     throws PageTemplateException {
     	
     	AttributesImpl result = new AttributesImpl();
     	
-    	I18NAttributes i18NAttributes = jptElement.getI18NAttributes( this.jptDocument );
-    	TALAttributes talAttributes = jptElement.getTALAttributes( this.jptDocument );
-    	List<StaticAttribute> staticAttributes = jptElement.getStaticAttributes();
+    	I18NAttributes i18NAttributes = zptElement.getI18NAttributes( this.zptDocument );
+    	TALAttributes talAttributes = zptElement.getTALAttributes( this.zptDocument );
+    	List<StaticAttribute> staticAttributes = zptElement.getStaticAttributes();
     	
     	// Return if there is no attribute to add to attributes list
     	if ( i18NAttributes == null && talAttributes == null && staticAttributes.isEmpty() ){
@@ -750,54 +750,54 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
     				staticAttributes, 
     				evaluationHelper, 
     				result, 
-    				this.jptDocument );
+    				this.zptDocument );
     	}
 
     	if ( talAttributes != null ){
     		talAttributes.evaluate(
     				evaluationHelper, 
     				result, 
-    				this.jptDocument );
+    				this.zptDocument );
     	}
     	
     	if ( i18NAttributes != null ){
     		i18NAttributes.evaluate(
     				evaluationHelper, 
-    				jptElement.getI18NParams( this.jptDocument ), 
+    				zptElement.getI18NParams( this.zptDocument ), 
     				result, 
-    				this.jptDocument );
+    				this.zptDocument );
     	}
     	
     	return result;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private boolean processMacro( JPTElement jptElement, 
+    private boolean processMacro( ZPTElement zptElement, 
     							EvaluationHelper evaluationHelper, 
                                 Stack <Map<String, Slot>> slotStack,
-                                JPTXMLWriter xmlWriter )
+                                ZPTXMLWriter xmlWriter )
         throws PageTemplateException, IOException, SAXException {
     	
-    	METALUseMacro metalUseMacro = jptElement.getMETALUseMacro( this.jptDocument );
+    	METALUseMacro metalUseMacro = zptElement.getMETALUseMacro( this.zptDocument );
     	
     	if ( metalUseMacro == null ){
     		return false;
     	}
     	
-        JPTExpression expression = metalUseMacro.getExpression();
+        ZPTExpression expression = metalUseMacro.getExpression();
 		Object object = expression.evaluate( evaluationHelper );
 		
         if ( object == null ) {
             throw new NoSuchPathException(
             		"Could not find macro: " 
             		+ expression.getStringExpression() 
-                    + " in '" + this.jptDocument.getTemplateName() + "' template.") ;
+                    + " in '" + this.zptDocument.getTemplateName() + "' template.") ;
         }
 
         if ( object instanceof Macro ) {
             // Find slots to fill inside this macro call
             Map<String, Slot> slots = new HashMap<String, Slot>();
-            findSlots( jptElement, slots );
+            findSlots( zptElement, slots );
 
             // Slots filled in later templates (processed earlier) 
             // Take precedence over slots filled in intermediate
@@ -811,7 +811,7 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
             
             // Call macro
             Macro macro = ( Macro ) object;
-            macro.process( xmlWriter, jptElement, evaluationHelper, slotStack );
+            macro.process( xmlWriter, zptElement, evaluationHelper, slotStack );
             
             return true;
         }
@@ -819,25 +819,25 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
         throw new PageTemplateException(
             		"Expression '" + expression.getStringExpression()  + "' does not evaluate to macro: " 
                     + object.getClass().getName() 
-                    + " in '" + this.jptDocument.getTemplateName() + "' template.");
+                    + " in '" + this.zptDocument.getTemplateName() + "' template.");
     }
     
 
-    private void findSlots( JPTElement jptElement, Map<String, Slot> slots ) 
+    private void findSlots( ZPTElement zptElement, Map<String, Slot> slots ) 
     		throws PageTemplateException {
         
         // Look for our attribute
-    	METALFillSlot metalFillSlot = jptElement.getMETALFillSlot( this.jptDocument );
+    	METALFillSlot metalFillSlot = zptElement.getMETALFillSlot( this.zptDocument );
     	
     	if ( metalFillSlot != null ){
     		String name = metalFillSlot.getName();
             if ( name != null ) {
-                slots.put( name, new SlotImpl( jptElement ) );
+                slots.put( name, new SlotImpl( zptElement ) );
             }
     	}
 
         // Recurse into child elements
-    	for ( JPTElement child : jptElement.getElementsContent() ){
+    	for ( ZPTElement child : zptElement.getElementsContent() ){
     		findSlots( child, slots );
     	}
     }
@@ -867,57 +867,57 @@ public class TwoPhasesPageTemplateImpl implements TwoPhasesPageTemplate {
 		
         if ( this.macros == null ) {
             this.macros = new HashMap<String, Macro>();
-            findMacros( this.jptDocument.getRoot(), this.macros );
+            findMacros( this.zptDocument.getRoot(), this.macros );
         }
         
         return this.macros;
     }
 	
 
-	private void findMacros( JPTElement jptElement, Map<String, Macro> macros ) throws PageTemplateException {
+	private void findMacros( ZPTElement zptElement, Map<String, Macro> macros ) throws PageTemplateException {
     	
         // Look for our attribute
-		METALDefineMacro metalDefineMacro = jptElement.getMETALDefineMacro( this.jptDocument );
+		METALDefineMacro metalDefineMacro = zptElement.getMETALDefineMacro( this.zptDocument );
         if ( metalDefineMacro != null ) {
             macros.put( 
             		metalDefineMacro.getName(), 
-            		new MacroImpl( jptElement ) );
+            		new MacroImpl( zptElement ) );
         }
 
         // Recurse into child elements
-        for ( JPTElement child: jptElement.getElementsContent() ){
+        for ( ZPTElement child: zptElement.getElementsContent() ){
         	findMacros( child, macros );
         }
     }
 	
 
     class MacroImpl implements Macro {
-        JPTElement jptElement;
+        ZPTElement zptElement;
         
-        MacroImpl( JPTElement jptElement ) {
-            this.jptElement = jptElement;
+        MacroImpl( ZPTElement zptElement ) {
+            this.zptElement = zptElement;
         }
 
 		@Override
-		public void process( JPTXMLWriter xmlWriter, JPTElement jptElement,
+		public void process( ZPTXMLWriter xmlWriter, ZPTElement zptElement,
 				EvaluationHelper evaluationHelper, Stack<Map<String, Slot>> slotStack )
 				throws PageTemplateException, IOException, SAXException {
-			processJPTElement( xmlWriter, this.jptElement, evaluationHelper, slotStack );
+			processZPTElement( xmlWriter, this.zptElement, evaluationHelper, slotStack );
 		}
     }
 
     class SlotImpl implements Slot {
-    	JPTElement jptElement;
+    	ZPTElement zptElement;
 
-        SlotImpl( JPTElement jptElement ) {
-            this.jptElement = jptElement;
+        SlotImpl( ZPTElement zptElement ) {
+            this.zptElement = zptElement;
         }
 
 		@Override
-		public void process( JPTXMLWriter xmlWriter, JPTElement jptElement,
+		public void process( ZPTXMLWriter xmlWriter, ZPTElement zptElement,
 				EvaluationHelper evaluationHelper, Stack<Map<String, Slot>> slotStack )
 				throws PageTemplateException, IOException, SAXException {
-			processJPTElement( xmlWriter, this.jptElement, evaluationHelper, slotStack );
+			processZPTElement( xmlWriter, this.zptElement, evaluationHelper, slotStack );
 		}
     }
 }

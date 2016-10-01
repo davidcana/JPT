@@ -14,7 +14,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,12 +34,12 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.1 $
  */
-public class JPTSAXWriter extends SAXWriter {
+public class ZPTSAXWriter extends SAXWriter {
 
 	private static final String SPACE = " ";
 
 	
-    public JPTSAXWriter(ContentHandler contentHandler,
+    public ZPTSAXWriter(ContentHandler contentHandler,
             LexicalHandler lexicalHandler) {
     	super( contentHandler, lexicalHandler );
     }
@@ -49,7 +49,7 @@ public class JPTSAXWriter extends SAXWriter {
 	protected void write(Element element, NamespaceStack namespaceStack)
 			throws SAXException {
 		
-		if ( !element.hasContent() && !JPTContext.getInstance().isEmptyTag( element.getName() ) ){
+		if ( !element.hasContent() && !ZPTContext.getInstance().isEmptyTag( element.getName() ) ){
 	        int stackSize = namespaceStack.size();
 	        AttributesImpl namespaceAttributes = startPrefixMapping( element, namespaceStack );
 	        startElement( element, namespaceAttributes );

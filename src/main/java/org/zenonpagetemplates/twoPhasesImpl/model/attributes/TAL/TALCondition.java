@@ -5,9 +5,9 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -36,25 +36,25 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class TALCondition extends JPTAttributeImpl implements DynamicAttribute {
+public class TALCondition extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 4626938652290394973L;
 	
-	private JPTExpression condition;
+	private ZPTExpression condition;
 	
 	
 	public TALCondition(){}
-	public TALCondition( String namespaceUri, String expression ) throws PageTemplateException {
-		super( namespaceUri );
+	public TALCondition( String namespaceURI, String expression ) throws PageTemplateException {
+		super( namespaceURI );
 		this.condition = ExpressionUtils.generate( expression );
 	}
 	
 
-	public JPTExpression getCondition() {
+	public ZPTExpression getCondition() {
 		return this.condition;
 	}
 
-	public void setCondition( JPTExpression condition ) {
+	public void setCondition( ZPTExpression condition ) {
 		this.condition = condition;
 	}
 	

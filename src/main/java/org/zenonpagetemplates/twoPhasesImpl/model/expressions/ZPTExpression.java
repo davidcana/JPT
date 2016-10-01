@@ -1,14 +1,17 @@
-package org.zenonpagetemplates.twoPhasesImpl.model.attributes;
+package org.zenonpagetemplates.twoPhasesImpl.model.expressions;
 
 import java.io.Serializable;
 
+import org.zenonpagetemplates.common.exceptions.EvaluationException;
+import org.zenonpagetemplates.common.scripting.EvaluationHelper;
+
 /**
  * <p>
- *   Interface that represents an attribute from a JPTElement.
+ *   Defines a generic expression that can be evaluated to an Object instance.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,14 +30,9 @@ import java.io.Serializable;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public interface JPTAttribute extends Serializable {
+public interface ZPTExpression extends Serializable {
 	
-	public String getAttributeName();
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException;
 	
-	public String getQualifiedName();
-	
-	public String getNamespaceUri();
-	
-	public String getValue();
-	
+	public String getStringExpression();
 }

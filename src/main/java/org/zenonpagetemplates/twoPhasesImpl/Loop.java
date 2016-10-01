@@ -10,16 +10,16 @@ import org.zenonpagetemplates.common.PageTemplate;
 import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.TAL.TALRepeat;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.ArrayExpression;
 
 /**
  * <p>
- *   Makes it easy to iterate through JPT elements in a loop.
+ *   Makes it easy to iterate through ZPT elements in a loop.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,7 @@ public class Loop {
 			throws EvaluationException {
 
 		this.talRepeat = talRepeat;
-		JPTExpression expression = null;
+		ZPTExpression expression = null;
 		try {
 			expression = this.talRepeat.getRepeat().getValue();
 

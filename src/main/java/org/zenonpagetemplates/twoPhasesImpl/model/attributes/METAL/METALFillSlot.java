@@ -2,7 +2,7 @@ package org.zenonpagetemplates.twoPhasesImpl.model.attributes.METAL;
 
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 
 /**
  * <p>
@@ -10,7 +10,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class METALFillSlot extends JPTAttributeImpl implements DynamicAttribute {
+public class METALFillSlot extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 860619226504361776L;
 	
@@ -37,8 +37,8 @@ public class METALFillSlot extends JPTAttributeImpl implements DynamicAttribute 
 	
 	
 	public METALFillSlot(){}
-	public METALFillSlot( String namespaceUri, String name ){
-		super( namespaceUri );
+	public METALFillSlot( String namespaceURI, String name ){
+		super( namespaceURI );
 		this.name = name;
 	}
 	

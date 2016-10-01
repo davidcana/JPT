@@ -11,16 +11,16 @@ import java.util.TreeMap;
 import org.dom4j.Namespace;
 import org.xml.sax.SAXException;
 import org.zenonpagetemplates.twoPhasesImpl.DocType;
-import org.zenonpagetemplates.twoPhasesImpl.JPTOutputFormat;
-import org.zenonpagetemplates.twoPhasesImpl.JPTXMLWriter;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTOutputFormat;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTXMLWriter;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 
 /**
  * <p>
- *   Encapsulates all data about a JPT.
+ *   Encapsulates all data about a ZPT.
  * </p>
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,14 +39,14 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class JPTDocument {
+public class ZPTDocument {
 
 	private static final String HTTP_WWW_W3_ORG = "http://www.w3.org/";
 	
 	private String id;
 	private URI uri;
 	private DocType docType;
-	private JPTElement root;
+	private ZPTElement root;
 	private Map<String, String> namespaces = new TreeMap<String, String>();
 	private String templateName;
 	
@@ -55,8 +55,8 @@ public class JPTDocument {
 	transient private String metalPrefix;
 	
 	
-	public JPTDocument(){}
-	public JPTDocument( URI uri ) throws URISyntaxException {
+	public ZPTDocument(){}
+	public ZPTDocument( URI uri ) throws URISyntaxException {
 		this.id = uri.toString();
 		this.uri = uri;
 	}
@@ -86,11 +86,11 @@ public class JPTDocument {
 		this.docType = docType;
 	}
 	
-	public JPTElement getRoot() {
+	public ZPTElement getRoot() {
 		return this.root;
 	}
 	
-	public void setRoot( JPTElement root ) {
+	public void setRoot( ZPTElement root ) {
 		this.root = root;
 	}
 
@@ -114,10 +114,10 @@ public class JPTDocument {
 		return this.namespaces.get( prefix );
 	}
 	
-	public String getTalPrefix(){
+	public String getTALPrefix(){
 		
 		if ( this.talPrefix == null ){
-			this.talPrefix = this.searchByPrefixByUri(
+			this.talPrefix = this.searchByPrefixByURI(
 					TwoPhasesPageTemplate.TAL_NAMESPACE_URI );
 		}
 		
@@ -127,24 +127,24 @@ public class JPTDocument {
 	public String getI18nPrefix(){
 		
 		if ( this.i18nPrefix == null ){
-			this.i18nPrefix = this.searchByPrefixByUri(
+			this.i18nPrefix = this.searchByPrefixByURI(
 					TwoPhasesPageTemplate.I18N_NAMESPACE_URI );
 		}
 		
 		return this.i18nPrefix;
 	}
 	
-	public String getMetalPrefix(){
+	public String getMETALPrefix(){
 		
 		if ( this.metalPrefix == null ){
-			this.metalPrefix = this.searchByPrefixByUri(
+			this.metalPrefix = this.searchByPrefixByURI(
 					TwoPhasesPageTemplate.METAL_NAMESPACE_URI );
 		}
 		
 		return this.metalPrefix;
 	}
 	
-	private String searchByPrefixByUri( String talNamespaceUri ) {
+	private String searchByPrefixByURI( String talNamespaceUri ) {
 		
 		for ( Map.Entry<String, String> mapEntry: this.namespaces.entrySet() ){
 			String uri = mapEntry.getValue();
@@ -157,13 +157,13 @@ public class JPTDocument {
 		return null;
 	}
 	
-	public String toHtml() throws IOException, SAXException {
+	public String toHTML() throws IOException, SAXException {
 		
 		Writer writer = new StringWriter();
 		
-		JPTXMLWriter xmlWriter = new JPTXMLWriter(
-				writer, JPTOutputFormat.getDefault() );
-		this.writeToXmlWriter( xmlWriter );
+		ZPTXMLWriter xmlWriter = new ZPTXMLWriter(
+				writer, ZPTOutputFormat.getDefault() );
+		this.writeToXMLWriter( xmlWriter );
 		xmlWriter.close();
 		
 		String result = writer.toString();
@@ -172,10 +172,10 @@ public class JPTDocument {
 		return result;
 	}
 	
-	private void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException, SAXException {
+	private void writeToXMLWriter( ZPTXMLWriter xmlWriter ) throws IOException, SAXException {
 		
 		xmlWriter.startDocument();
-		this.root.writeToXmlWriter( xmlWriter );
+		this.root.writeToXMLWriter( xmlWriter );
 		xmlWriter.endDocument();
 	}
 }

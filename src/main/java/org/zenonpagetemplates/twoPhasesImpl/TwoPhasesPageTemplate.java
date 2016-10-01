@@ -13,7 +13,7 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ public interface TwoPhasesPageTemplate extends PageTemplate {
 	
 	// Methods
 	public void process( OutputStream output, Object context, Map<String, Object> dictionary,
-			JPTOutputFormat jptOutputFormat )
+			ZPTOutputFormat zptOutputFormat )
         throws PageTemplateException;
     
 	Resolver getResolver();

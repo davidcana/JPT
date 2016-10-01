@@ -21,7 +21,7 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -53,24 +53,33 @@ public class HTMLFragment implements Serializable {
         
     	this.html = html;
         
-        if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
+        if ( ZPTContext.getInstance().isParseHTMLFragments() ){ 
         	parseFragment();
         }
     }
     
+    public String getHTML() {
+        return this.html;
+    }
     public String getHtml() {
         return this.html;
     }
     
+    public void setHTML( String html ) {
+        this.html = html;
+    }
     public void setHtml( String html ) {
         this.html = html;
     }
     
     public String getXhtml() throws PageTemplateException {
+    	return this.getXHTML();
+    }
+    public String getXHTML() throws PageTemplateException {
     	
         try {
             StringWriter buffer = new StringWriter();
-            toXhtml( buffer );
+            toXHTML( buffer );
             buffer.close();
             
             return buffer.toString();
@@ -81,7 +90,7 @@ public class HTMLFragment implements Serializable {
     }
 	
     @SuppressWarnings({ "unchecked" })
-	public void toXhtml( Writer writer ) throws PageTemplateException, IOException {
+	public void toXHTML( Writer writer ) throws PageTemplateException, IOException {
     	
         if ( this.dom == null ) {
             parseFragment();
@@ -102,13 +111,13 @@ public class HTMLFragment implements Serializable {
             fragment.append( "</body></html>" );
             
             Reader input = new StringReader( fragment.toString() );
-            SAXReader reader = JPTDocumentFactory.getXMLReader();
+            SAXReader reader = ZPTDocumentFactory.getXMLReader();
             try {
                 this.dom = reader.read( input ).getRootElement().element( BODY );
                 
             } catch( DocumentException e ) {
                 try {
-                    reader = JPTDocumentFactory.getHTMLReader();
+                    reader = ZPTDocumentFactory.getHTMLReader();
                     if ( reader == null ){
                         throw ( e );
                     }
@@ -131,10 +140,10 @@ public class HTMLFragment implements Serializable {
     
     @Override
     public String toString() {
-        return getHtml();
+        return getHTML();
     }
     
-    public Element getDom() throws PageTemplateException{
+    public Element getDOM() throws PageTemplateException{
     	
     	if ( this.dom == null ){
     		this.parseFragment();

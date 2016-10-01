@@ -11,7 +11,7 @@ import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
 
 	private static final long serialVersionUID = 6006642365133151640L;
 	
-	private List<JPTExpression> arguments = new ArrayList<JPTExpression>();
+	private List<ZPTExpression> arguments = new ArrayList<ZPTExpression>();
     
 	
 	public MethodCallExpression(){}
@@ -54,15 +54,15 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
 	}
 
 
-	public List<JPTExpression> getArguments() {
+	public List<ZPTExpression> getArguments() {
 		return this.arguments;
 	}
 
-	public void setArguments( List<JPTExpression> arguments ) {
+	public void setArguments( List<ZPTExpression> arguments ) {
 		this.arguments = arguments;
 	}
 	
-	public void addArgument( JPTExpression argument ){
+	public void addArgument( ZPTExpression argument ){
 		this.arguments.add( argument );
 	}
 	
@@ -100,7 +100,7 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
 	
 	@SuppressWarnings({ "rawtypes" })
 	private static Object evaluateNonLazyMethodCall( String methodName,
-			List<JPTExpression> argumentExpressions, EvaluationHelper evaluationHelper, Object object,
+			List<ZPTExpression> argumentExpressions, EvaluationHelper evaluationHelper, Object object,
 			Class clazz ) 
 					throws PageTemplateException, IllegalAccessException, InvocationTargetException {
 		
@@ -108,7 +108,7 @@ public class MethodCallExpression extends AbstractMethodCallExpression {
 
 		Object[] arguments = new Object[ argumentExpressions.size() ];
 		for ( int i = 0; i < arguments.length; i++ ) {
-			JPTExpression expression = argumentExpressions.get( i );
+			ZPTExpression expression = argumentExpressions.get( i );
 		    arguments[ i ] = expression.evaluate( evaluationHelper );
 		}
 		

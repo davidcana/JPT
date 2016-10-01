@@ -1,15 +1,17 @@
 package org.zenonpagetemplates.twoPhasesImpl;
 
-import org.zenonpagetemplates.common.AbstractJPTContext;
+import java.net.URI;
+
+import org.zenonpagetemplates.common.exceptions.PageTemplateException;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
 
 /**
  * <p>
- *   Extends AbstractJPTContext class with methods to get and set 
- *   the JPTDocumentCache instance.
+ *   Interface to cache ZPTDocument instances.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,35 +31,24 @@ import org.zenonpagetemplates.common.AbstractJPTContext;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class JPTContext extends AbstractJPTContext {
+public interface ZPTDocumentCache {
 	
-	private JPTDocumentCache jptDocumentCache = new DefaultJPTDocumentCache();
-    
-    private static JPTContext instance;
-
-    private JPTContext(){ }
-
-    
-	public JPTDocumentCache getJptDocumentCache() {
-		return this.jptDocumentCache;
-	}
-
-	public void setJptDocumentCache( JPTDocumentCache jptDocumentCache ) {
-		
-		if ( jptDocumentCache == null ){
-			throw new IllegalArgumentException( "Unable to set jptDocumentCache to null" );
-		}
-		
-		this.jptDocumentCache = jptDocumentCache;
-	}
-
-    public static JPTContext getInstance(){
-
-        if (instance == null){
-            instance = new JPTContext();
-        }
-
-        return instance;
-    }
-
+	/**
+	 * Put a ZPTDocument into the cache
+	 * 
+	 * @param uri
+	 * @param zptDocument
+	 * @throws PageTemplateException
+	 */
+	public void put( URI uri, ZPTDocument zptDocument ) throws PageTemplateException;
+	
+	
+	/**
+	 * Get a ZPTDocument from the cache
+	 * 
+	 * @param uri
+	 * @return a ZPTDocument from the cache
+	 * @throws PageTemplateException
+	 */
+	public ZPTDocument get( URI uri ) throws PageTemplateException;
 }

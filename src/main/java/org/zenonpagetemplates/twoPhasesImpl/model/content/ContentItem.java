@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.xml.sax.SAXException;
-import org.zenonpagetemplates.twoPhasesImpl.JPTXMLWriter;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTXMLWriter;
 
 /**
  * <p>
  *   Simple interface that represents an item from the contents
- *   of a JPTElement.
+ *   of a ZPTElement.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,6 @@ import org.zenonpagetemplates.twoPhasesImpl.JPTXMLWriter;
  */
 public interface ContentItem extends Serializable {
 	
-	public void writeToXmlWriter( JPTXMLWriter xmlWriter ) throws IOException, SAXException;
+	public void writeToXMLWriter( ZPTXMLWriter xmlWriter ) throws IOException, SAXException;
 	
 }

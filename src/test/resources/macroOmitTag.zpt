@@ -5,7 +5,7 @@
     </head>
     <body>
         The next macro must omit tag
-        <div metal:use-macro="resolver/getPageTemplate( 'macrosForOmitTag.jpt' )/macros/get( 'macro1' )">
+        <div metal:use-macro="resolver/getPageTemplate( 'macrosForOmitTag.zpt' )/macros/get( 'macro1' )">
             Macro with omit tag
         </div>
     </body>

@@ -18,7 +18,7 @@ import org.zenonpagetemplates.common.TemplateError;
 import bsh.EvalError;
 
 /**
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -103,10 +103,10 @@ public class TestObject extends TestObjectSuperClass {
     private TemplateError getTemplateError(){
     	
     	if (this.twoPhases){
-    		return org.zenonpagetemplates.twoPhasesImpl.JPTContext.getInstance().getError();
+    		return org.zenonpagetemplates.twoPhasesImpl.ZPTContext.getInstance().getError();
     	}
 
-    	return org.zenonpagetemplates.onePhaseImpl.JPTContext.getInstance().getError();
+    	return org.zenonpagetemplates.onePhaseImpl.ZPTContext.getInstance().getError();
     }*/
 
     

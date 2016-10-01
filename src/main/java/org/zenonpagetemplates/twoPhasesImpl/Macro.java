@@ -7,7 +7,7 @@ import java.util.Stack;
 import org.xml.sax.SAXException;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTElement;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTElement;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.JPTElement;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,8 +38,8 @@ import org.zenonpagetemplates.twoPhasesImpl.model.JPTElement;
  */
 public interface Macro {
 	
-	void process(JPTXMLWriter xmlWriter,
-    		      JPTElement jptElement, 
+	void process(ZPTXMLWriter xmlWriter,
+    		      ZPTElement zptElement, 
     		      EvaluationHelper evaluationHelper,
                   Stack <Map<String, Slot>>slotStack )
         throws PageTemplateException, IOException, SAXException;

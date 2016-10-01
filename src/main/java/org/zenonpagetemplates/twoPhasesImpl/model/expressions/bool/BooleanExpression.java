@@ -9,8 +9,8 @@ import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 
 /**
  * <p>
@@ -18,7 +18,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,11 +37,11 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-abstract public class BooleanExpression extends JPTExpressionImpl implements EvaluableToBoolean {
+abstract public class BooleanExpression extends ZPTExpressionImpl implements EvaluableToBoolean {
 
 	private static final long serialVersionUID = -8470225293970958948L;
 
-	protected List<JPTExpression> expressions = new ArrayList<JPTExpression>();
+	protected List<ZPTExpression> expressions = new ArrayList<ZPTExpression>();
 	
 	
 	public BooleanExpression(){}
@@ -50,15 +50,15 @@ abstract public class BooleanExpression extends JPTExpressionImpl implements Eva
 	}
 
 	
-	public List<JPTExpression> getExpressions() {
+	public List<ZPTExpression> getExpressions() {
 		return this.expressions;
 	}
 
-	public void setExpressions( List<JPTExpression> expressions ) {
+	public void setExpressions( List<ZPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 	
-	public void addExpression( JPTExpression expression ){
+	public void addExpression( ZPTExpression expression ){
 		this.expressions.add( expression );
 	}
 	

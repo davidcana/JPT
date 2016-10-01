@@ -1,6 +1,6 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="resolver/getPageTemplate( 'base.jpt' )/macros/page"
+      metal:use-macro="resolver/getPageTemplate( 'base.zpt' )/macros/page"
       metal:define-macro="page">
   <title metal:fill-slot="title">This should be ignored</title>
   <span metal:fill-slot="content" tal:omit-tag="">

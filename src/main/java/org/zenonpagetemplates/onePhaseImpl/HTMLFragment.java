@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -58,20 +58,29 @@ public class HTMLFragment implements Serializable {
         
     	this.html = html;
         
-        if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
+        if ( ZPTContext.getInstance().isParseHTMLFragments() ){ 
         	parseFragment();
         }
     }
     
+    public String getHTML() {
+        return this.html;
+    }
     public String getHtml() {
         return this.html;
     }
     
+    public void setHTML( String html ) {
+        this.html = html;
+    }
     public void setHtml( String html ) {
         this.html = html;
     }
     
     public String getXhtml() throws PageTemplateException {
+    	return this.getXHTML();
+    }
+    public String getXHTML() throws PageTemplateException {
     	
         try {
             StringWriter buffer = new StringWriter();
@@ -94,7 +103,7 @@ public class HTMLFragment implements Serializable {
         }
        
         //SAXWriter writer = new SAXWriter( contentHandler, lexicalHandler);
-        SAXWriter writer = new JPTSAXWriter( contentHandler, lexicalHandler );
+        SAXWriter writer = new ZPTSAXWriter( contentHandler, lexicalHandler );
         for ( Iterator<Node> i = this.dom.nodeIterator(); i.hasNext(); ) {
             Node node = i.next();
             writer.write( node );
@@ -152,7 +161,7 @@ public class HTMLFragment implements Serializable {
     
     @Override
     public String toString() {
-        return getHtml();
+        return getHTML();
     }
     
     

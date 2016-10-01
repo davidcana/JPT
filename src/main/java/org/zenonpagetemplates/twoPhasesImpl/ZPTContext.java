@@ -1,17 +1,11 @@
 package org.zenonpagetemplates.twoPhasesImpl;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Stack;
-
-import org.xml.sax.SAXException;
-import org.zenonpagetemplates.common.exceptions.PageTemplateException;
-import org.zenonpagetemplates.common.scripting.EvaluationHelper;
-import org.zenonpagetemplates.twoPhasesImpl.model.ZPTElement;
+import org.zenonpagetemplates.common.AbstractZPTContext;
 
 /**
  * <p>
- *   Interface to implement by slot classes.
+ *   Extends AbstractZPTContext class with methods to get and set 
+ *   the ZPTDocumentCache instance.
  * </p>
  * 
  * 
@@ -32,17 +26,38 @@ import org.zenonpagetemplates.twoPhasesImpl.model.ZPTElement;
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  *
- * @author <a href="mailto:chris@christophermrossi.com">Chris Rossi</a>
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.0 $
  */
+public class ZPTContext extends AbstractZPTContext {
+	
+	private ZPTDocumentCache zptDocumentCache = new DefaultZPTDocumentCache();
+    
+    private static ZPTContext instance;
 
-public interface Slot {
+    private ZPTContext(){ }
 
-	void process( ZPTXMLWriter xmlWriter,
-    		      ZPTElement zptElement, 
-    		      EvaluationHelper evaluationHelper,
-                  Stack <Map<String, Slot>>slotStack )
-        throws PageTemplateException, IOException, SAXException;
+    
+	public ZPTDocumentCache getZPTDocumentCache() {
+		return this.zptDocumentCache;
+	}
+
+	public void setZPTDocumentCache( ZPTDocumentCache zptDocumentCache ) {
+		
+		if ( zptDocumentCache == null ){
+			throw new IllegalArgumentException( "Unable to set zptDocumentCache to null" );
+		}
+		
+		this.zptDocumentCache = zptDocumentCache;
+	}
+
+    public static ZPTContext getInstance(){
+
+        if (instance == null){
+            instance = new ZPTContext();
+        }
+
+        return instance;
+    }
 
 }

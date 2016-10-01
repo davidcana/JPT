@@ -5,12 +5,12 @@ package org.zenonpagetemplates.common;
  *   Void interface used to mark classes that must be evaluated
  *   lazily. An example of lazy evaluation expression: if the first 
  *   operator of an <code>and:</code> expression is evaluated to 
- *   <code>false</code> JPT will not go on evaluating the next 
+ *   <code>false</code> ZPT will not go on evaluating the next 
  *   operators (the return value is already <code>false</code>). 
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public

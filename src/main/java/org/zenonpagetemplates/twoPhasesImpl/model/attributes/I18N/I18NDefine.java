@@ -12,7 +12,7 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
 
 /**
@@ -22,7 +22,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class I18NDefine extends JPTAttributeImpl implements DynamicAttribute {
+public class I18NDefine extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 7825312273948045668L;
 	
@@ -49,8 +49,8 @@ public class I18NDefine extends JPTAttributeImpl implements DynamicAttribute {
 	
 	
 	public I18NDefine(){}
-	public I18NDefine( String namespaceUri, String expression ) throws PageTemplateException {
-		super( namespaceUri );
+	public I18NDefine( String namespaceURI, String expression ) throws PageTemplateException {
+		super( namespaceURI );
 		this.definitions = AttributesUtils.getDefinitionsFromString( expression );
 	}
 	

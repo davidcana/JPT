@@ -1,19 +1,12 @@
-package org.zenonpagetemplates.twoPhasesImpl;
-
-import java.net.URI;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
+package org.zenonpagetemplates.twoPhasesImpl.model.expressions;
 
 /**
  * <p>
- *   Default implementation of JPTDocumentCache interface not for production 
- *   use (only for testing purposes).
+ *   Abstract class that implements some methods of ZPTExpression interface.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,24 +22,31 @@ import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- *
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class DefaultJPTDocumentCache implements JPTDocumentCache {
+abstract public class ZPTExpressionImpl implements ZPTExpression {
+
+	private static final long serialVersionUID = -3360133060255100296L;
 	
-	private Map<String, JPTDocument> documents = new TreeMap<String, JPTDocument>();
+	protected String stringExpression;
 	
-	DefaultJPTDocumentCache(){}
-	
-	@Override
-	public void put( URI uri, JPTDocument jptDocument ) {
-		this.documents.put( uri.toString(), jptDocument );
+	public ZPTExpressionImpl(){}
+	public ZPTExpressionImpl( String stringExpression ){
+		this.stringExpression = stringExpression;
 	}
 	
-	@Override
-	public JPTDocument get( URI uri ) {
-		return this.documents.get( uri.toString() );
+	public void setStringExpression( String stringExpression ) {
+		this.stringExpression = stringExpression;
 	}
 
+	@Override
+	public String getStringExpression() {
+		return this.stringExpression;
+	}
+
+	@Override
+	public String toString(){
+		return this.stringExpression;
+	}
 }

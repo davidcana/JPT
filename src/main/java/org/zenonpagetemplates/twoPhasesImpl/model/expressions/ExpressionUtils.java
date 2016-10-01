@@ -32,7 +32,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.scripting.JavaExpr
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.scripting.JavaExpr
  */
 public class ExpressionUtils {
 
-    static public Number evaluateToNumber( JPTExpression expression, EvaluationHelper evaluationHelper ) 
+    static public Number evaluateToNumber( ZPTExpression expression, EvaluationHelper evaluationHelper ) 
     		throws EvaluationException {
     	
     	try {
@@ -80,7 +80,7 @@ public class ExpressionUtils {
     	return Integer.valueOf( result.toString() );
     }
     
-    static public Boolean evaluateToBoolean( JPTExpression expression, EvaluationHelper evaluationHelper ) 
+    static public Boolean evaluateToBoolean( ZPTExpression expression, EvaluationHelper evaluationHelper ) 
     		throws EvaluationException {
     	
     	if ( expression instanceof EvaluableToBoolean ){
@@ -138,7 +138,7 @@ public class ExpressionUtils {
         return true;
     }
     
-    static public JPTExpression generate( String expression ) throws ExpressionSyntaxException {
+    static public ZPTExpression generate( String expression ) throws ExpressionSyntaxException {
 		
     	String effectiveExpression = ExpressionTokenizer.removeParenthesisIfAny(
 				expression ).trim();

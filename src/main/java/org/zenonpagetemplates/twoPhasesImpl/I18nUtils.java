@@ -5,9 +5,9 @@ import java.util.List;
 import org.xnap.commons.i18n.I18n;
 import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
-import org.zenonpagetemplates.twoPhasesImpl.JPTContext;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTContext;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.I18N.I18NParams;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -46,19 +46,19 @@ public class I18nUtils {
         try {
 			// Translate with no params
 			if ( i18nParams == null ){
-			    return JPTContext.getInstance().getTranslator().tr(
+			    return ZPTContext.getInstance().getTranslator().tr(
 			    		i18nList, 
 			    		i18nContent );
 			}
 			
 			// Translate with params
-			return JPTContext.getInstance().getTranslator().tr(
+			return ZPTContext.getInstance().getTranslator().tr(
 					i18nList, 
 					i18nContent, 
 			        getArrayFromI18nParams( i18nParams, evaluationHelper ) );
 			
 		} catch ( NullPointerException e ) {
-			throw new EvaluationException( "I18n subsystem of JPT was not initialized." );
+			throw new EvaluationException( "I18n subsystem of ZPT was not initialized." );
 		}
     }
     
@@ -81,9 +81,9 @@ public class I18nUtils {
         
         int i = 0;
         
-        for ( JPTExpression jptExpression : i18nParams.getParams() ){
+        for ( ZPTExpression zptExpression : i18nParams.getParams() ){
             try {
-                result[ i++ ] = jptExpression.evaluate( evaluationHelper );
+                result[ i++ ] = zptExpression.evaluate( evaluationHelper );
                 
             } catch ( ArrayIndexOutOfBoundsException e ) {
                 throw new EvaluationException( "Too many number of attributes, the maximum is " 

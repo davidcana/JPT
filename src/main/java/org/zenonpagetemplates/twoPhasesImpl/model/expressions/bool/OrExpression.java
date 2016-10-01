@@ -8,7 +8,7 @@ import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -78,10 +78,10 @@ public class OrExpression extends BooleanExpression {
 	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper )
 			throws EvaluationException {
 		
-		Iterator<JPTExpression> i = this.expressions.iterator();
+		Iterator<ZPTExpression> i = this.expressions.iterator();
 		
         while ( i.hasNext() ) {
-        	JPTExpression currentExpression = i.next();
+        	ZPTExpression currentExpression = i.next();
         	if ( ExpressionUtils.evaluateToBoolean( 
         			currentExpression, evaluationHelper ) ){
             	return true;

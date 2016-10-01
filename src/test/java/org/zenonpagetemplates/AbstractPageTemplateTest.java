@@ -18,13 +18,13 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import org.junit.Test;
-import org.zenonpagetemplates.common.AbstractJPTContext;
+import org.zenonpagetemplates.common.AbstractZPTContext;
 import org.zenonpagetemplates.common.scripting.beanShell.BeanShellEvaluator;
 import org.zenonpagetemplates.common.scripting.groovy.GroovyEvaluator;
-import org.zenonpagetemplates.twoPhasesImpl.JPTOutputFormat;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTOutputFormat;
 
 /**
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -50,11 +50,11 @@ abstract public class AbstractPageTemplateTest {
 	static final String ZPT_FILE_EXTENSION = ".zpt";
 	
 	protected abstract void testPageTemplate( String test, Map<String, Object> dictionary, 
-			JPTOutputFormat jptOutputFormat ) throws Exception;
+			ZPTOutputFormat zptOutputFormat ) throws Exception;
 	protected abstract void testStringTemplate( String test, String templateText, Map<String, Object> dictionary, 
-			JPTOutputFormat jptOutputFormat ) throws Exception;
+			ZPTOutputFormat zptOutputFormat ) throws Exception;
 	protected abstract boolean isTwoPhases();
-	protected abstract AbstractJPTContext getContext();
+	protected abstract AbstractZPTContext getContext();
 	
 	
 	@Test

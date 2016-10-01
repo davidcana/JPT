@@ -9,8 +9,8 @@ import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.exceptions.NoSuchPathException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.StringExpression;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.literals.BooleanLiteralExpression;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.literals.DoubleLiteralExpression;
@@ -27,7 +27,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.literals.Stri
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -48,11 +48,11 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.literals.Stri
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.2 $
  */
-public class PathExpression extends JPTExpressionImpl implements JPTExpression {
+public class PathExpression extends ZPTExpressionImpl implements ZPTExpression {
 
 	private static final long serialVersionUID = -2480164535532949474L;
 	
-	private List<JPTExpression> expressions = new ArrayList<JPTExpression>();
+	private List<ZPTExpression> expressions = new ArrayList<ZPTExpression>();
 	
 	
 	public PathExpression(){}
@@ -69,9 +69,9 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
 		
 		NoSuchPathException exception = null;
 		
-		for ( JPTExpression jptExpression: this.expressions ){
+		for ( ZPTExpression zptExpression: this.expressions ){
 			try {
-				Object result = jptExpression.evaluate( evaluationHelper );
+				Object result = zptExpression.evaluate( evaluationHelper );
 				if ( result != null ){
 					return result;
 				}
@@ -92,7 +92,7 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
 		return generate( pathExpression ).evaluate( evaluationHelper );
 	}
 	
-	static public JPTExpression generate( String exp ) throws ExpressionSyntaxException {
+	static public ZPTExpression generate( String exp ) throws ExpressionSyntaxException {
 		
         String expression = exp;
         
@@ -119,7 +119,7 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         return result;
 	}
 	
-    private static final JPTExpression generateFromPathSegment( String expression ) 
+    private static final ZPTExpression generateFromPathSegment( String expression ) 
     	throws ExpressionSyntaxException {
     	
         // Blank expression evaluates to blank string
@@ -200,8 +200,8 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         }
         
         // If it is an array
-        if ( arrayAccessor != null && result instanceof JPTExpression) {
-        	result = ArrayExpression.generate( token, ( JPTExpression ) result, arrayAccessor);
+        if ( arrayAccessor != null && result instanceof ZPTExpression) {
+        	result = ArrayExpression.generate( token, ( ZPTExpression ) result, arrayAccessor);
         }
         
         return result;
@@ -307,9 +307,9 @@ public class PathExpression extends JPTExpressionImpl implements JPTExpression {
         }
         
         // If it is an array
-        if ( arrayAccessor != null && result instanceof JPTExpression) {
+        if ( arrayAccessor != null && result instanceof ZPTExpression) {
         	ArrayExpression arrayExpression = ArrayExpression.generate( 
-        			token, ( JPTExpression ) result, arrayAccessor );
+        			token, ( ZPTExpression ) result, arrayAccessor );
         	return arrayExpression.evaluate( parent, evaluationHelper );
         }
         

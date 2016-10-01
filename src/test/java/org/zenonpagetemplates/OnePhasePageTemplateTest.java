@@ -9,15 +9,15 @@ import java.net.URL;
 import java.util.Map;
 
 import org.xml.sax.SAXException;
-import org.zenonpagetemplates.common.AbstractJPTContext;
+import org.zenonpagetemplates.common.AbstractZPTContext;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
-import org.zenonpagetemplates.onePhaseImpl.JPTContext;
+import org.zenonpagetemplates.onePhaseImpl.ZPTContext;
 import org.zenonpagetemplates.onePhaseImpl.OnePhasePageTemplate;
 import org.zenonpagetemplates.onePhaseImpl.PageTemplateImpl;
-import org.zenonpagetemplates.twoPhasesImpl.JPTOutputFormat;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTOutputFormat;
 
 /**
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,13 +41,13 @@ import org.zenonpagetemplates.twoPhasesImpl.JPTOutputFormat;
 public class OnePhasePageTemplateTest extends AbstractPageTemplateTest{
 	
 	@Override
-	protected void testPageTemplate( String test, Map<String, Object> dictionary, JPTOutputFormat jptOutputFormat ) 
+	protected void testPageTemplate( String test, Map<String, Object> dictionary, ZPTOutputFormat zptOutputFormat ) 
 			throws Exception {
 		
 		// Get URL and PageTemplate
-        String jpt = test + ZPT_FILE_EXTENSION;
+        String zpt = test + ZPT_FILE_EXTENSION;
         long start = System.currentTimeMillis();
-        URL resource = getClass().getResource( "/" + jpt );
+        URL resource = getClass().getResource( "/" + zpt );
 		OnePhasePageTemplate template = new PageTemplateImpl( resource );
         long elapsed = System.currentTimeMillis() - start;
         System.err.println( test + ": constructed template in " + elapsed + " ms" );
@@ -58,7 +58,7 @@ public class OnePhasePageTemplateTest extends AbstractPageTemplateTest{
 	
 	
 	@Override
-	protected void testStringTemplate( String test, String templateText, Map<String, Object> dictionary, JPTOutputFormat jptOutputFormat ) 
+	protected void testStringTemplate( String test, String templateText, Map<String, Object> dictionary, ZPTOutputFormat zptOutputFormat ) 
 			throws Exception {
 		
 		// Get URL and PageTemplate
@@ -109,8 +109,8 @@ public class OnePhasePageTemplateTest extends AbstractPageTemplateTest{
 	
 	
 	@Override
-	protected AbstractJPTContext getContext() {
-		return JPTContext.getInstance();
+	protected AbstractZPTContext getContext() {
+		return ZPTContext.getInstance();
 	}
 }
 

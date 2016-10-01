@@ -9,15 +9,15 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import org.zenonpagetemplates.common.AbstractJPTContext;
+import org.zenonpagetemplates.common.AbstractZPTContext;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
-import org.zenonpagetemplates.twoPhasesImpl.JPTContext;
-import org.zenonpagetemplates.twoPhasesImpl.JPTOutputFormat;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTContext;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTOutputFormat;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 
 /**
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -53,16 +53,16 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
 	private void testPageTemplatePreprocessing(String test)
 			throws PageTemplateException, IOException, SAXException {
 		
-		String jpt = test + ZPT_FILE_EXTENSION;
+		String zpt = test + ZPT_FILE_EXTENSION;
         long start = System.currentTimeMillis();
-        URL resource = getClass().getResource( "/" + jpt );
+        URL resource = getClass().getResource( "/" + zpt );
         
-		JPTDocument jptDocument = JPTDocumentFactory.getInstance().getJPTDocument( resource ); 
+		ZPTDocument zptDocument = ZPTDocumentFactory.getInstance().getZPTDocument( resource ); 
         long elapsed = System.currentTimeMillis() - start;
         System.err.println( test + ": preprocessed template in " + elapsed + " ms" );
         
         start = System.currentTimeMillis();
-        String xml = jptDocument.toHtml();
+        String xml = zptDocument.toHtml();
         elapsed = System.currentTimeMillis() - start;
         System.err.println( test + ": show xml structure of template in " + elapsed + " ms" );
 
@@ -73,9 +73,9 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
 	@Test
     public void testXhtml() throws Exception {
 
-		//JPTOutputFormat jptOutputFormat = new JPTOutputFormat();
-		//jptOutputFormat.setDocType(DocType.xhtmlTransitional);
-		//testPageTemplate( "validHtml", null, jptOutputFormat );
+		//ZPTOutputFormat zptOutputFormat = new ZPTOutputFormat();
+		//zptOutputFormat.setDocType(DocType.xhtmlTransitional);
+		//testPageTemplate( "validHtml", null, zptOutputFormat );
 		
 		testPageTemplate( "validXhtml", null, null );
     }
@@ -83,9 +83,9 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
 	@Test
     public void testHtml4() throws Exception {
 
-		//JPTOutputFormat jptOutputFormat = new JPTOutputFormat();
-		//jptOutputFormat.setDocType(DocType.xhtmlTransitional);
-		//testPageTemplate( "validHtml", null, jptOutputFormat );
+		//ZPTOutputFormat zptOutputFormat = new ZPTOutputFormat();
+		//zptOutputFormat.setDocType(DocType.xhtmlTransitional);
+		//testPageTemplate( "validHtml", null, zptOutputFormat );
 		
 		testPageTemplate( "validHtml4", null, null );
     }
@@ -93,34 +93,34 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
 	@Test
     public void testHtml5() throws Exception {
 
-		//JPTOutputFormat jptOutputFormat = new JPTOutputFormat();
-		//jptOutputFormat.setDocType(DocType.xhtmlTransitional);
-		//testPageTemplate( "validHtml", null, jptOutputFormat );
+		//ZPTOutputFormat zptOutputFormat = new ZPTOutputFormat();
+		//zptOutputFormat.setDocType(DocType.xhtmlTransitional);
+		//testPageTemplate( "validHtml", null, zptOutputFormat );
 		
 		testPageTemplate( "validHtml5", null, null );
     }
 	
 	@Override
     protected void testPageTemplate( String test, Map<String, Object> dictionary,
-    		JPTOutputFormat jptOutputFormat ) throws Exception {
+    		ZPTOutputFormat zptOutputFormat ) throws Exception {
 		
 		// Get URL and PageTemplate
-        String jpt = test + ZPT_FILE_EXTENSION;
+        String zpt = test + ZPT_FILE_EXTENSION;
         long start = System.currentTimeMillis();
-        URL resource = getClass().getResource( "/" + jpt );
+        URL resource = getClass().getResource( "/" + zpt );
         TwoPhasesPageTemplate template = new TwoPhasesPageTemplateImpl( resource.toURI() );
         long elapsed = System.currentTimeMillis() - start;
         System.err.println( test + ": constructed template in " + elapsed + " ms" );
 
         // Test PageTemplate
-        testPageTemplate(test, dictionary, jptOutputFormat, resource, template);
+        testPageTemplate(test, dictionary, zptOutputFormat, resource, template);
     }
 
 
 
 	@Override
 	protected void testStringTemplate(String test, String templateText,
-			Map<String, Object> dictionary, JPTOutputFormat jptOutputFormat)
+			Map<String, Object> dictionary, ZPTOutputFormat zptOutputFormat)
 			throws Exception {
 		
 		// Get URL and PageTemplate
@@ -132,7 +132,7 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
         System.err.println( test + ": constructed template in " + elapsed + " ms" );
 
         // Test PageTemplate
-        testPageTemplate(test, dictionary, jptOutputFormat, resource, template);
+        testPageTemplate(test, dictionary, zptOutputFormat, resource, template);
 	}
 	
 	@Test
@@ -141,7 +141,7 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
 	}
 	
 	private void testPageTemplate(String test, Map<String, Object> dictionary,
-			JPTOutputFormat jptOutputFormat, URL resource,
+			ZPTOutputFormat zptOutputFormat, URL resource,
 			TwoPhasesPageTemplate template) throws SAXException,
 			PageTemplateException, IOException, UnsupportedEncodingException,
 			Exception, FileNotFoundException {
@@ -150,7 +150,7 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         long start = System.currentTimeMillis();
-        template.process( buffer, testObject, dictionary, jptOutputFormat );
+        template.process( buffer, testObject, dictionary, zptOutputFormat );
         long elapsed = System.currentTimeMillis() - start;
         System.err.println( test + ": processed template in " + elapsed + " ms" );
 
@@ -166,8 +166,8 @@ public class TwoPhasesPageTemplateTest extends AbstractPageTemplateTest{
 	}
 
 	@Override
-	protected AbstractJPTContext getContext() {
-		return JPTContext.getInstance();
+	protected AbstractZPTContext getContext() {
+		return ZPTContext.getInstance();
 	}
     
 }

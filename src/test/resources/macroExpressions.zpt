@@ -6,21 +6,21 @@
     <body>
         Next line must show 'This is macro1'
         <div tal:define="macroName 'macro1';
-                         fileName 'macrosForExpressions.jpt'"
+                         fileName 'macrosForExpressions.zpt'"
              metal:use-macro="resolver/getPageTemplate( fileName )/macros/get( macroName )">
             Macro 1
         </div>
         
         Next line must show 'This is macro2'
         <div tal:define="macroName 'macro2';
-                         fileName 'macrosForExpressions.jpt'"
+                         fileName 'macrosForExpressions.zpt'"
              metal:use-macro="resolver/getPageTemplate( fileName )/macros/get( macroName )">
             Macro 2
         </div>
         
         Next line must show 'This is macro1'
         <div tal:define="macroName 'macro1';
-                         fileName 'macrosForExpressions.jpt'"
+                         fileName 'macrosForExpressions.zpt'"
              metal:use-macro="resolver/getPageTemplate( fileName )/macros/get( macroName )">
             Macro 1
         </div>

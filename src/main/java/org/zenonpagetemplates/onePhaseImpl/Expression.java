@@ -27,7 +27,7 @@ import org.zenonpagetemplates.common.scripting.groovy.GroovyEvaluator;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -520,13 +520,13 @@ public abstract class Expression {
     private static final Object evaluateJava( String expression, EvaluationHelper evaluationHelper )
         throws PageTemplateException {
 
-    	if ( ! JPTContext.getInstance().isScriptExpressionsOn() ){
+    	if ( ! ZPTContext.getInstance().isScriptExpressionsOn() ){
     		throw new PageTemplateException( "Script expressions not allowed." );
     	}
     	
         String filteredExpression = expression.replace( '*', '&' ).substring( 
         		OnePhasePageTemplate.EXPR_JAVA.length() );
-		return JPTContext.getInstance().getExpressionEvaluator().evaluate( 
+		return ZPTContext.getInstance().getExpressionEvaluator().evaluate( 
 				filteredExpression, evaluationHelper );	
         //return beanShell.eval( filteredExpression.substring( OnePhasePageTemplate.EXPR_JAVA.length() ) );
     }*/
@@ -537,7 +537,7 @@ public abstract class Expression {
 				expression.substring( 
 	            		OnePhasePageTemplate.EXPR_JAVA.length() ),
 	            evaluationHelper,
-				JPTContext.getInstance().getExpressionEvaluator() );	
+				ZPTContext.getInstance().getExpressionEvaluator() );	
     }
     
     private static final Object evaluateBsh( String expression, EvaluationHelper evaluationHelper )
@@ -563,12 +563,12 @@ public abstract class Expression {
     private static final Object evaluateScriptExpression( String expression, EvaluationHelper evaluationHelper, Evaluator evaluator )
             throws PageTemplateException {
 
-    	if ( ! JPTContext.getInstance().isScriptExpressionsOn() ){
+    	if ( ! ZPTContext.getInstance().isScriptExpressionsOn() ){
     		throw new PageTemplateException( "Script expressions not allowed." );
     	}
     	
         return evaluator.evaluate( 
-        		JPTContext.getInstance().restoreAmpersandsToScriptExpression( expression ),
+        		ZPTContext.getInstance().restoreAmpersandsToScriptExpression( expression ),
 				evaluationHelper );	
     }
     

@@ -4,10 +4,10 @@ import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,36 +27,36 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class GeneralPathExpressionItem implements JPTExpression {
+public class GeneralPathExpressionItem implements ZPTExpression {
 
 	private static final long serialVersionUID = -1840080964134073908L;
 	
-	private JPTExpression jptExpression;
+	private ZPTExpression zptExpression;
 	
 	public GeneralPathExpressionItem(){}
 	public GeneralPathExpressionItem( String stringExpression ) throws ExpressionSyntaxException {
-		this.jptExpression = ExpressionUtils.generate( stringExpression );
+		this.zptExpression = ExpressionUtils.generate( stringExpression );
 	}
-	public GeneralPathExpressionItem( JPTExpression jptExpression ){
-		this.jptExpression = jptExpression;
+	public GeneralPathExpressionItem( ZPTExpression zptExpression ){
+		this.zptExpression = zptExpression;
 	}
 
 	
-	public JPTExpression getJptExpression() {
-		return jptExpression;
+	public ZPTExpression getZptExpression() {
+		return zptExpression;
 	}
 
-	public void setJptExpression( JPTExpression jptExpression ) {
-		this.jptExpression = jptExpression;
+	public void setZptExpression( ZPTExpression zptExpression ) {
+		this.zptExpression = zptExpression;
 	}
 	
 	@Override
 	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {
-		return this.jptExpression.evaluate( evaluationHelper );
+		return this.zptExpression.evaluate( evaluationHelper );
 	}
 
 	@Override
 	public String getStringExpression() {
-		return this.jptExpression.getStringExpression();
+		return this.zptExpression.getStringExpression();
 	}
 }

@@ -6,7 +6,7 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.I18nUtils;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class I18NContent extends JPTAttributeImpl implements DynamicAttribute {
+public class I18NContent extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 8917785194106816239L;
 	
@@ -42,8 +42,8 @@ public class I18NContent extends JPTAttributeImpl implements DynamicAttribute {
 	
 	
 	public I18NContent(){}
-	public I18NContent( String namespaceUri, String content ){
-		super( namespaceUri );
+	public I18NContent( String namespaceURI, String content ){
+		super( namespaceURI );
 		this.i18nKey = content;
 	}
 	

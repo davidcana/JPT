@@ -4,15 +4,15 @@ import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 
 /**
  * <p>
  *   Abstract class that defines an expression with 2 operators.
  * </p>
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -32,18 +32,18 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.1 $
  */
-abstract public class TwoMembersComparisonExpression extends JPTExpressionImpl implements EvaluableToBoolean {
+abstract public class TwoMembersComparisonExpression extends ZPTExpressionImpl implements EvaluableToBoolean {
 
 	private static final long serialVersionUID = -6156728023036891309L;
 	
-	protected JPTExpression expression1;
-	protected JPTExpression expression2;
+	protected ZPTExpression expression1;
+	protected ZPTExpression expression2;
 	
 	public TwoMembersComparisonExpression(){}
 	public TwoMembersComparisonExpression( String stringExpression ){
 		super( stringExpression );
 	}
-	public TwoMembersComparisonExpression( String stringExpression, JPTExpression expression1, JPTExpression expression2 ){
+	public TwoMembersComparisonExpression( String stringExpression, ZPTExpression expression1, ZPTExpression expression2 ){
 		super( stringExpression );
 		
 		this.expression1 = expression1;
@@ -51,19 +51,19 @@ abstract public class TwoMembersComparisonExpression extends JPTExpressionImpl i
 	}
 
 	
-	public JPTExpression getExpression1() {
+	public ZPTExpression getExpression1() {
 		return this.expression1;
 	}
 
-	public void setExpression1( JPTExpression expression1 ) {
+	public void setExpression1( ZPTExpression expression1 ) {
 		this.expression1 = expression1;
 	}
 
-	public JPTExpression getExpression2() {
+	public ZPTExpression getExpression2() {
 		return this.expression2;
 	}
 
-	public void setExpression2( JPTExpression expression2 ) {
+	public void setExpression2( ZPTExpression expression2 ) {
 		this.expression2 = expression2;
 	}
 

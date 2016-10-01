@@ -11,7 +11,7 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -30,14 +30,14 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class NocallExpression extends JPTExpressionImpl implements JPTExpression, Nocallable {
+public class NocallExpression extends ZPTExpressionImpl implements ZPTExpression, Nocallable {
 	
 	private static final long serialVersionUID = 8440989606532293191L;
 	
-	private JPTExpression expression;
+	private ZPTExpression expression;
 	
 	public NocallExpression(){}
-	public NocallExpression( String stringExpression, JPTExpression expression ){
+	public NocallExpression( String stringExpression, ZPTExpression expression ){
 		super( stringExpression );
 		this.expression = expression;
 	}
@@ -51,11 +51,11 @@ public class NocallExpression extends JPTExpressionImpl implements JPTExpression
 						expression.substring( TwoPhasesPageTemplate.EXPR_NOCALL.length() ) ) );
 	}
 	
-	public JPTExpression getExpression() {
+	public ZPTExpression getExpression() {
 		return this.expression;
 	}
 
-	public void setExpression( JPTExpression expression ) {
+	public void setExpression( ZPTExpression expression ) {
 		this.expression = expression;
 	}
 	

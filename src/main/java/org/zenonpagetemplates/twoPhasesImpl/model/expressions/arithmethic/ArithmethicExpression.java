@@ -11,8 +11,8 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.EvaluableToNumber;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 
 /**
  * <p>
@@ -20,7 +20,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,11 +39,11 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-abstract public class ArithmethicExpression extends JPTExpressionImpl implements EvaluableToNumber {
+abstract public class ArithmethicExpression extends ZPTExpressionImpl implements EvaluableToNumber {
 
 	private static final long serialVersionUID = 7507838228949531425L;
 
-	private List<JPTExpression> expressions = new ArrayList<JPTExpression>();
+	private List<ZPTExpression> expressions = new ArrayList<ZPTExpression>();
 	
 	
 	public ArithmethicExpression(){}
@@ -52,15 +52,15 @@ abstract public class ArithmethicExpression extends JPTExpressionImpl implements
 	}
 	
 
-	public List<JPTExpression> getExpressions() {
+	public List<ZPTExpression> getExpressions() {
 		return this.expressions;
 	}
 
-	public void setExpressions( List<JPTExpression> expressions ) {
+	public void setExpressions( List<ZPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 
-	public void addExpression( JPTExpression expression ){
+	public void addExpression( ZPTExpression expression ){
 		this.expressions.add( expression );
 	}
 
@@ -105,12 +105,12 @@ abstract public class ArithmethicExpression extends JPTExpressionImpl implements
 	@Override
 	public Number evaluateToNumber( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
-		Iterator<JPTExpression> i = this.expressions.iterator();
+		Iterator<ZPTExpression> i = this.expressions.iterator();
 		
 		Number result = ExpressionUtils.evaluateToNumber( i.next(), evaluationHelper );
 		
 		while ( i.hasNext() ){
-			JPTExpression expression = i.next();
+			ZPTExpression expression = i.next();
 			
 			Number value = ExpressionUtils.evaluateToNumber(
 					expression, evaluationHelper );

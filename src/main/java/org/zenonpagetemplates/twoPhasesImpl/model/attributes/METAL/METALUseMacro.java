@@ -3,9 +3,9 @@ package org.zenonpagetemplates.twoPhasesImpl.model.attributes.METAL;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -13,7 +13,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -32,25 +32,25 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class METALUseMacro extends JPTAttributeImpl implements DynamicAttribute {
+public class METALUseMacro extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 62833153964900427L;
 	
-	private JPTExpression expression;
+	private ZPTExpression expression;
 	
 	
 	public METALUseMacro(){}
-	public METALUseMacro(String namespaceUri, String expression) throws PageTemplateException{
-		super( namespaceUri );
+	public METALUseMacro(String namespaceURI, String expression) throws PageTemplateException{
+		super( namespaceURI );
 		this.expression = ExpressionUtils.generate( expression );
 	}
 
 	
-	public JPTExpression getExpression() {
+	public ZPTExpression getExpression() {
 		return expression;
 	}
 	
-	public void setExpression(JPTExpression expression) {
+	public void setExpression(ZPTExpression expression) {
 		this.expression = expression;
 	}
 	

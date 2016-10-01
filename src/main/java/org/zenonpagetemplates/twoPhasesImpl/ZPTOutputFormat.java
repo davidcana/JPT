@@ -1,7 +1,7 @@
 package org.zenonpagetemplates.twoPhasesImpl;
 
 import org.dom4j.io.OutputFormat;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
 
 /**
  * <p>
@@ -10,7 +10,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -30,10 +30,10 @@ import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class JPTOutputFormat {
+public class ZPTOutputFormat {
 
 	private static final String DEFAULT_ENCODING = "UTF-8";
-	private static final JPTOutputFormat DEFAULT_INSTANCE = new JPTOutputFormat( null );
+	private static final ZPTOutputFormat DEFAULT_INSTANCE = new ZPTOutputFormat( null );
 	
 	private String encoding = DEFAULT_ENCODING;
 	private boolean suppressDeclaration = true;
@@ -41,12 +41,12 @@ public class JPTOutputFormat {
 	private boolean xmlMode = true;
 	
 	
-	public JPTOutputFormat( JPTDocument jptDocument ){
+	public ZPTOutputFormat( ZPTDocument zptDocument ){
 		
-		this.xmlMode = getXmlModeFromDocType( 
-				jptDocument == null?
+		this.xmlMode = getXMLModeFromDocType( 
+				zptDocument == null?
 				null:
-				jptDocument.getDocType() );
+				zptDocument.getDocType() );
 	}
 	
 	
@@ -72,20 +72,20 @@ public class JPTOutputFormat {
 
 	public void setDocType( DocType docType ) {
 		this.docType = docType;
-		this.xmlMode = getXmlModeFromDocType(docType);
+		this.xmlMode = getXMLModeFromDocType(docType);
 	}
 
-	static private boolean getXmlModeFromDocType( DocType docType ) {
+	static private boolean getXMLModeFromDocType( DocType docType ) {
 		return docType == null?
 			  true:
 			  docType.isXml();
 	}
 	
-	public void setXmlMode( boolean xmlMode ) {
+	public void setXMLMode( boolean xmlMode ) {
 		this.xmlMode = xmlMode;
 	}
 
-	public boolean isXmlMode() {
+	public boolean isXMLMode() {
 		return this.xmlMode;
 	}
 
@@ -101,7 +101,7 @@ public class JPTOutputFormat {
 		return result;
 	}
 	
-	static public JPTOutputFormat getDefault(){
+	static public ZPTOutputFormat getDefault(){
 		return DEFAULT_INSTANCE;
 	}
 }

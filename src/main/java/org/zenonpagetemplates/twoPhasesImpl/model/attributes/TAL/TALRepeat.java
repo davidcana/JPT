@@ -4,9 +4,9 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,25 +34,25 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class TALRepeat extends JPTAttributeImpl implements DynamicAttribute {
+public class TALRepeat extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 798497775749162543L;
 	
-	private KeyValuePair<JPTExpression> repeat;
+	private KeyValuePair<ZPTExpression> repeat;
 	
 	
 	public TALRepeat(){}
-	public TALRepeat(String namespaceUri, String expression) throws PageTemplateException {
-		super( namespaceUri );
+	public TALRepeat(String namespaceURI, String expression) throws PageTemplateException {
+		super( namespaceURI );
 		this.repeat = AttributesUtils.getDefinition( expression );
 	}
 	
 
-	public KeyValuePair<JPTExpression> getRepeat() {
+	public KeyValuePair<ZPTExpression> getRepeat() {
 		return this.repeat;
 	}
 
-	public void setRepeat(KeyValuePair<JPTExpression> repeat) {
+	public void setRepeat(KeyValuePair<ZPTExpression> repeat) {
 		this.repeat = repeat;
 	}
 	

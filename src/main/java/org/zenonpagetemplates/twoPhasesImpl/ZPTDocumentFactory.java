@@ -27,9 +27,9 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.zenonpagetemplates.common.Filter;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
-import org.zenonpagetemplates.twoPhasesImpl.JPTContext;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTElement;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTContext;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTElement;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.StaticAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.I18N.I18NAttributes;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.I18N.I18NContent;
@@ -54,12 +54,12 @@ import org.zenonpagetemplates.twoPhasesImpl.model.content.TextNode;
 
 /**
  * <p>
- *   Read a JPT from a file (using JNDI to locate it) or from a 
- *   String instance and returns a JPTDocument instance.
+ *   Read a ZPT from a file (using JNDI to locate it) or from a 
+ *   String instance and returns a ZPTDocument instance.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -80,9 +80,9 @@ import org.zenonpagetemplates.twoPhasesImpl.model.content.TextNode;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.1 $
  */
-public class JPTDocumentFactory {
+public class ZPTDocumentFactory {
 	
-	static private JPTDocumentFactory instance;
+	static private ZPTDocumentFactory instance;
 	
 	public static final String VOID_STRING = "";
 	private static final String ENCODING = "UTF-8";
@@ -92,7 +92,7 @@ public class JPTDocumentFactory {
     private static SAXReader htmlReader = null;
     static final SAXReader getHTMLReader() throws SAXNotRecognizedException, SAXNotSupportedException {
     	
-        if ( htmlReader == null && JPTContext.getInstance().isUseHtmlReader() ) {
+        if ( htmlReader == null && ZPTContext.getInstance().isUseHTMLReader() ) {
             htmlReader = new SAXReader();
             SAXParser parser = new SAXParser();
             parser.setProperty( "http://cyberneko.org/html/properties/names/elems", "match" );
@@ -127,28 +127,28 @@ public class JPTDocumentFactory {
     }
     
     
-    private JPTDocumentFactory(){}
+    private ZPTDocumentFactory(){}
     
-    public static JPTDocumentFactory getInstance(){
+    public static ZPTDocumentFactory getInstance(){
 
         if (instance == null){
-            instance = new JPTDocumentFactory();
+            instance = new ZPTDocumentFactory();
         }
 
         return instance;
     }
     
     
-    public JPTDocument getJPTDocument( URI uri ) throws PageTemplateException {
+    public ZPTDocument getZPTDocument( URI uri ) throws PageTemplateException {
     	
         try {
-        	JPTDocument result = recoverFromCache( uri );
+        	ZPTDocument result = recoverFromCache( uri );
         	
         	if ( result != null ){
         		return result;
         	}
         	
-        	result = getNewJPTDocument( uri );
+        	result = getNewZPTDocument( uri );
         	
         	saveToCache( uri, result );
         	
@@ -160,16 +160,16 @@ public class JPTDocumentFactory {
     }
     
     
-    public JPTDocument getJPTDocument( URI uri, String templateString ) throws PageTemplateException {
+    public ZPTDocument getZPTDocument( URI uri, String templateString ) throws PageTemplateException {
     	
         try {
-        	JPTDocument result = recoverFromCache( uri );
+        	ZPTDocument result = recoverFromCache( uri );
         	
         	if ( result != null ){
         		return result;
         	}
         	
-        	result = getNewJPTDocument( uri, templateString );
+        	result = getNewZPTDocument( uri, templateString );
         	
         	saveToCache( uri, result );
         	
@@ -180,38 +180,38 @@ public class JPTDocumentFactory {
         }
     }
 
-	static private JPTDocument recoverFromCache( URI uri ) throws PageTemplateException {
+	static private ZPTDocument recoverFromCache( URI uri ) throws PageTemplateException {
     	
-        if ( ! JPTContext.getInstance().isCacheOn() ){
+        if ( ! ZPTContext.getInstance().isCacheOn() ){
         	return null;
         }
         
-		return JPTContext.getInstance().getJptDocumentCache().get( uri );
+		return ZPTContext.getInstance().getZPTDocumentCache().get( uri );
 	}
     
-    static private void saveToCache( URI uri, JPTDocument jptDocument ) throws PageTemplateException {
+    static private void saveToCache( URI uri, ZPTDocument zptDocument ) throws PageTemplateException {
 
-		if ( ! JPTContext.getInstance().isCacheOn() ){
+		if ( ! ZPTContext.getInstance().isCacheOn() ){
 			return;
 		}
 		
-		JPTContext.getInstance().getJptDocumentCache().put( uri, jptDocument );
+		ZPTContext.getInstance().getZPTDocumentCache().put( uri, zptDocument );
 	}
     
-	private JPTDocument getNewJPTDocument( URI uri ) throws Exception,
+	private ZPTDocument getNewZPTDocument( URI uri ) throws Exception,
 			DocumentException, URISyntaxException, SAXException,
 			PageTemplateException, IOException {
 		
-		return getNewJPTDocument( 
+		return getNewZPTDocument( 
 					readTemplate( uri ), 
 					uri );
 	}
 
-    static private JPTDocument getNewJPTDocument( URI uri, String templateString ) 
+    static private ZPTDocument getNewZPTDocument( URI uri, String templateString ) 
     		throws DocumentException, URISyntaxException, SAXException, 
     		PageTemplateException, IOException {
     	
-		return getNewJPTDocument( 
+		return getNewZPTDocument( 
 					readTemplate( templateString ), 
 					uri );
 	}
@@ -270,21 +270,21 @@ public class JPTDocumentFactory {
 		
 	}
 	
-	static private JPTDocument getNewJPTDocument( Document template, URI uri)
+	static private ZPTDocument getNewZPTDocument( Document template, URI uri)
         throws SAXException, PageTemplateException, IOException {
 		
         try {
-        	JPTDocument result = new JPTDocument( uri );
+        	ZPTDocument result = new ZPTDocument( uri );
         	
-            // Set up template name and doc type in jptDocument
+            // Set up template name and doc type in zptDocument
         	result.setTemplateName(
         			template.getName() );
         	result.setDocType(
-        			DocType.generateDocTypeFromDom4jDocument( template ) );
+        			DocType.generateDocTypeFromDOM4jDocument( template ) );
         	
-            // Process root element and set it to jptDocument
+            // Process root element and set it to zptDocument
         	result.setRoot(
-            	getNewJPTElement( 
+            	getNewZPTElement( 
             		template.getRootElement(), 
             		result,
             		new Stack<Map<String, Slot>>() ) );
@@ -296,40 +296,40 @@ public class JPTDocumentFactory {
         }
     }
 
-    static protected JPTElement getNewJPTElement( 
-    		Element element, JPTDocument jptDocument,
+    static protected ZPTElement getNewZPTElement( 
+    		Element element, ZPTDocument zptDocument,
     		Stack <Map<String, Slot>>slotStack )
         throws SAXException, PageTemplateException, IOException {
     	
-    	// Create a new jptElement and set its name
-    	JPTElement result = new JPTElement( 
+    	// Create a new zptElement and set its name
+    	ZPTElement result = new ZPTElement( 
     			element.getName(), 
     			element.getNamespace().getPrefix() );
     	
     	// Map first namespaces to make all namespaces prefixes available
-    	mapNamespaces( element, result, jptDocument );
+    	mapNamespaces( element, result, zptDocument );
     	
 		// Get attributes
-		mapAttributes( element, result, jptDocument );
+		mapAttributes( element, result, zptDocument );
 		
 		// Continue processing if it is not define tal:content or i18n:content
-		if ( processContentIsOn( result, jptDocument ) ){
-			mapContent( element, result, jptDocument, slotStack );
+		if ( processContentIsOn( result, zptDocument ) ){
+			mapContent( element, result, zptDocument, slotStack );
 		}
 
 		return result;
 	}
 
-	private static boolean processContentIsOn( JPTElement jptElement, JPTDocument jptDocument ) {
+	private static boolean processContentIsOn( ZPTElement zptElement, ZPTDocument zptDocument ) {
 		
-		return ! jptElement.existsTalAttribute( TwoPhasesPageTemplate.TAL_CONTENT, jptDocument )
-				&& ! jptElement.existsI18nAttribute( TwoPhasesPageTemplate.I18N_CONTENT, jptDocument );
+		return ! zptElement.existsTALAttribute( TwoPhasesPageTemplate.TAL_CONTENT, zptDocument )
+				&& ! zptElement.existsI18nAttribute( TwoPhasesPageTemplate.I18N_CONTENT, zptDocument );
 	}
 
 	@SuppressWarnings({ "unchecked" })
     static private void mapContent( Element element,
-                                 JPTElement jptElement,
-                                 JPTDocument jptDocument,
+                                 ZPTElement zptElement,
+                                 ZPTDocument zptDocument,
                                  Stack <Map<String, Slot>>slotStack)
         throws SAXException, PageTemplateException, IOException {
     	
@@ -338,27 +338,27 @@ public class JPTDocumentFactory {
             Node node = i.next();
             switch( node.getNodeType() ) {
             case Node.ELEMENT_NODE:
-            	jptElement.addContent(
-            			getNewJPTElement( (Element) node, jptDocument , slotStack ) );
+            	zptElement.addContent(
+            			getNewZPTElement( (Element) node, zptDocument , slotStack ) );
                 break;
                 
             case Node.TEXT_NODE:
-            	jptElement.addContent(
+            	zptElement.addContent(
             			new TextNode( node.getText() ) );
                 break;
                 
             case Node.CDATA_SECTION_NODE:
-            	jptElement.addContent(
+            	zptElement.addContent(
             			new CDATANode( node.getText() ) );
                 break;
                 
             case Node.NAMESPACE_NODE:  // Already handled
             	/*
                 Namespace declared = (Namespace)node;
-                if (jptDocument.isNamespaceToDeclare(declared)){
-                	jptDocument.addNamespace(declared);
+                if (zptDocument.isNamespaceToDeclare(declared)){
+                	zptDocument.addNamespace(declared);
                 } else {
-                	jptElement.addNamespaceStaticAttribute(declared);
+                	zptElement.addNamespaceStaticAttribute(declared);
                 }
                 break;*/
              
@@ -374,24 +374,24 @@ public class JPTDocumentFactory {
     }
 	
 	@SuppressWarnings("unchecked")
-	static private void mapNamespaces( Element element, JPTElement jptElement, JPTDocument jptDocument ) 
+	static private void mapNamespaces( Element element, ZPTElement zptElement, ZPTDocument zptDocument ) 
         throws PageTemplateException {
 		
 		for ( Iterator<Attribute> i = element.nodeIterator(); i.hasNext(); ) {
 			Node node = i.next();
 			if ( node.getNodeType() == Node.NAMESPACE_NODE ){
                 Namespace declared = ( Namespace ) node;
-                if ( jptDocument.isNamespaceToDeclare( declared ) ){
-                	jptDocument.addNamespace( declared );
+                if ( zptDocument.isNamespaceToDeclare( declared ) ){
+                	zptDocument.addNamespace( declared );
                 } else {
-                	jptElement.addNamespaceStaticAttribute( declared );
+                	zptElement.addNamespaceStaticAttribute( declared );
                 }
 			}
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	static private void mapAttributes( Element element, JPTElement jptElement, JPTDocument jptDocument ) 
+	static private void mapAttributes( Element element, ZPTElement zptElement, ZPTDocument zptDocument ) 
         throws PageTemplateException {
 		
         String talOmitTag = null;
@@ -403,12 +403,12 @@ public class JPTDocumentFactory {
             String name = attribute.getName();
             String namespacePrefix = namespace.getPrefix();
             
-            // Handle JPT attributes
+            // Handle ZPT attributes
 			if ( TwoPhasesPageTemplate.TAL_NAMESPACE_URI.equals( namespace.getURI() ) ) {
 				
                 // tal:define
                 if ( name.equals( TwoPhasesPageTemplate.TAL_DEFINE ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALDefine( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -416,7 +416,7 @@ public class JPTDocumentFactory {
 
                 // tal:condition
                 else if ( name.equals( TwoPhasesPageTemplate.TAL_CONDITION ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALCondition( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -424,7 +424,7 @@ public class JPTDocumentFactory {
 
                 // tal:repeat
                 else if ( name.equals( TwoPhasesPageTemplate.TAL_REPEAT ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALRepeat( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -432,7 +432,7 @@ public class JPTDocumentFactory {
 
                 // tal:content
                 else if ( name.equals( TwoPhasesPageTemplate.TAL_CONTENT ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALContent( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -441,7 +441,7 @@ public class JPTDocumentFactory {
                 // tal:replace
                 else if ( name.equals( TwoPhasesPageTemplate.TAL_REPLACE ) ) {
                 	isReplace = true;
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALContent( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -449,7 +449,7 @@ public class JPTDocumentFactory {
 
                 // tal:attributes
                 else if ( name.equals( TwoPhasesPageTemplate.TAL_ATTRIBUTES ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALAttributes( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -462,7 +462,7 @@ public class JPTDocumentFactory {
 
                 // tal:on-error
                 else if ( name.equals( TwoPhasesPageTemplate.TAL_ON_ERROR ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALOnError( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -470,7 +470,7 @@ public class JPTDocumentFactory {
                 
                 // tal:tag
                 else if ( name.equals( TwoPhasesPageTemplate.TAL_TAG ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new TALTag( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -487,7 +487,7 @@ public class JPTDocumentFactory {
             	
                 // metal:use-macro
                 if ( name.equals( TwoPhasesPageTemplate.METAL_USE_MACRO ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new METALUseMacro( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -495,7 +495,7 @@ public class JPTDocumentFactory {
                 
                 // metal:define-slot
                 else if ( name.equals( TwoPhasesPageTemplate.METAL_DEFINE_SLOT ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new METALDefineSlot( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -503,7 +503,7 @@ public class JPTDocumentFactory {
 
                 // metal:define-macro
                 else if ( name.equals( TwoPhasesPageTemplate.METAL_DEFINE_MACRO ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new METALDefineMacro( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -511,7 +511,7 @@ public class JPTDocumentFactory {
                 
                 // metal:fill-slot
                 else if ( name.equals( TwoPhasesPageTemplate.METAL_FILL_SLOT ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new METALFillSlot( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -528,7 +528,7 @@ public class JPTDocumentFactory {
             	
                 // i18n:domain
                 if ( name.equals( TwoPhasesPageTemplate.I18N_DOMAIN ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new I18NDomain( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -536,7 +536,7 @@ public class JPTDocumentFactory {
                 
                 // i18n:define
                 else if ( name.equals( TwoPhasesPageTemplate.I18N_DEFINE ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new I18NDefine( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -544,7 +544,7 @@ public class JPTDocumentFactory {
                 
                 // i18n:content
                 else if ( name.equals( TwoPhasesPageTemplate.I18N_CONTENT ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new I18NContent( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -553,7 +553,7 @@ public class JPTDocumentFactory {
                 // i18n:replace
                 else if ( name.equals( TwoPhasesPageTemplate.I18N_REPLACE ) ) {
                 	isReplace = true;
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new I18NContent( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -561,7 +561,7 @@ public class JPTDocumentFactory {
                 
                 // i18n:attributes
                 else if ( name.equals( TwoPhasesPageTemplate.I18N_ATTRIBUTES ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new I18NAttributes(
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -569,7 +569,7 @@ public class JPTDocumentFactory {
                 
                 // i18n:params
                 else if ( name.equals( TwoPhasesPageTemplate.I18N_PARAMS ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new I18NParams( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -577,7 +577,7 @@ public class JPTDocumentFactory {
                 
                 // i18n:on-error
                 else if ( name.equals( TwoPhasesPageTemplate.I18N_ON_ERROR ) ) {
-                	jptElement.addDynamicAttribute(
+                	zptElement.addDynamicAttribute(
                 			new I18NOnError( 
                 					namespacePrefix,
                 					attribute.getValue() ) );
@@ -592,7 +592,7 @@ public class JPTDocumentFactory {
             
             // Pass on all other attributes
             else {
-            	jptElement.addStaticAttribute(
+            	zptElement.addStaticAttribute(
             			new StaticAttributeImpl( 
             					namespacePrefix,
             					name, 
@@ -602,15 +602,15 @@ public class JPTDocumentFactory {
         
         //  Add omit-tag
         if ( talOmitTag != null ){
-        	jptElement.addDynamicAttribute(
+        	zptElement.addDynamicAttribute(
         			new TALOmitTag( 
-        					jptDocument.getTalPrefix(),
+        					zptDocument.getTALPrefix(),
         					talOmitTag ) );
         	
         } else if ( isReplace ){
-        	jptElement.addDynamicAttribute(
+        	zptElement.addDynamicAttribute(
         			new TALOmitTag( 
-        					jptDocument.getTalPrefix(),
+        					zptDocument.getTALPrefix(),
         					VOID_STRING ) );
         }
     }

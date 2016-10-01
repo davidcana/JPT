@@ -11,7 +11,7 @@ import org.dom4j.DocumentType;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -121,7 +121,7 @@ public class DocType implements Serializable {
 		this.xml = xml;
 	}
 	
-	static public DocType generateDocTypeFromDom4jDocument( Document document ){
+	static public DocType generateDocTypeFromDOM4jDocument( Document document ){
 		
 		DocumentType documentType = document.getDocType();
 		

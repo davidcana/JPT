@@ -8,8 +8,8 @@ import org.zenonpagetemplates.common.exceptions.ExpressionSyntaxException;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.StringExpression;
 
 /**
@@ -18,7 +18,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.StringExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,30 +39,30 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.StringExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken, NextPathToken {
+public class ArrayExpression extends ZPTExpressionImpl implements FirstPathToken, NextPathToken {
 
 	private static final long serialVersionUID = 5624721214284460380L;
 	
-	private JPTExpression arrayBase;
-	private List<JPTExpression> indexes = new ArrayList<JPTExpression>();
+	private ZPTExpression arrayBase;
+	private List<ZPTExpression> indexes = new ArrayList<ZPTExpression>();
 	
 	public ArrayExpression(){}
 
-	public ArrayExpression( String stringExpression, JPTExpression arrayBase ){
+	public ArrayExpression( String stringExpression, ZPTExpression arrayBase ){
 		super( stringExpression );
 		
 		this.arrayBase = arrayBase;
 	}
 
-	public List<JPTExpression> getIndexes() {
+	public List<ZPTExpression> getIndexes() {
 		return this.indexes;
 	}
 
-	public void setIndexes( List<JPTExpression> indexes ) {
+	public void setIndexes( List<ZPTExpression> indexes ) {
 		this.indexes = indexes;
 	}
 
-	public void addIndex( JPTExpression index ){
+	public void addIndex( ZPTExpression index ){
 		this.indexes.add( index );
 	}
 	
@@ -71,7 +71,7 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 		return evaluate( this.arrayBase, this.indexes, evaluationHelper );
 	}
 	
-	static public Object evaluate( JPTExpression arrayBase, List<JPTExpression> indexes, EvaluationHelper evaluationHelper ) 
+	static public Object evaluate( ZPTExpression arrayBase, List<ZPTExpression> indexes, EvaluationHelper evaluationHelper ) 
 			throws EvaluationException {
 		
 		try {
@@ -93,7 +93,7 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 		}
 	}
 	
-	static private Object evaluateArrayItem( Object object, List<JPTExpression> indexExpressions, EvaluationHelper evaluationHelper ) 
+	static private Object evaluateArrayItem( Object object, List<ZPTExpression> indexExpressions, EvaluationHelper evaluationHelper ) 
 			throws PageTemplateException {
 		
 		Integer index = ExpressionUtils.evaluateToNumber(
@@ -115,7 +115,7 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 			return arrayInstance[ index ];
 		}
 		
-		List<JPTExpression> newIndexExpressions = new ArrayList<JPTExpression>( indexExpressions );
+		List<ZPTExpression> newIndexExpressions = new ArrayList<ZPTExpression>( indexExpressions );
 		newIndexExpressions.remove( 0 );
 		
 		return evaluateArrayItem (
@@ -301,7 +301,7 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
 		}
 	}
 
-    static public final ArrayExpression generate( String tok, JPTExpression arrayBase, String acc ) throws ExpressionSyntaxException {
+    static public final ArrayExpression generate( String tok, ZPTExpression arrayBase, String acc ) throws ExpressionSyntaxException {
     	
     	String accessor = new String( acc );
     	String token = new String( tok );
@@ -319,8 +319,8 @@ public class ArrayExpression extends JPTExpressionImpl implements FirstPathToken
         					"bad array accessor for " + token + ": "  + accessor );
         		}
 
-        		// Get index JPTExpression
-        		JPTExpression index = ExpressionUtils.generate( 
+        		// Get index ZPTExpression
+        		ZPTExpression index = ExpressionUtils.generate( 
         				accessor.substring( 1, close ) );
         		result.addIndex( index );
         		

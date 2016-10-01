@@ -1,17 +1,14 @@
-package org.zenonpagetemplates.twoPhasesImpl;
+package org.zenonpagetemplates.twoPhasesImpl.model.attributes;
 
-import java.net.URI;
-
-import org.zenonpagetemplates.common.exceptions.PageTemplateException;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
+import java.io.Serializable;
 
 /**
  * <p>
- *   Interface to cache JPTDocument instances.
+ *   Interface that represents an attribute from a ZPTElement.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,28 +24,17 @@ import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- *
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public interface JPTDocumentCache {
+public interface ZPTAttribute extends Serializable {
 	
-	/**
-	 * Put a JPTDocument into the cache
-	 * 
-	 * @param uri
-	 * @param jptDocument
-	 * @throws PageTemplateException
-	 */
-	public void put( URI uri, JPTDocument jptDocument ) throws PageTemplateException;
+	public String getAttributeName();
 	
+	public String getQualifiedName();
 	
-	/**
-	 * Get a JPTDocument from the cache
-	 * 
-	 * @param uri
-	 * @return a JPTDocument from the cache
-	 * @throws PageTemplateException
-	 */
-	public JPTDocument get( URI uri ) throws PageTemplateException;
+	public String getNamespaceURI();
+	
+	public String getValue();
+	
 }

@@ -9,10 +9,10 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.I18nUtils;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
 
 /**
@@ -22,7 +22,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.attributes.KeyValuePair;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class I18NAttributes extends JPTAttributeImpl implements DynamicAttribute {
+public class I18NAttributes extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = -636861278841912537L;
 	
@@ -49,8 +49,8 @@ public class I18NAttributes extends JPTAttributeImpl implements DynamicAttribute
 	
 	
 	public I18NAttributes(){}
-	public I18NAttributes( String namespaceUri, String expression ) throws PageTemplateException {
-		super( namespaceUri );
+	public I18NAttributes( String namespaceURI, String expression ) throws PageTemplateException {
+		super( namespaceURI );
 		this.attributes = AttributesUtils.getDefinitionsFromString( expression );
 	}
 
@@ -78,7 +78,7 @@ public class I18NAttributes extends JPTAttributeImpl implements DynamicAttribute
 	}
 	
 	public void evaluate(
-			EvaluationHelper evaluationHelper, I18NParams i18nParams, AttributesImpl attributesImpl, JPTDocument jptDocument)
+			EvaluationHelper evaluationHelper, I18NParams i18nParams, AttributesImpl attributesImpl, ZPTDocument zptDocument)
 			throws EvaluationException {
 		
 		try {
@@ -93,7 +93,7 @@ public class I18NAttributes extends JPTAttributeImpl implements DynamicAttribute
 			    		qualifiedName, 
 			    		value, 
 			    		attributesImpl, 
-			    		jptDocument );
+			    		zptDocument );
 			}
 			
 		} catch ( EvaluationException e ) {

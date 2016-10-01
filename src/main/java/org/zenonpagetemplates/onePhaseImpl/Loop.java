@@ -12,11 +12,11 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
- *   Makes it easy to iterate through JPT elements in a loop.
+ *   Makes it easy to iterate through ZPT elements in a loop.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public

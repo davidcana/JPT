@@ -7,9 +7,9 @@ import org.zenonpagetemplates.twoPhasesImpl.HTMLFragment;
 import org.zenonpagetemplates.twoPhasesImpl.NullContent;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.TextEscapableAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -36,29 +36,29 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class TALContent extends JPTAttributeImpl implements DynamicAttribute, TextEscapableAttribute {
+public class TALContent extends ZPTAttributeImpl implements DynamicAttribute, TextEscapableAttribute {
 
 	private static final long serialVersionUID = -4354550333342649701L;
 
 	static final NullContent NULL_CONTENT = new NullContent();
 	
-	private JPTExpression content;
+	private ZPTExpression content;
 	private boolean escapeOn = true;
 	
 	
 	public TALContent(){}
-	public TALContent(String namespaceUri, String expression) throws PageTemplateException {
-		super( namespaceUri );
+	public TALContent(String namespaceURI, String expression) throws PageTemplateException {
+		super( namespaceURI );
 		configureTextEscapableAttribute( this, expression );
 	}
 	
 
-	public JPTExpression getContent() {
+	public ZPTExpression getContent() {
 		return this.content;
 	}
 	
 	@Override
-	public void setContent(JPTExpression content) {
+	public void setContent(ZPTExpression content) {
 		this.content = content;
 	}
 	

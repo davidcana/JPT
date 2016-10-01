@@ -11,8 +11,8 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 
 /**
  * <p>
@@ -20,7 +20,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,11 +39,11 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class EqualsExpression extends JPTExpressionImpl implements EvaluableToBoolean {
+public class EqualsExpression extends ZPTExpressionImpl implements EvaluableToBoolean {
 
 	private static final long serialVersionUID = -1879171293873071854L;
 	
-	private List<JPTExpression> expressions = new ArrayList<JPTExpression>();
+	private List<ZPTExpression> expressions = new ArrayList<ZPTExpression>();
 	
 	
 	public EqualsExpression(){}
@@ -52,15 +52,15 @@ public class EqualsExpression extends JPTExpressionImpl implements EvaluableToBo
 	}
 
 	
-	public List<JPTExpression> getExpressions() {
+	public List<ZPTExpression> getExpressions() {
 		return this.expressions;
 	}
 
-	public void setExpressions( List<JPTExpression> expressions ) {
+	public void setExpressions( List<ZPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 
-	public void addExpression( JPTExpression expression ){
+	public void addExpression( ZPTExpression expression ){
 		this.expressions.add( expression );
 	}
 
@@ -100,12 +100,12 @@ public class EqualsExpression extends JPTExpressionImpl implements EvaluableToBo
 	@Override
 	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
-		Iterator<JPTExpression> i = this.expressions.iterator();
-		JPTExpression expression1 = i.next();
+		Iterator<ZPTExpression> i = this.expressions.iterator();
+		ZPTExpression expression1 = i.next();
         Object result1 = expression1.evaluate( evaluationHelper );
         
         while ( i.hasNext() ) {
-        	JPTExpression expression = i.next();
+        	ZPTExpression expression = i.next();
         	Object result = expression.evaluate( evaluationHelper );
 			if ( ! areEquivalent( result1, result ) ){
             	return false;

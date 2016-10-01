@@ -5,9 +5,9 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -16,7 +16,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -35,25 +35,25 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class TALTag extends JPTAttributeImpl implements DynamicAttribute {
+public class TALTag extends ZPTAttributeImpl implements DynamicAttribute {
 	
 	private static final long serialVersionUID = -3886897632750397602L;
 	
-	private JPTExpression expression;
+	private ZPTExpression expression;
 	
 	
 	public TALTag(){}
-	public TALTag( String namespaceUri, String expression ) throws PageTemplateException {
-		super( namespaceUri );
+	public TALTag( String namespaceURI, String expression ) throws PageTemplateException {
+		super( namespaceURI );
 		this.expression = ExpressionUtils.generate( expression );
 	}
 	
 
-	public JPTExpression getExpression() {
+	public ZPTExpression getExpression() {
 		return this.expression;
 	}
 
-	public void setExpression( JPTExpression condition ) {
+	public void setExpression( ZPTExpression condition ) {
 		this.expression = condition;
 	}
 	

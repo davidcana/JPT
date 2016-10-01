@@ -6,8 +6,8 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.EvaluableToBoolean;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ExpressionUtils;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,26 +34,26 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpressionImpl;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class NotExpression extends JPTExpressionImpl implements EvaluableToBoolean {
+public class NotExpression extends ZPTExpressionImpl implements EvaluableToBoolean {
 
 	private static final long serialVersionUID = 4107795468596398923L;
 	
-	private JPTExpression expression;
+	private ZPTExpression expression;
 	
 	
 	public NotExpression(){}
 	
-	public NotExpression( String stringExpression, JPTExpression expression ){
+	public NotExpression( String stringExpression, ZPTExpression expression ){
 		super( stringExpression );
 		
 		this.expression = expression;
 	}
 
-	public JPTExpression getExpression() {
+	public ZPTExpression getExpression() {
 		return this.expression;
 	}
 
-	public void setExpression( JPTExpression expression ) {
+	public void setExpression( ZPTExpression expression ) {
 		this.expression = expression;
 	}
 

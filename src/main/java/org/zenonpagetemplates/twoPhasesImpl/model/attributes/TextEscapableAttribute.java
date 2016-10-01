@@ -1,6 +1,6 @@
 package org.zenonpagetemplates.twoPhasesImpl.model.attributes;
 
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -8,7 +8,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -31,5 +31,5 @@ public interface TextEscapableAttribute {
 
 	public void setEscapeOn( boolean escapeOn );
 	
-	public void setContent( JPTExpression content );
+	public void setContent( ZPTExpression content );
 }

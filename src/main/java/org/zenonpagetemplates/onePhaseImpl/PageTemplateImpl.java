@@ -53,11 +53,11 @@ import org.zenonpagetemplates.twoPhasesImpl.ScriptFactory;
 
 /**
  * <p>
- *   Main class to implement JPT in one phase.
+ *   Main class to implement ZPT in one phase.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -100,7 +100,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
     
     private static SAXReader htmlReader = null;
     static final SAXReader getHTMLReader() throws Exception {
-        if ( htmlReader == null && JPTContext.getInstance().isUseHtmlReader()) {
+        if ( htmlReader == null && ZPTContext.getInstance().isUseHTMLReader()) {
             htmlReader = new SAXReader();
             SAXParser parser = new SAXParser();
             parser.setProperty( "http://cyberneko.org/html/properties/names/elems", "match" );
@@ -301,14 +301,14 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
     private void saveToCache() throws IOException {
 
     	try {
-    		if ( ! JPTContext.getInstance().isCacheOn()
+    		if ( ! ZPTContext.getInstance().isCacheOn()
     				|| this.id == null 
     				|| this.recoveredFromCache 
-    				|| JPTContext.getInstance().getTemplateCache() == null ){
+    				|| ZPTContext.getInstance().getTemplateCache() == null ){
     			return;
     		}
     		
-			JPTContext.getInstance().getTemplateCache().put( this.id, this.template );
+			ZPTContext.getInstance().getTemplateCache().put( this.id, this.template );
 			
 		} catch ( Exception e ) {
 			throw new IOException( e );
@@ -319,13 +319,13 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
     private boolean recoverFromCache() throws IOException {
     	
     	try {
-            if ( ! JPTContext.getInstance().isCacheOn() 
+            if ( ! ZPTContext.getInstance().isCacheOn() 
             		|| this.id == null 
-            		|| JPTContext.getInstance().getTemplateCache() == null ){
+            		|| ZPTContext.getInstance().getTemplateCache() == null ){
             	return false;
             }
             
-			this.template = JPTContext.getInstance().getTemplateCache().get( this.id );
+			this.template = ZPTContext.getInstance().getTemplateCache().get( this.id );
 			
 			return ! ( this.template == null );
 			
@@ -454,7 +454,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		
 		try {
 			// Process content
-			jptContent(
+			zptContent(
 					contentHandler, 
 					lexicalHandler, 
 					processContent( content, evaluationHelper, i18nContent, i18nParams ) );
@@ -529,9 +529,9 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         /* Content elements */
 		
 		// content or replace
-		Object jptContent = null;
+		Object zptContent = null;
 		if ( expressions.content != null || expressions.i18nContent != null ) {
-		    jptContent = processContent( expressions.content, evaluationHelper, expressions.i18nContent, expressions.i18nParams );
+		    zptContent = processContent( expressions.content, evaluationHelper, expressions.i18nContent, expressions.i18nParams );
 		}
 		
 		// attributes
@@ -540,23 +540,23 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		}
 		
 		// omit-tag
-		boolean jptOmitTag = getJptOmitTag( evaluationHelper, expressions, element );
+		boolean zptOmitTag = getZPTOmitTag( evaluationHelper, expressions, element );
 		
 		// Declare element
-		if ( ! jptOmitTag ) {
+		if ( ! zptOmitTag ) {
 		    startElement( element, contentHandler, attributes, configurableTag );
 		}
 		
 		// Content
-		if ( jptContent != null ) {
-		    jptContent( contentHandler, lexicalHandler, jptContent );
+		if ( zptContent != null ) {
+		    zptContent( contentHandler, lexicalHandler, zptContent );
 		}
 		else {
 		    defaultContent( element, contentHandler, lexicalHandler, evaluationHelper, slotStack );
 		}
    
 		// End element
-		if ( ! jptOmitTag ) {
+		if ( ! zptOmitTag ) {
 		    endElement( element, contentHandler, configurableTag );
 		}
 		
@@ -625,26 +625,26 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		}
 	}
 
-	private void jptContent(ContentHandler contentHandler,
-			LexicalHandler lexicalHandler, Object jptContent)
+	private void zptContent(ContentHandler contentHandler,
+			LexicalHandler lexicalHandler, Object zptContent)
 			throws PageTemplateException, SAXException {
 		
 		// Content for this element has been generated dynamically
-		if ( jptContent instanceof HTMLFragment ) {
+		if ( zptContent instanceof HTMLFragment ) {
 			
-			HTMLFragment html = ( HTMLFragment ) jptContent;
+			HTMLFragment html = ( HTMLFragment ) zptContent;
 			
-			if ( JPTContext.getInstance().isParseHTMLFragments() ){ 
+			if ( ZPTContext.getInstance().isParseHTMLFragments() ){ 
 				html.toXhtml( contentHandler, lexicalHandler );
 			} else {
-				char[] text = html.getHtml().toCharArray();
+				char[] text = html.getHTML().toCharArray();
 				contentHandler.characters( text, 0, text.length );
 			}
 		} 
 		
 		// plain text
 		else {
-		    char[] text = ( ( String ) jptContent ).toCharArray();
+		    char[] text = ( ( String ) zptContent ).toCharArray();
 		    contentHandler.characters( text, 0, text.length );
 		}
 	}
@@ -666,10 +666,10 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		setVar( evaluationHelper, varsToUnset, varsToSet, ON_ERROR_VAR_NAME, I18N_EXPRESSION_PREFIX + i18nOnError );
 	}
 
-	static private boolean getJptOmitTag(EvaluationHelper evaluationHelper, Expressions expressions, Element element)
+	static private boolean getZPTOmitTag(EvaluationHelper evaluationHelper, Expressions expressions, Element element)
 			throws PageTemplateException {
 		
-		boolean jptOmitTag = false;
+		boolean zptOmitTag = false;
 		
 		// Omit tag when it is from TAL name space
 		if ( TAL_NAMESPACE_URI.equals( element.getNamespace().getURI() ) ) {
@@ -679,13 +679,13 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
 		// Omit tag depending on the value of omitTag attribute
 		if ( expressions.omitTag != null ) {
 		    if ( expressions.omitTag.equals( VOID_STRING ) ) {
-		        jptOmitTag = true;
+		        zptOmitTag = true;
 		    }
 		    else {
-		        jptOmitTag = Expression.evaluateBoolean( expressions.omitTag, evaluationHelper );
+		        zptOmitTag = Expression.evaluateBoolean( expressions.omitTag, evaluationHelper );
 		    }
 		}
-		return jptOmitTag;
+		return zptOmitTag;
 	}
     
     static private void processVars(EvaluationHelper evaluationHelper, List<String> varsToUnset, Map<String, Object> varsToSet) 
@@ -775,7 +775,7 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
             Namespace namespace = attribute.getNamespace();
             String name = attribute.getName();
             
-            // Handle JPT attributes
+            // Handle ZPT attributes
             if ( TAL_NAMESPACE_URI.equals( namespace.getURI() ) ) {
             	
                 // tal:define
@@ -956,19 +956,19 @@ public class PageTemplateImpl implements OnePhasePageTemplate {
         try {
 			// Translate with no params
 			if ( i18nParams == null ){
-			    return JPTContext.getInstance().getTranslator().tr(
+			    return ZPTContext.getInstance().getTranslator().tr(
 			    		i18nList, 
 			    		i18nContent );
 			}
 			
 			// Translate with params
-			return JPTContext.getInstance().getTranslator().tr(
+			return ZPTContext.getInstance().getTranslator().tr(
 					i18nList, 
 					i18nContent, 
 			        this.getArrayFromI18nParams( i18nParams, evaluationHelper ) );
 			
 		} catch ( NullPointerException e ) {
-			throw new PageTemplateException( "I18n subsystem of JPT was not initialized." );
+			throw new PageTemplateException( "I18n subsystem of ZPT was not initialized." );
 		}
     }
 

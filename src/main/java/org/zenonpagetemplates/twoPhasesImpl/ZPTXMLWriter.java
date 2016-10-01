@@ -11,9 +11,9 @@ import org.dom4j.Node;
 import org.dom4j.io.XMLWriter;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-import org.zenonpagetemplates.twoPhasesImpl.JPTContext;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTDocument;
-import org.zenonpagetemplates.twoPhasesImpl.model.JPTElement;
+import org.zenonpagetemplates.twoPhasesImpl.ZPTContext;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTDocument;
+import org.zenonpagetemplates.twoPhasesImpl.model.ZPTElement;
 import org.zenonpagetemplates.twoPhasesImpl.model.content.CDATANode;
 import org.zenonpagetemplates.twoPhasesImpl.model.content.ContentItem;
 import org.zenonpagetemplates.twoPhasesImpl.model.content.TextNode;
@@ -21,11 +21,11 @@ import org.zenonpagetemplates.twoPhasesImpl.model.content.TextNode;
 /**
  * <p>
  *   Extends XMLWriter class to make it easy to write XML documents
- *   using JPTOutputFormat and JPTElement instances.
+ *   using ZPTOutputFormat and ZPTElement instances.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.content.TextNode;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class JPTXMLWriter extends XMLWriter {
+public class ZPTXMLWriter extends XMLWriter {
 
 	private static final String OPEN_EMPTY_TAG = "<";
 	private static final String CLOSE_XML_EMPTY_TAG = " />";
@@ -53,31 +53,31 @@ public class JPTXMLWriter extends XMLWriter {
 	private static final String NEW_LINE = "\n";
 
 	
-	private JPTOutputFormat jptOutputFormat;
+	private ZPTOutputFormat zptOutputFormat;
 	
 	
-	public JPTXMLWriter( Writer writer, JPTOutputFormat jptOutputFormat ){
-		super( writer, jptOutputFormat.getOutputFormat() );
+	public ZPTXMLWriter( Writer writer, ZPTOutputFormat zptOutputFormat ){
+		super( writer, zptOutputFormat.getOutputFormat() );
 		
-		this.jptOutputFormat = jptOutputFormat;
+		this.zptOutputFormat = zptOutputFormat;
 	}
 	
-	public JPTXMLWriter( OutputStream outputStream, JPTOutputFormat jptOutputFormat )  
+	public ZPTXMLWriter( OutputStream outputStream, ZPTOutputFormat zptOutputFormat )  
 			throws UnsupportedEncodingException {
-		super( outputStream, jptOutputFormat.getOutputFormat() );
+		super( outputStream, zptOutputFormat.getOutputFormat() );
 		
-		this.jptOutputFormat = jptOutputFormat;
+		this.zptOutputFormat = zptOutputFormat;
 	}
 	
-	public JPTOutputFormat getJptOutputFormat() {
-		return this.jptOutputFormat;
+	public ZPTOutputFormat getZptOutputFormat() {
+		return this.zptOutputFormat;
 	}
 
-	public void writeDocType( JPTDocument jptDocument ) throws IOException, SAXException {
+	public void writeDocType( ZPTDocument zptDocument ) throws IOException, SAXException {
 		
-		DocType docType = jptDocument.getDocType() != null? 
-				jptDocument.getDocType():
-				this.jptOutputFormat.getDocType();
+		DocType docType = zptDocument.getDocType() != null? 
+				zptDocument.getDocType():
+				this.zptOutputFormat.getDocType();
 		
 		if ( docType == null ){
 			return;
@@ -91,58 +91,58 @@ public class JPTXMLWriter extends XMLWriter {
 		this.writeNewLine();
 	}
 	
-	public void writeJPTElement( JPTElement jptElement ) throws IOException, SAXException {
+	public void writeZPTElement( ZPTElement zptElement ) throws IOException, SAXException {
 		
 		// Special empty tags
-		if (jptElement.isEmpty() 
-				&& JPTContext.getInstance().isOmitElementCloseSet( jptElement.getName() )){
+		if (zptElement.isEmpty() 
+				&& ZPTContext.getInstance().isOmitElementCloseSet( zptElement.getName() )){
 			
 			// Write empty tag
-			this.writeEmptyElement( jptElement );
+			this.writeEmptyElement( zptElement );
 			return;
 		}
 		
 		// Write non empty tag
 		this.startElement( 
-				jptElement.getNamespace(), 
-				jptElement.getName(), 
-				jptElement.getQualifiedName(),
-				jptElement.generateAttributes() );
+				zptElement.getNamespace(), 
+				zptElement.getName(), 
+				zptElement.getQualifiedName(),
+				zptElement.generateAttributes() );
 
-		for ( ContentItem contentItem: jptElement.getContents() ){
-			contentItem.writeToXmlWriter( this );
+		for ( ContentItem contentItem: zptElement.getContents() ){
+			contentItem.writeToXMLWriter( this );
 		}
 		
 		this.endElement( 
-				jptElement.getNamespace(), 
-				jptElement.getName(), 
-				jptElement.getQualifiedName() );
+				zptElement.getNamespace(), 
+				zptElement.getName(), 
+				zptElement.getQualifiedName() );
 	}
 	
-    public void writeEmptyElement( JPTElement jptElement )
+    public void writeEmptyElement( ZPTElement zptElement )
             throws IOException, SAXException {
-        this.writeEmptyElement( jptElement, jptElement.generateAttributes() );
+        this.writeEmptyElement( zptElement, zptElement.generateAttributes() );
         /*
     	this.writer.write(OPEN_EMPTY_TAG);
-        this.writer.write(jptElement.getQualifiedName());
+        this.writer.write(zptElement.getQualifiedName());
         writeNamespaces();
-        writeAttributes(jptElement.generateAttributes());
+        writeAttributes(zptElement.generateAttributes());
         this.writer.write(
-        		this.jptOutputFormat.isXmlMode()? 
+        		this.zptOutputFormat.isXmlMode()? 
         		CLOSE_XML_EMPTY_TAG:
         		CLOSE_HTML_TAG);*/
     }
     
     
-    public void writeEmptyElement( JPTElement jptElement, AttributesImpl attributes )
+    public void writeEmptyElement( ZPTElement zptElement, AttributesImpl attributes )
             throws IOException, SAXException {
         
     	this.writer.write( OPEN_EMPTY_TAG );
-        this.writer.write( jptElement.getQualifiedName() );
+        this.writer.write( zptElement.getQualifiedName() );
         writeNamespaces();
         writeAttributes( attributes );
         this.writer.write(
-        		this.jptOutputFormat.isXmlMode()? 
+        		this.zptOutputFormat.isXMLMode()? 
         		CLOSE_XML_EMPTY_TAG:
         		CLOSE_HTML_TAG );
     }
@@ -180,8 +180,8 @@ public class JPTXMLWriter extends XMLWriter {
 	
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     	
-    	if ( ! this.jptOutputFormat.isXmlMode() 
-    			&& JPTContext.getInstance().isOmitElementCloseSet( localName )){
+    	if ( ! this.zptOutputFormat.isXMLMode() 
+    			&& ZPTContext.getInstance().isOmitElementCloseSet( localName )){
     		return;
     	}
     	
@@ -191,7 +191,7 @@ public class JPTXMLWriter extends XMLWriter {
 	@Override
     protected void writeEmptyElementClose( String qualifiedName ) throws IOException {
 
-		if ( JPTContext.getInstance().isEmptyTag( qualifiedName ) ){
+		if ( ZPTContext.getInstance().isEmptyTag( qualifiedName ) ){
         	this.writer.write( "/>" );
         } else {
         	this.writer.write( "></" );

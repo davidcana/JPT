@@ -6,9 +6,9 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.twoPhasesImpl.HTMLFragment;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.TextEscapableAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -36,26 +36,26 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class TALOnError extends JPTAttributeImpl implements DynamicAttribute, TextEscapableAttribute {
+public class TALOnError extends ZPTAttributeImpl implements DynamicAttribute, TextEscapableAttribute {
 
 	private static final long serialVersionUID = 4194311049933172978L;
-	private JPTExpression content;
+	private ZPTExpression content;
 	private boolean escapeOn = true;
 	
 	
 	public TALOnError(){}
-	public TALOnError(String namespaceUri, String expression) throws PageTemplateException {
-		super( namespaceUri );
+	public TALOnError(String namespaceURI, String expression) throws PageTemplateException {
+		super( namespaceURI );
 		configureTextEscapableAttribute( this, expression );
 	}
 	
 	
-	public JPTExpression getContent() {
+	public ZPTExpression getContent() {
 		return content;
 	}
 
 	@Override
-	public void setContent(JPTExpression content) {
+	public void setContent(ZPTExpression content) {
 		this.content = content;
 	}
 	

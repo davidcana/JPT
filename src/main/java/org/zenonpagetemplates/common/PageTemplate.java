@@ -8,11 +8,11 @@ import org.zenonpagetemplates.common.exceptions.PageTemplateException;
 /**
  * <p>
  *   Base interface with constants and methods to implement for 
- *   JPT implementation classes.
+ *   ZPT implementation classes.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public

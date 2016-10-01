@@ -13,11 +13,11 @@ import org.zenonpagetemplates.common.scripting.groovy.GroovyEvaluator;
 
 /**
  * <p>
- *   Configuration options for JPT. Common options for any JPTContext.
+ *   Configuration options for ZPT. Common options for any ZPTContext.
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,11 +38,11 @@ import org.zenonpagetemplates.common.scripting.groovy.GroovyEvaluator;
  * @version $Revision: 1.2 $
  */
 
-abstract public class AbstractJPTContext {
+abstract public class AbstractZPTContext {
 	
 	private Translator translator = new TranslatorImpl();
 	private boolean scriptExpressionsOn = true;
-	private boolean useHtmlReader = false;
+	private boolean useHTMLReader = false;
 	private boolean cacheOn = false;
 	private boolean parseHTMLFragments = true;
     //private XMLWriter xmlWriter;
@@ -77,12 +77,12 @@ abstract public class AbstractJPTContext {
 		this.cacheOn = cacheOn;
 	}
 
-	public boolean isUseHtmlReader() {
-		return this.useHtmlReader;
+	public boolean isUseHTMLReader() {
+		return this.useHTMLReader;
 	}
 
-	public void setUseHtmlReader( boolean useHtmlReader ) {
-		this.useHtmlReader = useHtmlReader;
+	public void setUseHTMLReader( boolean useHtmlReader ) {
+		this.useHTMLReader = useHtmlReader;
 	}
 
 	public boolean isScriptExpressionsOn() {

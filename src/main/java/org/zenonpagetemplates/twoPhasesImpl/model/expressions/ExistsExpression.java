@@ -13,7 +13,7 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
  *   evaluates to <code>false</code>.
  * </p>
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -32,25 +32,25 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class ExistsExpression extends JPTExpressionImpl implements EvaluableToBoolean {
+public class ExistsExpression extends ZPTExpressionImpl implements EvaluableToBoolean {
 
 	private static final long serialVersionUID = 6282707534539128919L;
 	
-	private JPTExpression expression;
+	private ZPTExpression expression;
 	
 	
 	public ExistsExpression(){}
-	public ExistsExpression( String stringExpression, JPTExpression expression ){
+	public ExistsExpression( String stringExpression, ZPTExpression expression ){
 		super( stringExpression );
 		this.expression = expression;
 	}
 
 	
-	public JPTExpression getExpression() {
+	public ZPTExpression getExpression() {
 		return this.expression;
 	}
 
-	public void setExpression( JPTExpression expression ) {
+	public void setExpression( ZPTExpression expression ) {
 		this.expression = expression;
 	}
 

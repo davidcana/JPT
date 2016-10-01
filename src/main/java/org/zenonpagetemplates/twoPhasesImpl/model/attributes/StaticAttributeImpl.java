@@ -6,7 +6,7 @@ package org.zenonpagetemplates.twoPhasesImpl.model.attributes;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ package org.zenonpagetemplates.twoPhasesImpl.model.attributes;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class StaticAttributeImpl extends JPTAttributeImpl implements StaticAttribute {
+public class StaticAttributeImpl extends ZPTAttributeImpl implements StaticAttribute {
 	
 	private static final long serialVersionUID = -2520079638396474376L;
 	
@@ -59,7 +59,7 @@ public class StaticAttributeImpl extends JPTAttributeImpl implements StaticAttri
 	@Override
 	public String getQualifiedName() {
 		
-		if ( this.getNamespaceUri().isEmpty() ){
+		if ( this.getNamespaceURI().isEmpty() ){
 			return this.attributeName;
 		}
 		

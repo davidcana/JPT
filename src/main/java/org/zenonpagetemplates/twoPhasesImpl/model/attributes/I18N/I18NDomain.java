@@ -12,8 +12,8 @@ import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplateImpl;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.AttributesUtils;
 import org.zenonpagetemplates.twoPhasesImpl.model.attributes.DynamicAttribute;
-import org.zenonpagetemplates.twoPhasesImpl.model.attributes.JPTAttributeImpl;
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
+import org.zenonpagetemplates.twoPhasesImpl.model.attributes.ZPTAttributeImpl;
+import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,28 +41,28 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.JPTExpression;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public class I18NDomain extends JPTAttributeImpl implements DynamicAttribute {
+public class I18NDomain extends ZPTAttributeImpl implements DynamicAttribute {
 
 	private static final long serialVersionUID = 7815056548268774549L;
 	
-	private List<JPTExpression> expressions = new ArrayList<JPTExpression>();
+	private List<ZPTExpression> expressions = new ArrayList<ZPTExpression>();
 	
 	
 	public I18NDomain(){}
-	public I18NDomain( String namespaceUri, String expression ) throws PageTemplateException {
-		super( namespaceUri );
+	public I18NDomain( String namespaceURI, String expression ) throws PageTemplateException {
+		super( namespaceURI );
 		this.expressions = AttributesUtils.getExpressions( expression );
 	}
 
-	public List<JPTExpression> getExpressions() {
+	public List<ZPTExpression> getExpressions() {
 		return this.expressions;
 	}
 
-	public void setExpressions( List<JPTExpression> expressions ) {
+	public void setExpressions( List<ZPTExpression> expressions ) {
 		this.expressions = expressions;
 	}
 
-	public void addExpressions( JPTExpression expressions ){
+	public void addExpressions( ZPTExpression expressions ){
 		this.expressions.add( expressions );
 	}
 	
@@ -79,12 +79,12 @@ public class I18NDomain extends JPTAttributeImpl implements DynamicAttribute {
 	public void process( EvaluationHelper evaluationHelper, 
 			List<String> varsToUnset, Map<String, Object> varsToSet ) throws EvaluationException {
 		
-		JPTExpression expression = null;
+		ZPTExpression expression = null;
         try {
             List<I18n> i18nList = new ArrayList<I18n>();
-            for ( JPTExpression jptExpression: this.expressions ){
-            	expression = jptExpression;
-            	i18nList.add( (I18n) jptExpression.evaluate( evaluationHelper ) );
+            for ( ZPTExpression zptExpression: this.expressions ){
+            	expression = zptExpression;
+            	i18nList.add( (I18n) zptExpression.evaluate( evaluationHelper ) );
             }
             
             TwoPhasesPageTemplateImpl.setVar(

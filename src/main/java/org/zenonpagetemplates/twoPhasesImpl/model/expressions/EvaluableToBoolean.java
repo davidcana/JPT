@@ -9,7 +9,7 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
  * </p>
  * 
  * 
- *  Java Page Templates
+ *  Zenon Page Templates
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ import org.zenonpagetemplates.common.scripting.EvaluationHelper;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public interface EvaluableToBoolean extends JPTExpression {
+public interface EvaluableToBoolean extends ZPTExpression {
 
 	public Boolean evaluateToBoolean( EvaluationHelper evaluationHelper ) throws EvaluationException;
 	
