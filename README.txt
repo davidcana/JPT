@@ -1,5 +1,5 @@
 
-Zeno Page Templates - Java (ZPT-Java) is a Java implementation of Zope Page Templates (ZPT).
+Zenon Page Templates - Java (ZPT-Java) is a Java implementation of Zope Page Templates (ZPT).
 
 ----------------------------------
 Zope Page Templates are a web page generation tool. They help programmers and designers collaborate in producing dynamic web pages for Zope web applications. Designers can use them to maintain pages without having to abandon their tools, while preserving the work required to embed those pages in an application.
