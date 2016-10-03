@@ -1,0 +1,7 @@
+Hello! My name is David Cana. I needed some time ago a Zope Page Templates (ZPT) implementation in Javascript. The best one I found was JPT (https://github.com/chrisrossi/JPT), but I wanted to add new features and a better performance. So I decided to fork that project to make it better (IMHO, of course). The result of this is Zenon Page Templates - Java (ZPT-Java).
+
+Nowadays the list of contributors to this project is:
+    - Chris Rossi, developer of JPT (https://github.com/chrisrossi/JPT). Some routines and classes still remains.
+    - David Cana (me!), the main developer of ZPT-Java. I added support of a many expressions and did a full refactory of code. Added support of caching.
+
+
