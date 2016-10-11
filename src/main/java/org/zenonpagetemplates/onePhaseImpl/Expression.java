@@ -6,7 +6,9 @@ import java.beans.PropertyDescriptor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.zenonpagetemplates.common.ExpressionTokenizer;
@@ -479,6 +481,30 @@ public abstract class Expression {
 		    String segment = segments.nextToken().trim();
 		    Object evaluate = evaluate( segment, evaluationHelper );
 		    
+		    // Process array of numeric literals
+		    if ( evaluate instanceof List ){
+		    	
+                for ( Object objectItem : ( List ) evaluate  ) {
+                    Number value = numericLiteral( objectItem.toString() );
+                    
+                    if ( value == null ) {
+                        throw new PageTemplateException(
+                        		"Error trying doing math operation, value '" + value 
+                                + "' is not a valid number in expression '" + mathOperation + ' ' + expression + "'" );
+                    }
+                    
+                    if ( c++ == 0 ){
+                        result = value.intValue();
+                        continue;
+                    }
+                    
+                    result = evaluateArithmeticItem( result, value.intValue(), mathOperation );
+                }
+                
+                continue;
+		    }
+		    
+		    // Process numeric literal
 			if ( ! ( evaluate instanceof Number ) ){
 				throw new PageTemplateException( 
 						"Error trying to " + operationName + " integers, value '" + evaluate.toString() 
@@ -492,30 +518,39 @@ public abstract class Expression {
 				continue;
 			}
 			
-	    	switch ( mathOperation ) {
-			case add:
-				result += value;
-				break;
-			case sub:
-				result -=  value;
-				break;
-			case mul:
-				result *=  value;
-				break;
-			case div:
-				result /=  value;
-				break;
-			case mod:
-				result %=  value;
-				break;
-			default:
-				throw new PageTemplateException( "The evaluateArithmetic method can't handle '" 
-						+ mathOperation + "' math operation" );
-			}
+	    	result = evaluateArithmeticItem(result, value, mathOperation);
 		}
 
         return result;
     }
+
+
+	private static Integer evaluateArithmeticItem(Integer result,
+			Integer value, MathOperation mathOperation) throws PageTemplateException {
+		
+		switch ( mathOperation ) {
+		case add:
+			result += value;
+			break;
+		case sub:
+			result -=  value;
+			break;
+		case mul:
+			result *=  value;
+			break;
+		case div:
+			result /=  value;
+			break;
+		case mod:
+			result %=  value;
+			break;
+		default:
+			throw new PageTemplateException( "The evaluateArithmetic method can't handle '" 
+					+ mathOperation + "' math operation" );
+		}
+		
+		return result;
+	}
     /*
     private static final Object evaluateJava( String expression, EvaluationHelper evaluationHelper )
         throws PageTemplateException {
@@ -692,7 +727,8 @@ public abstract class Expression {
         // Separate identifier from any array accessors
         String arrayAccessor = null;
         int bracket = findArrayAccessor( token );
-        if ( bracket != -1 ) {
+        //if ( bracket != -1 ) {
+        if ( bracket > 0 ) { // Not list expressions
             arrayAccessor = token.substring( bracket ).trim();
             token = token.substring( 0, bracket ).trim();
         }
@@ -709,24 +745,32 @@ public abstract class Expression {
             // Maybe it's a boolean literal
             if ( result == null ) {
                 result = booleanLiteral( token );
-                                    
-                // It could be a class, for a static method call
+                
+                // A list?
                 if ( result == null ) {
-                    try {
-                        result = new StaticCall( Class.forName( token ) );
-                    } catch( ClassNotFoundException e ) {
-                        // Or it could be an actual reference to a class object
-                        try {
-                            if ( token.endsWith( CLASS_EXTENSION ) ) {
-                                token = token.substring( 0, token.length() - CLASS_EXTENSION.length() );
-                                result = Class.forName( token );
-                            }
-                        } catch( ClassNotFoundException ee ) {}
-                        // Must be an object in dictionary
-                        if ( result == null ) {
-                        	result = evaluationHelper.get( token );
-                        }
-                    }
+                	result = listExpression( token, evaluationHelper );
+                	
+	                // It could be a class, for a static method call
+	                if ( result == null ) {
+	                    try {
+	                        result = new StaticCall( Class.forName( token ) );
+	                        
+	                    } catch( ClassNotFoundException e ) {
+	                    	
+	                        // Or it could be an actual reference to a class object
+	                        try {
+	                            if ( token.endsWith( CLASS_EXTENSION ) ) {
+	                                token = token.substring( 0, token.length() - CLASS_EXTENSION.length() );
+	                                result = Class.forName( token );
+	                            }
+	                        } catch( ClassNotFoundException ee ) {}
+	                        
+		                        // Must be an object in dictionary
+		                        if ( result == null ) {
+		                        	result = evaluationHelper.get( token );
+		                        }
+	                    }
+	                }
                 }
             }
         }
@@ -1146,6 +1190,107 @@ public abstract class Expression {
         throw new EvaluationException( 
         		"No such property '" + name + "' of " + object.getClass().getName() );
     }
+
+    private static final List<Object> listExpression( String expression, EvaluationHelper evaluationHelper ) throws PageTemplateException {
+    	
+    	//if ( expression.indexOf( '[' ) != 0  || expression.indexOf( ']' ) != expression.length() - 1 ) {
+        if ( expression.charAt( 0 ) != '[' || expression.charAt( expression.length() - 1 ) != ']' ) {
+            return null;
+        }
+
+        String listExp = expression.substring( 1, expression.length() - 1 ).trim();
+        List<Object> result = new ArrayList<Object>();
+        ExpressionTokenizer segments = new ExpressionTokenizer( listExp, OnePhasePageTemplate.EXPRESSION_DELIMITER );
+        
+        while ( segments.hasMoreTokens() ) {
+            String segment = segments.nextToken().trim();
+            List<Object> range = rangeExpression( segment, evaluationHelper );
+            
+            if ( range != null ){
+                result.addAll( range );
+            } else {
+                Object value = evaluate( segment, evaluationHelper );
+                result.add( value );
+            }
+        }
+        
+        return result;
+    }
+    
+    private static final List<Object> rangeExpression( String exp, EvaluationHelper evaluationHelper ) throws PageTemplateException {
+
+        int RANGE_DEFAULT_START = 0;
+        int RANGE_DEFAULT_STEP = 1;
+        
+        String expression = exp.trim();
+        
+        // Return null if there is no range delimiter
+        if ( expression.indexOf( OnePhasePageTemplate.RANGE_DELIMITER ) == -1){
+        	return null;
+        }
+        
+        ExpressionTokenizer segments = new ExpressionTokenizer( expression, OnePhasePageTemplate.RANGE_DELIMITER );
+        
+        int numberOfTokens = segments.countTokens();
+        if ( numberOfTokens != 2 && numberOfTokens != 3 ) {
+            throw new ExpressionSyntaxException( "Malformed range expression: " + expression );
+        }
+        
+        // Evaluate start expression if any
+        String start = segments.nextToken().trim();
+        Object startExpressionResult = 
+        		start.equals("")? 
+        		RANGE_DEFAULT_START: 
+        		evaluate( start, evaluationHelper );
+        
+        // Evaluate end expression
+        String end = segments.nextToken().trim();
+        Object endExpressionResult = evaluate( end, evaluationHelper );
+        
+        // Evaluate step expression if any
+        Object stepExpressionResult = RANGE_DEFAULT_STEP;
+        if ( numberOfTokens == 3 ){
+            String step = segments.nextToken().trim();
+            stepExpressionResult = evaluate( step, evaluationHelper );
+        }
+        
+        return evaluateRange(
+        		startExpressionResult,
+        		endExpressionResult,
+        		stepExpressionResult);
+    }
+
+    
+	private static List<Object> evaluateRange(Object startObject, Object endObject, Object stepObject) throws EvaluationException {
+		
+		// Check values are integer
+		if ( ! ( startObject instanceof Integer ) ) {
+            throw new EvaluationException( "Range start must be an integer" );
+        }
+		if ( ! ( endObject instanceof Integer ) ) {
+            throw new EvaluationException( "Range end must be an integer" );
+        }
+		if ( ! ( stepObject instanceof Integer ) ) {
+            throw new EvaluationException( "Range step must be an integer" );
+        }
+		
+		// Cast them
+		int start = (Integer) startObject;
+		int end = (Integer) endObject;
+		int step = (Integer) stepObject;
+
+		// Iterate and build the list
+		List<Object> result = new ArrayList<Object>();
+        boolean forward = step > 0; 
+        
+        int c = start;
+        while( forward? c <= end: c >= end ){
+            result.add( c );
+            c += step;
+        }
+        
+        return result;
+	}
 }
 
 class StaticCall {

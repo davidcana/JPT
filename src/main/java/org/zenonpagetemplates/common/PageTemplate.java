@@ -99,6 +99,7 @@ public interface PageTemplate {
 	static final char IN_ATTRIBUTE_DELIMITER = ' ';
 	static final char PATH_DELIMITER = '|';
 	static final char EXPRESSION_DELIMITER = ' ';
+	static final char RANGE_DELIMITER = ':';
 	
 	// Boolean strings
 	static final String FALSE_STRING = "false";
