@@ -340,9 +340,9 @@ public class ArrayExpression extends ZPTExpressionImpl implements FirstPathToken
     		throw new ExpressionSyntaxException( e );
     	}
     }
-    
+    /*
     @Override
     public String toString(){
     	return this.stringExpression;
-    }
+    }*/
 }

@@ -164,7 +164,8 @@ public class PathExpression extends ZPTExpressionImpl implements ZPTExpression {
         // Separate identifier from any array accessors
         String arrayAccessor = null;
         int bracket = ArrayExpression.findArrayAccessor( token );
-        if ( bracket != -1 ) {
+        //if ( bracket != -1 ) {
+        if ( bracket > 0 ) { // Not list expressions
             arrayAccessor = token.substring( bracket ).trim();
             token = token.substring( 0, bracket ).trim();
         }
@@ -182,18 +183,23 @@ public class PathExpression extends ZPTExpressionImpl implements ZPTExpression {
 	            // Maybe it's a boolean literal
 	            result = BooleanLiteralExpression.generate( token );
 	            if ( result == null ) {
-	            
-	                // It could be a class, for a static method call
-	                result = StaticCallExpression.generate( token );
-	                if ( result == null ) {
-	                    
-	                	// Or it could be an actual reference to a class object
-	                    result = ClassExpression.generate( token );
-	                    if ( result == null ) {
-	                        
-	                    	// Must be an object in scope
-	                        result = VarNameExpression.generate( token );
-	                    }
+	            	
+	            	// A list?
+	            	result = ListExpression.generate( token );
+	            	if ( result == null ) {	
+	            	
+		                // It could be a class, for a static method call
+		                result = StaticCallExpression.generate( token );
+		                if ( result == null ) {
+		                    
+		                	// Or it could be an actual reference to a class object
+		                    result = ClassExpression.generate( token );
+		                    if ( result == null ) {
+		                        
+		                    	// Must be an object in scope
+		                        result = VarNameExpression.generate( token );
+		                    }
+		                }
 	                }
 	            }
 	        }
@@ -207,7 +213,7 @@ public class PathExpression extends ZPTExpressionImpl implements ZPTExpression {
         return result;
     }
     
-	private static FirstPathToken generateNumericLiteralExpression( String token ) {
+	static private FirstPathToken generateNumericLiteralExpression( String token ) {
 		
 		FirstPathToken result = LongLiteralExpression.generate( token );
         if ( result != null ) {

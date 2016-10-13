@@ -98,6 +98,18 @@ abstract public class AbstractPageTemplateTest {
         testPageTemplate( template, dictionary, null );
     }
 	
+    @Test
+    public void testListExpressions() throws Exception {
+        Map<String, Object> dictionary = new HashMap<String, Object>();
+        dictionary.put( "number1", 1 );
+        dictionary.put( "number2", 2 );
+        dictionary.put( "number3", 3 );
+        dictionary.put( "number5", 5 );
+        dictionary.put( "number-2", -2 );
+        
+		testPageTemplate( "listExpressions", dictionary, null );
+    }
+	
 	@Test
     public void testBSHScriptsAndExpressions() throws Exception {
 		testPageTemplate( "bshScriptsAndExpressions", null, null );

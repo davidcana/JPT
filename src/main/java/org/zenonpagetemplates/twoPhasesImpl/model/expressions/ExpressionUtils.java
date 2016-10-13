@@ -58,8 +58,8 @@ public class ExpressionUtils {
     	
     	try {
 			if ( expression instanceof EvaluableToNumber ){
-				EvaluableToNumber evaluableToInteger = ( EvaluableToNumber ) expression;
-				return evaluableToInteger.evaluateToNumber( evaluationHelper );
+				EvaluableToNumber evaluableToNumber = ( EvaluableToNumber ) expression;
+				return evaluableToNumber.evaluateToNumber( evaluationHelper );
 			}
 			
 			Object result = expression.evaluate( evaluationHelper );

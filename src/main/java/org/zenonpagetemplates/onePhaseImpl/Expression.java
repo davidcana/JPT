@@ -1193,7 +1193,6 @@ public abstract class Expression {
 
     private static final List<Object> listExpression( String expression, EvaluationHelper evaluationHelper ) throws PageTemplateException {
     	
-    	//if ( expression.indexOf( '[' ) != 0  || expression.indexOf( ']' ) != expression.length() - 1 ) {
         if ( expression.charAt( 0 ) != '[' || expression.charAt( expression.length() - 1 ) != ']' ) {
             return null;
         }

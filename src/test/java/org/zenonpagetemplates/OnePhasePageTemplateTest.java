@@ -40,7 +40,7 @@ import org.zenonpagetemplates.twoPhasesImpl.ZPTOutputFormat;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.11 $
  */
-public class OnePhasePageTemplateTest extends AbstractPageTemplateTest{
+public class OnePhasePageTemplateTest extends AbstractPageTemplateTest {
 	
 	@Override
 	protected void testPageTemplate( String test, Map<String, Object> dictionary, ZPTOutputFormat zptOutputFormat ) 
@@ -57,7 +57,7 @@ public class OnePhasePageTemplateTest extends AbstractPageTemplateTest{
         // Test PageTemplate
         testPageTemplate(test, dictionary, resource, template);
     }
-	
+	/*
 	@Test
     public void testListExpressions() throws Exception {
         Map<String, Object> dictionary = new HashMap<String, Object>();
@@ -68,7 +68,7 @@ public class OnePhasePageTemplateTest extends AbstractPageTemplateTest{
         dictionary.put( "number-2", -2 );
         
 		testPageTemplate( "listExpressions", dictionary, null );
-    }
+    }*/
 	
 	@Override
 	protected void testStringTemplate( String test, String templateText, Map<String, Object> dictionary, ZPTOutputFormat zptOutputFormat ) 

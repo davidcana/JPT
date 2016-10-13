@@ -32,6 +32,7 @@ public class EvaluationException extends PageTemplateException {
 
     private String expression;
     private String source;
+    private Object value;
     
     private static final long serialVersionUID = 2059091942240330015L;
 
@@ -42,7 +43,12 @@ public class EvaluationException extends PageTemplateException {
     public EvaluationException( String message ) {
         super( message );
     }
-
+    
+    public EvaluationException( String message, Object value ) {
+        super( message );
+        this.value = value;
+    }
+    
     public EvaluationException( String message, Throwable cause ) {
         super( message, cause );
     }
@@ -89,6 +95,14 @@ public class EvaluationException extends PageTemplateException {
 		this.setSource( source );
 	}
 	
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
 	@Override
     public String getMessage() {
     	

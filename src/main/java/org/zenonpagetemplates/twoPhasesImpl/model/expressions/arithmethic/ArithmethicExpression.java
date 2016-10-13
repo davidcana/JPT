@@ -1,7 +1,6 @@
 package org.zenonpagetemplates.twoPhasesImpl.model.expressions.arithmethic;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.zenonpagetemplates.common.ExpressionTokenizer;
@@ -102,7 +101,52 @@ abstract public class ArithmethicExpression extends ZPTExpressionImpl implements
         }
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
+	public Number evaluateToNumber( EvaluationHelper evaluationHelper ) throws EvaluationException {
+		
+		Number result = 0;
+		int c = 0;
+		
+		for ( ZPTExpression expression : this.expressions ){
+			
+			Object evaluate = expression.evaluate( evaluationHelper );
+			
+			if ( evaluate instanceof List ){
+				for ( Object objectItem : ( List<Object> ) evaluate  ) {
+					try {
+						Integer integerItem = ( Integer )  objectItem;
+	                    
+						result = c++ == 0?
+								result = integerItem:
+								this.doOperation( result, integerItem );
+	                    
+					} catch (Exception e) {
+						throw new EvaluationException(
+								"Error trying doing math operation, value '" + objectItem 
+                                + "' is not a valid number in expression '" + this.stringExpression + "'" );
+					}
+					
+				}
+				continue;
+			}
+			
+			if ( evaluate instanceof Number ){
+				Integer value = ( ( Number ) evaluate ).intValue();
+				result = c++ == 0?
+					result = value:
+					this.doOperation( result, value );
+				continue;
+			}
+			
+			throw new EvaluationException( 
+					"Error trying to evaluate arithmethic expression, value '" + evaluate.toString() 
+					+ "' is not a valid integer value in expression '" + this.stringExpression + "'");
+		}
+		
+		return result;
+	}
+	/*
 	public Number evaluateToNumber( EvaluationHelper evaluationHelper ) throws EvaluationException {
 		
 		Iterator<ZPTExpression> i = this.expressions.iterator();
@@ -119,7 +163,7 @@ abstract public class ArithmethicExpression extends ZPTExpressionImpl implements
 		}
 		
 		return result;
-	}
+	}*/
 	
 	@Override
 	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException {

@@ -1,10 +1,14 @@
-package org.zenonpagetemplates.twoPhasesImpl.model.expressions;
+package org.zenonpagetemplates.twoPhasesImpl.model.expressions.path;
 
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.ListExpressionItem;
+import java.io.Serializable;
+
+import org.zenonpagetemplates.common.exceptions.EvaluationException;
+import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
- *   Defines a generic expression that can be evaluated to an Object instance.
+ *   Defines an expression that can be used as a item 
+ *   in a ListExpression.
  * </p>
  * 
  * 
@@ -24,9 +28,13 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.path.ListExpressio
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
+ *
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public interface ZPTExpression extends ListExpressionItem {
-
+public interface ListExpressionItem extends Serializable {
+	
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException;
+	
+	public String getStringExpression();
 }
