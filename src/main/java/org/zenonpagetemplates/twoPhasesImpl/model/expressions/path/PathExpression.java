@@ -129,7 +129,7 @@ public class PathExpression extends ZPTExpressionImpl implements ZPTExpression {
         }
      
         // Evaluate first token
-        ExpressionTokenizer tokenizer = new ExpressionTokenizer( expression, '/' );
+        ExpressionTokenizer tokenizer = new ExpressionTokenizer( expression, TwoPhasesPageTemplate.PATH_SEGMENT_DELIMITER );
         String token = tokenizer.nextToken().trim();
         FirstPathToken firstPathToken = generateFirstPathToken( token );
         

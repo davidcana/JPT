@@ -705,7 +705,7 @@ public abstract class Expression {
         }
         
         // Evaluate first token
-        ExpressionTokenizer path = new ExpressionTokenizer( expression, '/' );
+        ExpressionTokenizer path = new ExpressionTokenizer( expression, OnePhasePageTemplate.PATH_SEGMENT_DELIMITER );
         String token = path.nextToken().trim();
         Object result = evaluateFirstPathToken( token, evaluationHelper );
         

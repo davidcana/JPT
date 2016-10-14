@@ -8,6 +8,7 @@ import org.zenonpagetemplates.common.exceptions.EvaluationException;
 import org.zenonpagetemplates.common.exceptions.NoSuchPathException;
 import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 import org.zenonpagetemplates.common.scripting.Script;
+import org.zenonpagetemplates.twoPhasesImpl.TwoPhasesPageTemplate;
 import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpression;
 
 /**
@@ -112,7 +113,7 @@ public class Path implements ZPTExpression {
 				this.firstToken.getStringExpression() );
 		
 		for ( NextPathToken nextPathToken: this.tokens ){
-			sb.append( '/' );
+			sb.append( TwoPhasesPageTemplate.PATH_SEGMENT_DELIMITER );
 			sb.append( nextPathToken.getStringExpression() );
 		}
 		

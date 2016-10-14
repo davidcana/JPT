@@ -98,6 +98,7 @@ public interface PageTemplate {
 	static final char ATTRIBUTE_DELIMITER = ';';
 	static final char IN_ATTRIBUTE_DELIMITER = ' ';
 	static final char PATH_DELIMITER = '|';
+	static final char PATH_SEGMENT_DELIMITER = '/';
 	static final char EXPRESSION_DELIMITER = ' ';
 	static final char RANGE_DELIMITER = ':';
 	
