@@ -488,7 +488,58 @@ ZPTContext.getInstance().setCharToReplaceAmpersand( '~' );
         There are a few minor variations for <code>tal:repeat</code>. The repeat expression must evaluate to an array, an <code>Iterator</code> or a <code>Collection</code>. If the expression evaluates to an <code>Iterator</code> the repeat variable <code>length</code> is undefined. The repeat variables <code>Letter</code> and <code>Roman</code> have been changed in ZPT-Java to
         <code>capitalLetter</code> and <code>capitalRoman</code>, to avoid confusion with Java case conventions.
     </p>
+    <a id="tal.repeat"></a>
+    <h3>Repeat expressions</h3>
+    <p>
+        There are a few minor variations for <code>tal:repeat</code>. The repeat expression must evaluate to an array.
+    </p>
 
+    <a id="tal.range"></a>
+    <h3>Lists expressions</h3>
+    <p>
+        A list is defined as an enumeration of items in brackets. Some examples:
+    </p>
+    <ul>
+        <li><code>[1 2 3]</code> evaluates as 1,2,3</li>
+        <li><code>[1 2 3 number1]</code> evaluates as 1,2,3,1 (if the value of <code>number1</code> is 1)</li>
+    </ul>
+    <p>
+        You can iterate through lists using loops:
+    </p>
+    <ul>
+        <li><code>tal:repeat="c [10 20 30]"</code> iterates using <code>c</code> through 10, 20 and 30</li>
+        <li><code>tal:repeat="mixed ['yes!' 'no!' aNumber]"</code> iterates using <code>mixed</code></li>
+    </ul>
+    <p>
+        Another ways of using lists is as range expressions:
+    </p>
+    <ul>
+        <li><code>tal:repeat="c [1:5]"</code> iterates using <code>c</code> through 1,2,3,4 and 5</li>
+        <li><code>tal:repeat="c [1:7:2]"</code> iterates using <code>c</code> through 1,3,5 and 7</li>
+        <li><code>tal:repeat="c [:5]"</code> iterates using <code>c</code> through 0,1,2,3,4 and 5</li>
+    </ul>
+    
+    <p>
+        Lists are very versatile:
+    </p>
+    <ul>
+        <li><code>[1:3 10]</code> evaluates to 1,2,3 and 10</li>
+        <li><code>[4 1:3 10]</code> evaluates to 4,1,2,3 and 10</li>
+    </ul>
+    
+    <p>
+        ...and can be used in arithmethic operations:
+    </p>
+    <ul>
+        <li><code>+: [1:3 10]</code> evaluates to 1+2+3+10 = 16</li>
+        <li><code>+: [4 1:3 10]</code> evaluates to 4+1+2+3+10 = 20</li>
+    </ul>
+    
+    Don't forget to not use spaces inside ranges! 
+    <ul>
+        <li><code>[ 1 : 3 ]</code> will not work!</li>
+    </ul>
+    
     <a id="tal.tag"></a>
     <h3>tal:tag</h3>
     <p>
