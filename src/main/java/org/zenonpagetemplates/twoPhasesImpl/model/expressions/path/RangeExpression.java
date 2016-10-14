@@ -119,11 +119,5 @@ public class RangeExpression extends ZPTExpressionImpl implements ListExpression
         
         return new RangeExpression( expression, startExpression, endExpression, stepExpression );
 	}
-	/*
-	@Override
-	public String getStringExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
 
 }

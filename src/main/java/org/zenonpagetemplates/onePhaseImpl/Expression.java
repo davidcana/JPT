@@ -429,6 +429,7 @@ public abstract class Expression {
     }
     
 
+	@SuppressWarnings("rawtypes")
 	private static final Integer evaluateArithmetic( String exp, EvaluationHelper evaluationHelper, MathOperation mathOperation )
             throws PageTemplateException {   
     	// Init vars
@@ -469,9 +470,9 @@ public abstract class Expression {
         }
 
         ExpressionTokenizer segments = new ExpressionTokenizer( expression, OnePhasePageTemplate.EXPRESSION_DELIMITER );
-        if ( segments.countTokens() == 1 ) {
-        	throw new PageTemplateException( "Only one element in " + operationName + " expression, please add at least one more." );
-        }
+        //if ( segments.countTokens() == 1 ) {
+        //	throw new PageTemplateException( "Only one element in " + operationName + " expression, please add at least one more." );
+        //}
 
         // Evaluate segments
 		Integer result = 0;
@@ -521,6 +522,10 @@ public abstract class Expression {
 	    	result = evaluateArithmeticItem(result, value, mathOperation);
 		}
 
+        //if ( c == 1 ) {
+        //	throw new PageTemplateException( "Only one element in " + operationName + " expression, please add at least one more." );
+        //}
+        
         return result;
     }
 

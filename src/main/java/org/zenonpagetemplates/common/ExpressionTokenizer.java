@@ -91,12 +91,12 @@ public class ExpressionTokenizer {
             }
             
             // increment parenthesis level
-            else if ( ch == '(' ) {
+            else if ( ch == '(' || ch == '[' ) {
                 parenLevel++;
             }
             
             // decrement parenthesis level
-            else if ( ch == ')' ) {
+            else if ( ch == ')' || ch == ']') {
                 parenLevel--;
                 // If unmatched right parenthesis
                 if ( parenLevel < 0 ) {

@@ -80,11 +80,12 @@ abstract public class ArithmethicExpression extends ZPTExpressionImpl implements
         		expression, 
         		TwoPhasesPageTemplate.EXPRESSION_DELIMITER );
         
+        /*
         if ( segments.countTokens() == 1 ) {
         	throw new ExpressionSyntaxException(
         			"Only one element in " + operationName 
         			+ " expression, please add at least one more.");
-        }
+        }*/
 
         // Set string expression
         arithmethicExpression.setStringExpression( exp );
@@ -143,7 +144,7 @@ abstract public class ArithmethicExpression extends ZPTExpressionImpl implements
 					"Error trying to evaluate arithmethic expression, value '" + evaluate.toString() 
 					+ "' is not a valid integer value in expression '" + this.stringExpression + "'");
 		}
-		
+        
 		return result;
 	}
 	/*

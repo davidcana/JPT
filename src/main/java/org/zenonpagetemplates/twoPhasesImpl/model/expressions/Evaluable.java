@@ -1,11 +1,13 @@
-package org.zenonpagetemplates.twoPhasesImpl.model.expressions.path;
+package org.zenonpagetemplates.twoPhasesImpl.model.expressions;
 
-import org.zenonpagetemplates.twoPhasesImpl.model.expressions.Evaluable;
+import java.io.Serializable;
+
+import org.zenonpagetemplates.common.exceptions.EvaluationException;
+import org.zenonpagetemplates.common.scripting.EvaluationHelper;
 
 /**
  * <p>
- *   Defines an expression that can be used as a item 
- *   in a ListExpression.
+ *   Defines an object that can be evaluated.
  * </p>
  * 
  * 
@@ -29,6 +31,9 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.Evaluable;
  * @author <a href="mailto:david.javapagetemplates@gmail.com">David Cana</a>
  * @version $Revision: 1.0 $
  */
-public interface ListExpressionItem extends Evaluable {
-
+public interface Evaluable extends Serializable {
+	
+	public Object evaluate( EvaluationHelper evaluationHelper ) throws EvaluationException;
+	
+	public String getStringExpression();
 }

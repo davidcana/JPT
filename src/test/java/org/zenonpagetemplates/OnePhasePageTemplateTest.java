@@ -6,10 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
 import org.xml.sax.SAXException;
 import org.zenonpagetemplates.common.AbstractZPTContext;
 import org.zenonpagetemplates.common.exceptions.PageTemplateException;
@@ -57,18 +55,6 @@ public class OnePhasePageTemplateTest extends AbstractPageTemplateTest {
         // Test PageTemplate
         testPageTemplate(test, dictionary, resource, template);
     }
-	/*
-	@Test
-    public void testListExpressions() throws Exception {
-        Map<String, Object> dictionary = new HashMap<String, Object>();
-        dictionary.put( "number1", 1 );
-        dictionary.put( "number2", 2 );
-        dictionary.put( "number3", 3 );
-        dictionary.put( "number5", 5 );
-        dictionary.put( "number-2", -2 );
-        
-		testPageTemplate( "listExpressions", dictionary, null );
-    }*/
 	
 	@Override
 	protected void testStringTemplate( String test, String templateText, Map<String, Object> dictionary, ZPTOutputFormat zptOutputFormat ) 

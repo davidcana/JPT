@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -106,6 +108,8 @@ abstract public class AbstractPageTemplateTest {
         dictionary.put( "number3", 3 );
         dictionary.put( "number5", 5 );
         dictionary.put( "number-2", -2 );
+        dictionary.put( "from1To3", new ArrayList<Integer>(
+        	    Arrays.asList(1, 2, 3)));
         
 		testPageTemplate( "listExpressions", dictionary, null );
     }

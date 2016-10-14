@@ -14,7 +14,7 @@ import org.zenonpagetemplates.twoPhasesImpl.model.expressions.ZPTExpressionImpl;
 
 /**
  * <p>
- *   Evaluates a var name.
+ *   Evaluates a list.
  * </p>
  * 
  * 
@@ -106,14 +106,5 @@ public class ListExpression extends ZPTExpressionImpl implements FirstPathToken 
         
 		return new ListExpression( stringExpression, items );
 	}
-	/*
-	@Override
-	public String getStringExpression() {
-		return this.varName;
-	}
-	
-	@Override
-    public String toString(){
-    	return this.varName;
-    }*/
+
 }
